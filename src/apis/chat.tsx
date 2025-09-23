@@ -1,10 +1,11 @@
+const BASE_URL: string = "http://localhost:8080";
+
 // 获取Id列表
 export const fetchChatIds = async () => {
   try {
-    const res = await fetch(`http://localhost:8080/ai/history/chat`);
-    let data: string[] = await res.json();
-    data = data.filter((id) => id && id.trim() !== "");
-    console.log(data);
+    const res = await fetch(`${BASE_URL}/ai/history/chat`);
+    const data: string[] = await res.json();
+
     return data;
     // if (data.length > 0) {
     //   setCurrentChatId(data[0]); // 默认选中第一个
@@ -16,7 +17,7 @@ export const fetchChatIds = async () => {
 
 // 获取chatId对应的聊天历史
 export const fetchMessages = async (chatId: string) => {
-  const res = await fetch(`http://localhost:8080/ai/history/chat/${chatId}`);
+  const res = await fetch(`${BASE_URL}/ai/history/chat/${chatId}`);
   const data: { role: string; content: string }[] = await res.json();
 
   return data;
@@ -28,7 +29,7 @@ export const sendChatMessage = async (prompt: string, chatId: string) => {
   formData.append("prompt", prompt);
   formData.append("chatId", chatId);
 
-  const response = await fetch("http://localhost:8080/ai/chat", {
+  const response = await fetch(`${BASE_URL}/ai/chat`, {
     method: "POST",
     body: formData,
   });
