@@ -1,8 +1,6 @@
-"use client";
-
 import { Button } from "antd";
 import { useState, useRef, useEffect } from "react";
-import { fetchChatIds, fetchMessages } from "../apis/chat";
+import { fetchChatIds, fetchMessages, sendChatMessage } from "../apis/chat";
 
 interface Message {
   sender: "user" | "bot"; // 前端内部用 sender，bot 对应后端的 assistant
@@ -68,15 +66,8 @@ export default function ChatBot() {
     setInput("");
     setIsStreaming(true);
 
-    const formData = new FormData();
-    formData.append("prompt", input);
-    formData.append("chatId", currentChatId);
-
     try {
-      const response = await fetch("http://localhost:8080/ai/chat", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await sendChatMessage(input, currentChatId);
 
       if (!response.body) {
         const text = await response.text();
