@@ -1,6 +1,13 @@
-import { Button } from "antd";
 import { useState, useRef, useEffect } from "react";
-import { fetchChatIds, fetchMessages, sendChatMessage } from "../apis/chat";
+import {
+  deleteChatById,
+  fetchChatIds,
+  fetchMessages,
+  sendChatMessage,
+} from "../apis/chat";
+import { QuestionCircleOutlined } from "@ant-design/icons";
+import { Button, Popconfirm, Spin } from "antd";
+import { MessagesSquare, Forward } from "lucide-react";
 
 interface Message {
   sender: "user" | "bot"; // 前端内部用 sender，bot 对应后端的 assistant
@@ -114,6 +121,12 @@ export default function ChatBot() {
     }
   };
 
+  // 处理删除对话
+  const onDelete = async (chatId: string): Promise<void> => {
+    await deleteChatById(chatId);
+    setChatIds((prev) => prev.filter((id) => id !== chatId)); // 更新本地状态
+  };
+
   // 开始新对话
   const startNewChat = () => {
     const newChatId = Date.now().toString();
@@ -123,9 +136,9 @@ export default function ChatBot() {
   };
 
   return (
-    <div className="flex max-w-5xl mx-auto border rounded bg-white">
+    <div className="flex max-w-5xl mx-auto border rounded bg-white ">
       {/* 侧边栏 */}
-      <div className="w-48 h-[400px] overflow-y-auto border-r p-3 bg-gray-100 flex flex-col">
+      <div className="w-55 h-[400px] overflow-y-auto border-r p-3 bg-gray-100 flex flex-col">
         <h2 className="font-semibold text-gray-700">Conversations</h2>
         <Button onClick={startNewChat}>New Chat</Button>
 
@@ -137,13 +150,29 @@ export default function ChatBot() {
             <div
               key={id}
               onClick={() => setCurrentChatId(id)}
-              className={`cursor-pointer p-2 rounded text-sm truncate ${
+              className={`relative group cursor-pointer p-2 rounded text-sm truncate flex items-center gap-3 ${
                 currentChatId === id
                   ? "bg-blue-600 text-white"
                   : "bg-white hover:bg-gray-200"
               }`}
             >
-              {id}
+              <MessagesSquare size={25} />
+              <span>{id.slice(-4)}</span>
+              <Popconfirm
+                title="Delete the chat"
+                description="Are you sure to delete this chat?"
+                icon={<QuestionCircleOutlined style={{ color: "red" }} />}
+                onConfirm={() => onDelete(id)}
+              >
+                <Button
+                  type="text"
+                  danger
+                  size="small"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity !bg-transparent !shadow-none !text-gray-400 hover:!text-red-500"
+                >
+                  ×
+                </Button>
+              </Popconfirm>
             </div>
           ))}
         </div>
@@ -189,13 +218,13 @@ export default function ChatBot() {
               if (e.key === "Enter") handleSend();
             }}
           />
-          <button
+          <Button
             onClick={handleSend}
             disabled={isStreaming}
-            className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+            className="px-3 py-5 bg-blue-600 text-white rounded disabled:opacity-50"
           >
-            {isStreaming ? "Generating..." : "Send"}
-          </button>
+            {isStreaming ? <Spin /> : <Forward />}
+          </Button>
         </div>
       </div>
     </div>

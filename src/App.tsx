@@ -43,11 +43,11 @@ const App = () => {
   }));
 
   return (
-    <div className="grid grid-cols-6 gap-6 p-4">
-      <div className="col-span-1 flex justify-start">
+    <div className="grid grid-cols-6 gap-4 p-4 mt-2">
+      <div className="col-span-1 flex justify-start ">
         <Steps direction="vertical" current={current} items={items} />
       </div>
-      <div className=" w-[800px] col-span-5 p-6 border rounded-lg bg-white flex flex-col justify-between max-h-[550px] min-h-[550px]">
+      <div className=" w-[800px] col-span-5 ml-12 p-6 border rounded-lg bg-white flex flex-col justify-end max-h-[550px] min-h-[550px] gap-4">
         <div className="flex-1 mb-4"></div>
         {/*  */}
         {current === 0 && <Step1 />}

@@ -36,3 +36,19 @@ export const sendChatMessage = async (prompt: string, chatId: string) => {
 
   return response;
 };
+
+// 删除某个 chatId 的对话记录
+export const deleteChatById = async (chatId: string) => {
+  try {
+    const response = await fetch(`${BASE_URL}/ai/history/chat/${chatId}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return true;
+  } catch (error) {
+    console.error("Delete API Error:", error);
+    return false;
+  }
+};
