@@ -2,6 +2,7 @@
 
 import { Button } from "antd";
 import { useState, useRef, useEffect } from "react";
+import { fetchChatIds, fetchMessages } from "../apis/chat";
 
 interface Message {
   sender: "user" | "bot"; // 前端内部用 sender，bot 对应后端的 assistant
@@ -28,46 +29,34 @@ export default function ChatBot() {
     if (hasFetchedRef.current) return;
     hasFetchedRef.current = true;
 
-    const fetchChatIds = async () => {
-      try {
-        const res = await fetch(`http://localhost:8080/ai/history/chat`);
-        let data: string[] = await res.json();
-        data = data.filter((id) => id && id.trim() !== "");
-        console.log(data);
-        setChatIds(data);
-        // if (data.length > 0) {
-        //   setCurrentChatId(data[0]); // 默认选中第一个
-        // }
-      } catch (err) {
-        console.error("Failed to load chat IDs:", err);
+    const loadChatIds = async () => {
+      const res = await fetchChatIds();
+      if (res) {
+        setChatIds(res);
+        // 可选：默认选中第一个
+        // setCurrentChatId(res[0]);
       }
     };
-    fetchChatIds();
+    loadChatIds();
   }, []);
 
   // 监听 currentChatId 改变，加载对应聊天记录
   useEffect(() => {
-    const fetchMessages = async (chatId: string) => {
-      try {
-        const res = await fetch(
-          `http://localhost:8080/ai/history/chat/${chatId}`
-        );
-        const data: { role: string; content: string }[] = await res.json();
-
+    try {
+      const loadMessages = async (chatId: string) => {
+        const data = await fetchMessages(chatId);
         const mapped: Message[] = data.map((msg) => ({
           sender: msg.role === "assistant" ? "bot" : "user",
           content: msg.content,
         }));
-
         setMessages(mapped);
-      } catch (err) {
-        console.error("Failed to load chat messages:", err);
-        setMessages([]);
+      };
+      if (currentChatId) {
+        loadMessages(currentChatId);
       }
-    };
-
-    if (currentChatId) {
-      fetchMessages(currentChatId);
+    } catch (err) {
+      console.error("Failed to load chat messages:", err);
+      setMessages([]);
     }
   }, [currentChatId]);
 

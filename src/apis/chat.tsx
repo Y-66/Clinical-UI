@@ -1,26 +1,21 @@
-// import { request } from "../utils/request";
+export const fetchChatIds = async () => {
+  try {
+    const res = await fetch(`http://localhost:8080/ai/history/chat`);
+    let data: string[] = await res.json();
+    data = data.filter((id) => id && id.trim() !== "");
+    console.log(data);
+    return data;
+    // if (data.length > 0) {
+    //   setCurrentChatId(data[0]); // 默认选中第一个
+    // }
+  } catch (err) {
+    console.error("Failed to load chat IDs:", err);
+  }
+};
 
-// export const sendMessageAPI = (
-//   prompt: string,
-//   chatId: string,
-//   files?: File[]
-// ) => {
-//   const formData = new FormData();
-//   formData.append("prompt", prompt);
-//   formData.append("chatId", chatId);
+export const fetchMessages = async (chatId: string) => {
+  const res = await fetch(`http://localhost:8080/ai/history/chat/${chatId}`);
+  const data: { role: string; content: string }[] = await res.json();
 
-//   if (files && files.length > 0) {
-//     files.forEach((file) => formData.append("files", file));
-//   }
-
-//   return request({
-//     url: "/ai/chat",
-//     method: "POST",
-//     data: formData, // 使用 FormData 上传文件
-//     headers: {
-//       "Content-Type": "multipart/form-data",
-//     },
-//     // responseType: "stream", // 如果你想处理流式返回
-//     responseType: "text", // 改成 text
-//   });
-// };
+  return data;
+};
