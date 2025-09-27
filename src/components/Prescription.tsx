@@ -23,6 +23,7 @@ const Prescription: React.FC = () => (
       <EditOutlined key="edit" />,
       <EllipsisOutlined key="ellipsis" />,
     ]}
+    className="w-full h-full items-center justify-center"
   >
     <Meta
       avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />}

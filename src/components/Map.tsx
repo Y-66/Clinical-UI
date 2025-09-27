@@ -103,7 +103,7 @@ const Map = () => {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col">
+    <div className="w-full h-full flex flex-col">
       {/* 固定在顶部的搜索框 */}
       <div className="w-full bg-white p-2 flex gap-2 shadow">
         <input

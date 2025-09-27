@@ -2,6 +2,7 @@ import "./App.css";
 import "antd/dist/reset.css";
 import { useState } from "react";
 import { Button, message, Steps, Card } from "antd";
+import { RobotOutlined } from "@ant-design/icons";
 import { Step1 } from "./pages/step1";
 import { Step3 } from "./pages/step3";
 import { Step4 } from "./pages/step4";
@@ -49,8 +50,6 @@ const App = () => {
 
       {/* 主区域 */}
       <div className="w-[800px] col-span-5 ml-12 p-6 border rounded-lg bg-white flex flex-col justify-end max-h-[550px] min-h-[550px] gap-4">
-        <div className="flex-1 mb-4"></div>
-
         {current === 0 && <Step1 />}
         {current === 1 && <Step2 />}
         {current === 2 && <Step3 />}
@@ -59,8 +58,11 @@ const App = () => {
         {/* 按钮组 */}
         <div className="flex gap-2 mt-4 justify-between">
           {/* 这里加一个按钮控制右侧栏 */}
-          <Button onClick={() => setShowSidebar(!showSidebar)}>
-            {showSidebar ? "关闭侧栏" : "打开侧栏"}
+          <Button
+            onClick={() => setShowSidebar(!showSidebar)}
+            icon={<RobotOutlined />}
+          >
+            {showSidebar ? "Close" : "Robot"}
           </Button>
 
           <div className="flex gap-2">
