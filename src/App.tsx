@@ -1,33 +1,31 @@
 import "./App.css";
 import "antd/dist/reset.css";
 import { useState } from "react";
-import { Button, message, Steps, Drawer } from "antd";
+import { Button, message, Steps, Card } from "antd";
 import { Step1 } from "./pages/step1";
-import Map from "./components/Map";
+import { Step3 } from "./pages/step3";
+import { Step4 } from "./pages/step4";
+import { Step2 } from "./pages/step2";
+import SideBot from "./components/SideBot";
 
 const App = () => {
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const showLoading = () => {
-    setOpen(true);
-    setLoading(false);
-  };
+  const [showSidebar, setShowSidebar] = useState(false);
   const steps = [
     {
-      title: "First",
-      description: "First-content",
+      title: "Confirm",
+      description: "Confirm Your Personal Information",
     },
     {
-      title: "Second",
-      description: "Second-content",
+      title: "Address",
+      description: "Comfirm Your Pharmacy",
     },
     {
-      title: "Third",
-      description: "Last-content",
+      title: "Prescription",
+      description: "Get Your Prescription",
     },
     {
-      title: "Last",
-      description: "Last-content",
+      title: "Send",
+      description: "Send to Pharmacy",
     },
   ];
   const [current, setCurrent] = useState(0);
@@ -43,54 +41,54 @@ const App = () => {
   }));
 
   return (
-    <div className="grid grid-cols-6 gap-4 p-4 mt-2">
+    <div className="relative grid grid-cols-6 gap-4 p-4 mt-2">
+      {/* 左侧 Steps */}
       <div className="col-span-1 flex justify-start ">
         <Steps direction="vertical" current={current} items={items} />
       </div>
-      <div className=" w-[800px] col-span-5 ml-12 p-6 border rounded-lg bg-white flex flex-col justify-end max-h-[550px] min-h-[550px] gap-4">
+
+      {/* 主区域 */}
+      <div className="w-[800px] col-span-5 ml-12 p-6 border rounded-lg bg-white flex flex-col justify-end max-h-[550px] min-h-[550px] gap-4">
         <div className="flex-1 mb-4"></div>
-        {/*  */}
+
         {current === 0 && <Step1 />}
-        {current === 1 && <Map />}
-        <div className="flex gap-2 mt-4 justify-end">
-          {current > 0 && <Button onClick={() => prev()}>Previous</Button>}
-          {current < steps.length - 1 && (
-            <Button type="primary" onClick={() => next()}>
-              Next
-            </Button>
-          )}
-          {current === steps.length - 1 && (
-            <Button
-              type="primary"
-              onClick={() => message.success("Processing complete!")}
-            >
-              Done
-            </Button>
-          )}
+        {current === 1 && <Step2 />}
+        {current === 2 && <Step3 />}
+        {current === 3 && <Step4 />}
+
+        {/* 按钮组 */}
+        <div className="flex gap-2 mt-4 justify-between">
+          {/* 这里加一个按钮控制右侧栏 */}
+          <Button onClick={() => setShowSidebar(!showSidebar)}>
+            {showSidebar ? "关闭侧栏" : "打开侧栏"}
+          </Button>
+
+          <div className="flex gap-2">
+            {current > 0 && <Button onClick={() => prev()}>Previous</Button>}
+            {current < steps.length - 1 && (
+              <Button type="primary" onClick={() => next()}>
+                Next
+              </Button>
+            )}
+            {current === steps.length - 1 && (
+              <Button
+                type="primary"
+                onClick={() => message.success("Processing complete!")}
+              >
+                Done
+              </Button>
+            )}
+          </div>
         </div>
       </div>
-      <div className="col-span-1">
-        <Button type="primary" onClick={showLoading}>
-          Open Drawer
-        </Button>
-      </div>
-      <Drawer
-        closable
-        destroyOnHidden
-        title={<p>Loading Drawer</p>}
-        placement="right"
-        open={open}
-        loading={loading}
-        onClose={() => setOpen(false)}
-      >
-        <Button
-          type="primary"
-          style={{ marginBottom: 16 }}
-          onClick={showLoading}
-        >
-          Reload
-        </Button>
-      </Drawer>
+
+      {/* 右侧栏（默认隐藏，用 absolute 定位，不影响主内容宽度） */}
+      {showSidebar && (
+        <Card className="fixed top-8 bottom-8 right-5 w-[280px] border-4 bg-gray-100 shadow-lg ">
+          <h3 className="font-semibold mb-2">Assistant</h3>
+          <SideBot />
+        </Card>
+      )}
     </div>
   );
 };
