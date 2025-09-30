@@ -1,36 +1,75 @@
-import { APIProvider, Map } from "@vis.gl/react-google-maps";
+import {
+  APIProvider,
+  Map,
+  useMap,
+  useMapsLibrary,
+} from "@vis.gl/react-google-maps";
 import type { MapCameraChangedEvent } from "@vis.gl/react-google-maps";
 import { PoiMarkers } from "./PoiMarkers";
+import {
+  GOOGLE_API_KEY,
+  INITIAL_LATITUDE,
+  INITIAL_LONGITUDE,
+} from "../../constants";
+import { useEffect, useState } from "react";
+import type { Poi } from "../../types/Poi";
 
-type Poi = { key: string; location: google.maps.LatLngLiteral };
-const locations: Poi[] = [
-  { key: "operaHouse", location: { lat: -33.8567844, lng: 151.213108 } },
-  { key: "tarongaZoo", location: { lat: -33.8472767, lng: 151.2188164 } },
-  { key: "manlyBeach", location: { lat: -33.8209738, lng: 151.2563253 } },
-  { key: "hyderPark", location: { lat: -33.8690081, lng: 151.2052393 } },
-  { key: "theRocks", location: { lat: -33.8587568, lng: 151.2058246 } },
-  { key: "circularQuay", location: { lat: -33.858761, lng: 151.2055688 } },
-  { key: "harbourBridge", location: { lat: -33.852228, lng: 151.2038374 } },
-  { key: "kingsCross", location: { lat: -33.8737375, lng: 151.222569 } },
-  { key: "botanicGardens", location: { lat: -33.864167, lng: 151.216387 } },
-  { key: "museumOfSydney", location: { lat: -33.8636005, lng: 151.2092542 } },
-  { key: "maritimeMuseum", location: { lat: -33.869395, lng: 151.198648 } },
-  { key: "kingStreetWharf", location: { lat: -33.8665445, lng: 151.1989808 } },
-  { key: "aquarium", location: { lat: -33.869627, lng: 151.202146 } },
-  { key: "darlingHarbour", location: { lat: -33.87488, lng: 151.1987113 } },
-  { key: "barangaroo", location: { lat: -33.8605523, lng: 151.1972205 } },
-];
+const center = { lat: INITIAL_LATITUDE, lng: INITIAL_LONGITUDE };
+
+const NearbyPharmacies = () => {
+  const map = useMap();
+  const placesLib = useMapsLibrary("places");
+  const [pois, setPois] = useState<Poi[]>([]);
+
+  useEffect(() => {
+    if (!map || !placesLib) return;
+
+    const service = new google.maps.places.PlacesService(map);
+
+    const request: google.maps.places.PlaceSearchRequest = {
+      location: center,
+      radius: 2000,
+      type: "pharmacy",
+    };
+
+    service.nearbySearch(request, (results, status) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+        console.log(results);
+        setPois(
+          results.map((place, i) => ({
+            key: place.place_id ?? `pharmacy-${i}`,
+            location: {
+              lat: place.geometry!.location!.lat(),
+              lng: place.geometry!.location!.lng(),
+            },
+            business_status: place.business_status,
+            name: place.name,
+            vicinity: place.vicinity,
+            rating: place.rating,
+            user_ratings_total: place.user_ratings_total,
+            icon: place.icon,
+            plus_code: place.plus_code,
+            types: place.types,
+          }))
+        );
+      }
+    });
+  }, [map, placesLib]);
+
+  return <PoiMarkers pois={pois} />;
+};
+
 export const MyMap = () => {
   return (
     <div className="w-full h-full">
       <APIProvider
-        apiKey={"AIzaSyDw43mWhjBByW3DKHaCvGzcEDLaaYKio5o"}
+        apiKey={GOOGLE_API_KEY}
         onLoad={() => console.log("Maps API has loaded.")}
       >
         <Map
           className="w-full h-full"
           defaultZoom={13}
-          defaultCenter={{ lat: -33.860664, lng: 151.208138 }}
+          defaultCenter={center}
           mapId="320e09b3a26d8c60123f0cd4"
           onCameraChanged={(ev: MapCameraChangedEvent) =>
             console.log(
@@ -41,7 +80,7 @@ export const MyMap = () => {
             )
           }
         >
-          <PoiMarkers pois={locations} />
+          <NearbyPharmacies />
         </Map>
       </APIProvider>
     </div>

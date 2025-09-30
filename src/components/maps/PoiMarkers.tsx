@@ -1,9 +1,14 @@
 import { MarkerClusterer, type Marker } from "@googlemaps/markerclusterer";
-import { AdvancedMarker, Pin, useMap } from "@vis.gl/react-google-maps";
+import {
+  AdvancedMarker,
+  InfoWindow,
+  Pin,
+  useMap,
+} from "@vis.gl/react-google-maps";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Circle } from "./circle";
-
-type Poi = { key: string; location: google.maps.LatLngLiteral };
+import { Circle } from "./Circle";
+import MapInfo from "./MapInfo";
+import type { Poi } from "../../types/Poi";
 
 export const PoiMarkers = (props: { pois: Poi[] }) => {
   const map = useMap();
@@ -54,9 +59,19 @@ export const PoiMarkers = (props: { pois: Poi[] }) => {
     null
   );
 
+  const [selectedPoi, setSelectedPoi] = useState<Poi | null>(null);
+
+  const handleSelectedPoiClick = (poi: Poi) => {
+    setSelectedPoi(poi);
+  };
+
+  const handleClose = () => {
+    setSelectedPoi(null);
+  };
+
   return (
     <>
-      <Circle
+      {/* <Circle
         radius={800}
         center={circleCenter}
         strokeColor={"#0c4cb3"}
@@ -64,14 +79,17 @@ export const PoiMarkers = (props: { pois: Poi[] }) => {
         strokeWeight={3}
         fillColor={"#3b82f6"}
         fillOpacity={0.3}
-      />
+      /> */}
       {props.pois.map((poi: Poi) => (
         <AdvancedMarker
           key={poi.key}
           position={poi.location}
           ref={(marker) => setMarkerRef(marker, poi.key)}
           clickable={true}
-          onClick={handleClick}
+          onClick={(ev) => {
+            handleClick(ev);
+            handleSelectedPoiClick(poi);
+          }}
         >
           <Pin
             background={"#FBBC04"}
@@ -80,6 +98,11 @@ export const PoiMarkers = (props: { pois: Poi[] }) => {
           />
         </AdvancedMarker>
       ))}
+      {selectedPoi && (
+        <InfoWindow position={selectedPoi.location} onCloseClick={handleClose}>
+          <MapInfo selectedPoi={selectedPoi} />
+        </InfoWindow>
+      )}
     </>
   );
 };
