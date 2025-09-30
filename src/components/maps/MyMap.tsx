@@ -72,7 +72,10 @@ export const MyMap = () => {
           className="w-full h-full"
           defaultZoom={15}
           defaultCenter={center}
-          mapId="320e09b3a26d8c60123f0cd4"
+          mapId="320e09b3a26d8c60fe158e5a"
+          renderingType="VECTOR"
+          tiltInteractionEnabled={true}
+          headingInteractionEnabled={true}
           onCameraChanged={(ev: MapCameraChangedEvent) =>
             console.log(
               "camera changed:",

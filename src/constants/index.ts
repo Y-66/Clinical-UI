@@ -1,4 +1,4 @@
 export const GOOGLE_API_KEY = 'AIzaSyDw43mWhjBByW3DKHaCvGzcEDLaaYKio5o'
 
-export const INITIAL_LATITUDE = -33.860664
-export const INITIAL_LONGITUDE = 151.208138
+export const INITIAL_LATITUDE = 45.4236
+export const INITIAL_LONGITUDE = -75.6831
