@@ -1,6 +1,8 @@
 import {
+  AdvancedMarker,
   APIProvider,
   Map,
+  Pin,
   useMap,
   useMapsLibrary,
 } from "@vis.gl/react-google-maps";
@@ -68,7 +70,7 @@ export const MyMap = () => {
       >
         <Map
           className="w-full h-full"
-          defaultZoom={13}
+          defaultZoom={15}
           defaultCenter={center}
           mapId="320e09b3a26d8c60123f0cd4"
           onCameraChanged={(ev: MapCameraChangedEvent) =>
@@ -80,6 +82,15 @@ export const MyMap = () => {
             )
           }
         >
+          {/* ✅ 原始位置的特殊标记 */}
+          <AdvancedMarker position={center}>
+            <Pin
+              background="#DB4437" // 蓝色背景
+              borderColor="#000"
+              glyphColor="#fff"
+              scale={1.5} // 放大 2 倍
+            />
+          </AdvancedMarker>
           <NearbyPharmacies />
         </Map>
       </APIProvider>

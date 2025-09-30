@@ -9,8 +9,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Circle } from "./Circle";
 import MapInfo from "./MapInfo";
 import type { Poi } from "../../types/Poi";
+import PlaceDetailsCompact from "./PlaceDetailsCompact";
+import { useGoogleMapsApi } from "./useGoogleMapsApi";
+import { GOOGLE_API_KEY } from "../../constants";
 
 export const PoiMarkers = (props: { pois: Poi[] }) => {
+  const loaded = useGoogleMapsApi(GOOGLE_API_KEY);
+
   const map = useMap();
   const [markers, setMarkers] = useState<{ [key: string]: Marker }>({});
   const clusterer = useRef<MarkerClusterer | null>(null);
@@ -69,6 +74,7 @@ export const PoiMarkers = (props: { pois: Poi[] }) => {
     setSelectedPoi(null);
   };
 
+  if (!loaded) return <div>Loading Google Maps...</div>;
   return (
     <>
       {/* <Circle
@@ -100,7 +106,10 @@ export const PoiMarkers = (props: { pois: Poi[] }) => {
       ))}
       {selectedPoi && (
         <InfoWindow position={selectedPoi.location} onCloseClick={handleClose}>
-          <MapInfo selectedPoi={selectedPoi} />
+          {/* <MapInfo selectedPoi={selectedPoi} /> */}
+          <div style={{ width: "400px" }}>
+            <PlaceDetailsCompact placeId={selectedPoi.key} />
+          </div>
         </InfoWindow>
       )}
     </>
