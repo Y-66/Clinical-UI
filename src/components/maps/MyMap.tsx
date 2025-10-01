@@ -63,7 +63,7 @@ const NearbyPharmacies = () => {
 
 export const MyMap = () => {
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full max-h-[440px]">
       <APIProvider
         apiKey={GOOGLE_API_KEY}
         onLoad={() => console.log("Maps API has loaded.")}

@@ -42,7 +42,7 @@ const App = () => {
   }));
 
   return (
-    <div className="relative grid grid-cols-6 gap-4 p-4 mt-2">
+    <div className="relative grid grid-cols-6 gap-4 p-4 mt-2 overflow-hidden">
       {/* 左侧 Steps */}
       <div className="col-span-1 flex justify-start ">
         <Steps direction="vertical" current={current} items={items} />

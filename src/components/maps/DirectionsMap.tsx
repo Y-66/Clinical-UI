@@ -47,7 +47,7 @@ const DirectionsMap: React.FC<DirectionsMapProps> = ({ start, end }) => {
         strokeColor: getRandomColor(), // 随机颜色
         strokeWeight: 5,
       },
-      panel: panelRef.current, // 指定文字路线容器
+      // panel: panelRef.current, // 指定文字路线容器
     });
   }, [map]);
 

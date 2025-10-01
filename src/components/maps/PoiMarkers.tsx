@@ -125,6 +125,10 @@ export const PoiMarkers = (props: { pois: Poi[] }) => {
               <PlaceDetailsCompact placeId={selectedPoi.key} />
             </div>
           </InfoWindow>
+        </>
+      )}
+      {selectedPoi && (
+        <>
           <DirectionsMap
             start={{ lat: INITIAL_LATITUDE, lng: INITIAL_LONGITUDE }}
             end={{
