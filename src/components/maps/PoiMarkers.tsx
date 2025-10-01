@@ -11,7 +11,13 @@ import MapInfo from "./MapInfo";
 import type { Poi } from "../../types/Poi";
 import PlaceDetailsCompact from "./PlaceDetailsCompact";
 import { useGoogleMapsApi } from "./useGoogleMapsApi";
-import { GOOGLE_API_KEY } from "../../constants";
+import {
+  GOOGLE_API_KEY,
+  INITIAL_LATITUDE,
+  INITIAL_LONGITUDE,
+} from "../../constants";
+import { useStore } from "../../store";
+import DirectionsMap from "./DirectionsMap";
 
 export const PoiMarkers = (props: { pois: Poi[] }) => {
   const loaded = useGoogleMapsApi(GOOGLE_API_KEY);
@@ -65,9 +71,13 @@ export const PoiMarkers = (props: { pois: Poi[] }) => {
   );
 
   const [selectedPoi, setSelectedPoi] = useState<Poi | null>(null);
+  const { updatePoi } = useStore() as {
+    updatePoi: (lat: number, lng: number) => void;
+  };
 
   const handleSelectedPoiClick = (poi: Poi) => {
     setSelectedPoi(poi);
+    updatePoi(poi.location.lat, poi.location.lng);
   };
 
   const handleClose = () => {
@@ -105,12 +115,25 @@ export const PoiMarkers = (props: { pois: Poi[] }) => {
         </AdvancedMarker>
       ))}
       {selectedPoi && (
-        <InfoWindow position={selectedPoi.location} onCloseClick={handleClose}>
-          {/* <MapInfo selectedPoi={selectedPoi} /> */}
-          <div style={{ width: "400px" }}>
-            <PlaceDetailsCompact placeId={selectedPoi.key} />
-          </div>
-        </InfoWindow>
+        <>
+          <InfoWindow
+            position={selectedPoi.location}
+            onCloseClick={handleClose}
+          >
+            {/* <MapInfo selectedPoi={selectedPoi} /> */}
+            <div style={{ width: "400px" }}>
+              <PlaceDetailsCompact placeId={selectedPoi.key} />
+            </div>
+          </InfoWindow>
+          <DirectionsMap
+            start={{ lat: INITIAL_LATITUDE, lng: INITIAL_LONGITUDE }}
+            end={{
+              lat: selectedPoi.location.lat,
+              lng: selectedPoi.location.lng,
+            }}
+            zoom={6}
+          />
+        </>
       )}
     </>
   );

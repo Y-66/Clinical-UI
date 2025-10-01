@@ -11,14 +11,15 @@
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.10",
+    "@googlemaps/markerclusterer": "^2.5.1",
+    "@vis.gl/react-google-maps": "latest",
     "antd": "^5.27.4",
     "axios": "^1.12.2",
     "lucide-react": "^0.544.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwind": "^4.0.0",
-    "@googlemaps/markerclusterer": "^2.5.1",
-    "@vis.gl/react-google-maps": "latest"
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
