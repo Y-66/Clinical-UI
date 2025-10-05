@@ -5,6 +5,8 @@ import {
   MedicineBoxOutlined,
   UserOutlined,
   SafetyOutlined,
+  FileTextOutlined,
+  ExperimentOutlined,
 } from "@ant-design/icons";
 import {
   Chip,
@@ -157,6 +159,53 @@ const Prescription: React.FC = () => {
           pagination={false}
           size="small"
         />
+      </Card>
+
+      {/* Requisition Card */}
+      <Card
+        title={
+          <div className="flex items-center gap-2">
+            <FileTextOutlined className="text-orange-600" />
+            <span>Laboratory Requisition</span>
+          </div>
+        }
+        extra={<Tag color="orange">Pending</Tag>}
+        className="shadow-md"
+      >
+        <div className="grid grid-cols-2 gap-6">
+          <div>
+            <h4 className="text-sm font-bold text-gray-700 mb-3">Requisition Details</h4>
+            <Descriptions column={1} size="small">
+              <Descriptions.Item label="Requisition ID">REQ-2025-001234</Descriptions.Item>
+              <Descriptions.Item label="Type">Blood Work & Imaging</Descriptions.Item>
+              <Descriptions.Item label="Priority">Routine</Descriptions.Item>
+              <Descriptions.Item label="Issue Date">October 5, 2025</Descriptions.Item>
+            </Descriptions>
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-gray-700 mb-3">Service Center</h4>
+            <Descriptions column={1} size="small">
+              <Descriptions.Item label="Facility">City Medical Lab</Descriptions.Item>
+              <Descriptions.Item label="Address">789 Lab Street, NY 10003</Descriptions.Item>
+              <Descriptions.Item label="Phone">(555) 987-6543</Descriptions.Item>
+              <Descriptions.Item label="Hours">Mon-Fri: 7:00 AM - 5:00 PM</Descriptions.Item>
+            </Descriptions>
+          </div>
+        </div>
+        <div className="mt-4 p-4 bg-orange-50 rounded-lg border border-orange-200">
+          <div className="flex items-start gap-3">
+            <ExperimentOutlined className="text-orange-600 text-lg mt-1" />
+            <div>
+              <h4 className="text-sm font-bold text-gray-800 m-0 mb-2">Requested Tests</h4>
+              <div className="flex flex-wrap gap-2">
+                <Tag color="orange">Complete Blood Count (CBC)</Tag>
+                <Tag color="orange">Lipid Panel</Tag>
+                <Tag color="orange">Glucose Test</Tag>
+                <Tag color="orange">Chest X-Ray</Tag>
+              </div>
+            </div>
+          </div>
+        </div>
       </Card>
 
       {/* Prescriber Card */}

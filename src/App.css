@@ -94,3 +94,28 @@
   scrollbar-width: thin;
   scrollbar-color: #06b6d4 transparent;
 }
+
+/* Tabs Styling */
+.requisition-tabs .ant-tabs-nav {
+  margin-bottom: 24px;
+}
+
+.requisition-tabs .ant-tabs-tab {
+  padding: 12px 24px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.requisition-tabs .ant-tabs-tab:hover {
+  color: #06b6d4;
+}
+
+.requisition-tabs .ant-tabs-tab-active {
+  background: linear-gradient(135deg, #e0f2fe 0%, #ccfbf1 100%);
+}
+
+.requisition-tabs .ant-tabs-ink-bar {
+  background: linear-gradient(90deg, #06b6d4 0%, #14b8a6 100%);
+  height: 3px;
+}
