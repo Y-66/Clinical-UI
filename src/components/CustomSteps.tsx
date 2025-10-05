@@ -96,7 +96,7 @@ const CustomSteps: React.FC<CustomStepsProps> = ({ steps, current }) => {
 
                 {/* Progress Badge */}
                 {isCurrent && (
-                  <div className="mt-2 inline-block">
+                  <div className="mt-0 inline-block">
                     <span className="px-3 py-1 bg-gradient-to-r from-cyan-100 to-teal-100 text-cyan-700 text-xs font-semibold rounded-full animate-pulse">
                       In Progress
                     </span>
@@ -104,7 +104,7 @@ const CustomSteps: React.FC<CustomStepsProps> = ({ steps, current }) => {
                 )}
 
                 {isCompleted && (
-                  <div className="mt-2 inline-block">
+                  <div className="mt-0 inline-block">
                     <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
                       Completed
                     </span>
