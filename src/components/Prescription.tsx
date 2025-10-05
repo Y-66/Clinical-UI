@@ -1,184 +1,211 @@
 import React from "react";
-import { Card, Tag, Divider, Row, Col, Avatar, Button } from "antd";
-import { 
-  UserOutlined, 
-  CalendarOutlined, 
+import { Card, Badge, Table, Descriptions, Tag } from "antd";
+import {
+  CheckCircleOutlined,
   MedicineBoxOutlined,
-  FileTextOutlined,
-  DownloadOutlined,
-  PrinterOutlined
+  UserOutlined,
+  SafetyOutlined,
 } from "@ant-design/icons";
+import {
+  Chip,
+  Avatar,
+} from "@mui/material";
+import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
 
-const Prescription: React.FC = () => (
-  <div className="w-full max-w-4xl mx-auto h-full">
-    <Card 
-      className="shadow-lg rounded-2xl border-2 border-cyan-100"
-      bodyStyle={{ padding: '32px' }}
-    >
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6 pb-6 border-b-2 border-gray-100">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 flex items-center justify-center shadow-lg shadow-cyan-500/50">
-            <FileTextOutlined className="text-white text-2xl" />
+const Prescription: React.FC = () => {
+  const medicationColumns = [
+    {
+      title: 'Medication',
+      dataIndex: 'name',
+      key: 'name',
+      render: (text: string, record: any) => (
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-teal-500 flex items-center justify-center">
+            <LocalPharmacyIcon sx={{ color: 'white', fontSize: 20 }} />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-800 m-0">Digital Prescription</h2>
-            <p className="text-gray-500 m-0 mt-1">Electronic Health Record</p>
+            <p className="font-bold text-gray-800 m-0">{text}</p>
+            <p className="text-xs text-gray-500 m-0">{record.type}</p>
           </div>
         </div>
-        <Tag color="green" className="px-4 py-1 text-base font-semibold">
-          ACTIVE
-        </Tag>
-      </div>
-
-      {/* Patient Information */}
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
-          <UserOutlined className="text-cyan-600" />
-          Patient Information
-        </h3>
-        <Row gutter={[24, 16]}>
-          <Col span={12}>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-gray-500 text-sm mb-1">Patient Name</p>
-              <p className="text-gray-800 font-semibold text-base m-0">John Smith</p>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-gray-500 text-sm mb-1">Date of Birth</p>
-              <p className="text-gray-800 font-semibold text-base m-0">January 15, 1985</p>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-gray-500 text-sm mb-1">Prescription ID</p>
-              <p className="text-gray-800 font-semibold text-base m-0">RX-2025-001234</p>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-gray-500 text-sm mb-1">Issue Date</p>
-              <p className="text-gray-800 font-semibold text-base m-0 flex items-center gap-2">
-                <CalendarOutlined className="text-cyan-600" />
-                October 5, 2025
-              </p>
-            </div>
-          </Col>
-        </Row>
-      </div>
-
-      <Divider />
-
-      {/* Medication Details */}
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
-          <MedicineBoxOutlined className="text-cyan-600" />
-          Prescribed Medications
-        </h3>
-        
-        <div className="space-y-4">
-          {/* Medication 1 */}
-          <div className="border-2 border-cyan-100 rounded-xl p-5 bg-gradient-to-r from-cyan-50/50 to-teal-50/50">
-            <div className="flex justify-between items-start mb-3">
-              <div>
-                <h4 className="text-lg font-bold text-gray-800 m-0">Amoxicillin 500mg</h4>
-                <p className="text-gray-600 mt-1">Antibiotic - Capsules</p>
-              </div>
-              <Tag color="blue" className="text-sm font-semibold">30 Days</Tag>
-            </div>
-            <div className="grid grid-cols-3 gap-4 mt-3">
-              <div>
-                <p className="text-gray-500 text-sm mb-1">Dosage</p>
-                <p className="text-gray-800 font-semibold m-0">1 tablet</p>
-              </div>
-              <div>
-                <p className="text-gray-500 text-sm mb-1">Frequency</p>
-                <p className="text-gray-800 font-semibold m-0">3 times daily</p>
-              </div>
-              <div>
-                <p className="text-gray-500 text-sm mb-1">Quantity</p>
-                <p className="text-gray-800 font-semibold m-0">90 tablets</p>
-              </div>
-            </div>
-            <p className="text-gray-600 text-sm mt-3 italic">
-              Take with food. Complete full course even if symptoms improve.
-            </p>
-          </div>
-
-          {/* Medication 2 */}
-          <div className="border-2 border-cyan-100 rounded-xl p-5 bg-gradient-to-r from-cyan-50/50 to-teal-50/50">
-            <div className="flex justify-between items-start mb-3">
-              <div>
-                <h4 className="text-lg font-bold text-gray-800 m-0">Ibuprofen 400mg</h4>
-                <p className="text-gray-600 mt-1">Pain Reliever - Tablets</p>
-              </div>
-              <Tag color="orange" className="text-sm font-semibold">As Needed</Tag>
-            </div>
-            <div className="grid grid-cols-3 gap-4 mt-3">
-              <div>
-                <p className="text-gray-500 text-sm mb-1">Dosage</p>
-                <p className="text-gray-800 font-semibold m-0">1 tablet</p>
-              </div>
-              <div>
-                <p className="text-gray-500 text-sm mb-1">Frequency</p>
-                <p className="text-gray-800 font-semibold m-0">Every 6-8 hours</p>
-              </div>
-              <div>
-                <p className="text-gray-500 text-sm mb-1">Quantity</p>
-                <p className="text-gray-800 font-semibold m-0">30 tablets</p>
-              </div>
-            </div>
-            <p className="text-gray-600 text-sm mt-3 italic">
-              Take with food or milk. Do not exceed 3 tablets in 24 hours.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <Divider />
-
-      {/* Prescriber Information */}
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-700 mb-4">Prescriber Information</h3>
-        <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-lg">
-          <Avatar 
-            size={56} 
-            icon={<UserOutlined />}
-            style={{ backgroundColor: '#06b6d4' }}
-          />
-          <div>
-            <p className="text-gray-800 font-bold text-base m-0">Dr. Sarah Johnson, MD</p>
-            <p className="text-gray-600 m-0">Internal Medicine Specialist</p>
-            <p className="text-gray-500 text-sm m-0 mt-1">License: MD-123456 | NPI: 1234567890</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex gap-3 justify-end pt-4 border-t border-gray-200">
-        <Button 
-          icon={<DownloadOutlined />} 
-          size="large"
-          className="premium-button"
-        >
-          Download PDF
-        </Button>
-        <Button 
-          icon={<PrinterOutlined />} 
-          type="primary"
-          size="large"
-          className="premium-button"
-          style={{
-            background: 'linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%)',
-            border: 'none',
+      ),
+    },
+    {
+      title: 'Dosage',
+      dataIndex: 'dosage',
+      key: 'dosage',
+      align: 'center' as const,
+      render: (text: string) => (
+        <span className="font-semibold text-cyan-700">{text}</span>
+      ),
+    },
+    {
+      title: 'Frequency',
+      dataIndex: 'frequency',
+      key: 'frequency',
+      align: 'center' as const,
+      render: (text: string) => (
+        <Chip
+          label={text}
+          size="small"
+          sx={{
+            backgroundColor: '#e0f2fe',
+            color: '#0891b2',
+            fontWeight: 'bold',
           }}
-        >
-          Print Prescription
-        </Button>
-      </div>
-    </Card>
-  </div>
-);
+        />
+      ),
+    },
+    {
+      title: 'Duration',
+      dataIndex: 'duration',
+      key: 'duration',
+      align: 'center' as const,
+      render: (text: string) => (
+        <Tag color="blue">{text}</Tag>
+      ),
+    },
+    {
+      title: 'Quantity',
+      dataIndex: 'quantity',
+      key: 'quantity',
+      align: 'center' as const,
+      render: (text: string) => (
+        <span className="font-bold text-gray-800">{text}</span>
+      ),
+    },
+    {
+      title: 'Instructions',
+      dataIndex: 'instructions',
+      key: 'instructions',
+      render: (text: string) => (
+        <p className="text-xs text-gray-600 m-0 max-w-xs">{text}</p>
+      ),
+    },
+  ];
+
+  const medicationData = [
+    {
+      key: '1',
+      name: 'Amoxicillin 500mg',
+      type: 'Antibiotic - Capsules',
+      dosage: '1 tablet',
+      frequency: '3x daily',
+      duration: '30 days',
+      quantity: '90 tablets',
+      instructions: 'Take with food. Complete full course.',
+    },
+    {
+      key: '2',
+      name: 'Ibuprofen 400mg',
+      type: 'Pain Reliever - Tablets',
+      dosage: '1 tablet',
+      frequency: 'Every 6-8h',
+      duration: 'As needed',
+      quantity: '30 tablets',
+      instructions: 'Take with food or milk. Max 3/day.',
+    },
+  ];
+
+  return (
+    <div className="w-full h-full space-y-4">
+      {/* Patient Card */}
+      <Card
+        title={
+          <div className="flex items-center gap-2">
+            <UserOutlined className="text-cyan-600" />
+            <span>Patient Information</span>
+          </div>
+        }
+        extra={<Tag color="green">Verified</Tag>}
+        className="shadow-md"
+      >
+        <Descriptions column={2} size="small">
+          <Descriptions.Item label="Full Name">John Smith</Descriptions.Item>
+          <Descriptions.Item label="Date of Birth">January 15, 1985</Descriptions.Item>
+          <Descriptions.Item label="Age">40 years</Descriptions.Item>
+          <Descriptions.Item label="Gender">Male</Descriptions.Item>
+          <Descriptions.Item label="Blood Type">
+            <Chip
+              label="A+"
+              size="small"
+              sx={{
+                background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+                color: "white",
+                fontWeight: "bold",
+              }}
+            />
+          </Descriptions.Item>
+          <Descriptions.Item label="Insurance ID">INS-123456789</Descriptions.Item>
+        </Descriptions>
+      </Card>
+
+      {/* Medications Table */}
+      <Card
+        title={
+          <div className="flex items-center gap-2">
+            <MedicineBoxOutlined className="text-purple-600" />
+            <span>Prescribed Medications</span>
+          </div>
+        }
+        extra={<Badge count={2} style={{ backgroundColor: '#a855f7' }} />}
+        className="shadow-md"
+      >
+        <Table
+          columns={medicationColumns}
+          dataSource={medicationData}
+          pagination={false}
+          size="small"
+        />
+      </Card>
+
+      {/* Prescriber Card */}
+      <Card
+        title={
+          <div className="flex items-center gap-2">
+            <SafetyOutlined className="text-emerald-600" />
+            <span>Prescriber Information</span>
+          </div>
+        }
+        className="shadow-md"
+      >
+        <div className="flex items-start gap-6">
+          <Avatar
+            sx={{
+              width: 80,
+              height: 80,
+              background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+              fontSize: "32px",
+              fontWeight: "bold",
+              border: "4px solid #f0fdf4",
+            }}
+          >
+            SJ
+          </Avatar>
+          <div className="flex-1">
+            <h4 className="text-lg font-bold text-gray-800 m-0 mb-2">
+              Dr. Sarah Johnson, MD
+            </h4>
+            <Descriptions column={2} size="small">
+              <Descriptions.Item label="Specialty">Internal Medicine</Descriptions.Item>
+              <Descriptions.Item label="License">MD-123456</Descriptions.Item>
+              <Descriptions.Item label="NPI">1234567890</Descriptions.Item>
+              <Descriptions.Item label="DEA">AB1234563</Descriptions.Item>
+              <Descriptions.Item label="Phone">(555) 123-4567</Descriptions.Item>
+              <Descriptions.Item label="Email">dr.johnson@hospital.com</Descriptions.Item>
+            </Descriptions>
+            <div className="mt-4 p-3 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg border border-emerald-200">
+              <p className="text-xs text-gray-600 mb-2">Digital Signature</p>
+              <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600 m-0" style={{ fontFamily: 'cursive' }}>
+                Sarah Johnson
+              </p>
+              <p className="text-xs text-gray-500 mt-1">Signed on October 5, 2025</p>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+};
 
 export default Prescription;
