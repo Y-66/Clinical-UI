@@ -63,7 +63,7 @@ const NearbyPharmacies = () => {
 
 export const MyMap = () => {
   return (
-    <div className="w-full h-full max-h-[440px]">
+    <div className="w-full h-[400px] rounded-xl overflow-hidden shadow-lg border-2 border-purple-100">
       <APIProvider
         apiKey={GOOGLE_API_KEY}
         onLoad={() => console.log("Maps API has loaded.")}
@@ -88,10 +88,10 @@ export const MyMap = () => {
           {/* ✅ 原始位置的特殊标记 */}
           <AdvancedMarker position={center}>
             <Pin
-              background="#DB4437" // 蓝色背景
+              background="#DB4437"
               borderColor="#000"
               glyphColor="#fff"
-              scale={1.5} // 放大 2 倍
+              scale={1.5}
             />
           </AdvancedMarker>
           <NearbyPharmacies />

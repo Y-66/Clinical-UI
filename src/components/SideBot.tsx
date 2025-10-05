@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { fetchMessages, sendChatMessage } from "../apis/chat";
-import { Button, Spin } from "antd";
-import { Forward } from "lucide-react";
+import { Button, Spin, Avatar } from "antd";
+import { SendOutlined, UserOutlined, RobotOutlined } from "@ant-design/icons";
 
 interface Message {
-  sender: "user" | "bot"; // 前端内部用 sender，bot 对应后端的 assistant
+  sender: "user" | "bot";
   content: string;
 }
 
@@ -15,22 +15,18 @@ export default function SideBot() {
   const [currentChatId, setCurrentChatId] = useState<string | undefined>();
   const chatEndRef = useRef<HTMLDivElement | null>(null);
   const messagesBoxRef = useRef<HTMLDivElement | null>(null);
-  const hasFetchedRef = useRef(false); // 防止重复 fetch
+  const hasFetchedRef = useRef(false);
 
-  // 自动滚动到底部
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // 初次挂载：获取对话 ID 列表，只执行一次
   useEffect(() => {
     if (hasFetchedRef.current) return;
     hasFetchedRef.current = true;
-
     startNewChat();
   }, []);
 
-  // 监听 currentChatId 改变，加载对应聊天记录
   useEffect(() => {
     try {
       const loadMessages = async (chatId: string) => {
@@ -50,7 +46,6 @@ export default function SideBot() {
     }
   }, [currentChatId]);
 
-  // 发送消息
   const handleSend = async () => {
     if (!input.trim() || !currentChatId) return;
 
@@ -106,7 +101,6 @@ export default function SideBot() {
     }
   };
 
-  // 开始新对话
   const startNewChat = () => {
     const newChatId = Date.now().toString();
     setCurrentChatId(newChatId);
@@ -115,50 +109,85 @@ export default function SideBot() {
 
   return (
     <div className="flex-1 flex flex-col h-full">
-      {/* 消息区 */}
+      {/* Messages Area */}
       <div
         ref={messagesBoxRef}
-        className=" h-[500px] overflow-y-auto border rounded p-1 space-y-3 bg-gray-50"
+        className="flex-1 overflow-y-auto p-3 space-y-4 bg-gradient-to-b from-white to-gray-50 rounded-xl"
+        style={{ minHeight: '450px', maxHeight: '520px' }}
       >
         {messages.length === 0 && (
-          <div className="text-gray-400">Type and send to start the chat.</div>
+          <div className="flex flex-col items-center justify-center h-full text-center p-6">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 flex items-center justify-center mb-4">
+              <RobotOutlined className="text-purple-600 text-2xl" />
+            </div>
+            <p className="text-gray-500 font-medium mb-2">How can I assist you?</p>
+            <p className="text-gray-400 text-sm">
+              Ask me anything about your prescription
+            </p>
+          </div>
         )}
 
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`max-w-[85%] whitespace-pre-wrap break-words p-3 rounded ${
-              msg.sender === "user"
-                ? "bg-blue-600 text-white ml-auto"
-                : "bg-gray-200 text-black mr-auto"
-            }`}
+            className={`flex gap-2 ${msg.sender === "user" ? "flex-row-reverse" : "flex-row"}`}
           >
-            {msg.content}
+            <Avatar
+              size={32}
+              icon={msg.sender === "user" ? <UserOutlined /> : <RobotOutlined />}
+              style={{
+                backgroundColor: msg.sender === "user" ? "#667eea" : "#f093fb",
+                flexShrink: 0,
+              }}
+            />
+            <div
+              className={`max-w-[75%] whitespace-pre-wrap break-words px-4 py-3 rounded-2xl shadow-sm ${
+                msg.sender === "user"
+                  ? "bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-tr-sm"
+                  : "bg-white text-gray-800 border border-gray-200 rounded-tl-sm"
+              }`}
+            >
+              {msg.content}
+            </div>
           </div>
         ))}
 
         <div ref={chatEndRef} />
       </div>
 
-      {/* 输入区 */}
-      <div className="mt-4 flex gap-2">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type a message..."
-          className="w-[180px] border rounded px-3 py-2"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleSend();
-          }}
-        />
-        <Button
-          onClick={handleSend}
-          disabled={isStreaming}
-          className="px-2 py-5 bg-blue-600 text-white rounded disabled:opacity-50"
-        >
-          {isStreaming ? <Spin /> : <Forward />}
-        </Button>
+      {/* Input Area */}
+      <div className="mt-4 pt-4 border-t border-gray-200">
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type your message..."
+            className="flex-1 border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-400 transition-colors"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !isStreaming) handleSend();
+            }}
+          />
+          <Button
+            onClick={handleSend}
+            disabled={isStreaming || !input.trim()}
+            type="primary"
+            size="large"
+            icon={isStreaming ? <Spin size="small" /> : <SendOutlined />}
+            className="premium-button flex-shrink-0"
+            style={{
+              background: isStreaming || !input.trim() 
+                ? '#d1d5db' 
+                : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              border: 'none',
+              width: '56px',
+              height: '48px',
+            }}
+          />
+        </div>
+        <p className="text-xs text-gray-400 mt-2 text-center">
+          AI Assistant • Powered by Advanced AI
+        </p>
       </div>
     </div>
   );
