@@ -8,6 +8,7 @@ import {
   EnvironmentOutlined,
   FileTextOutlined,
   SendOutlined,
+  CloseOutlined,
 } from "@ant-design/icons";
 import { Step1 } from "./pages/step1";
 import { Step3 } from "./pages/step3";
@@ -80,13 +81,33 @@ const App = () => {
         <div className="col-span-9">
           <div className="glass-card p-8 min-h-[600px] flex flex-col justify-between">
             {/* Step Title */}
-            <div className="mb-0 flex items-baseline">
-              <h2 className="text-3xl font-bold gradient-text">
-                {steps[current].title}
-              </h2>
-              <p className="text-gray-600 text-base ml-4">
-                {steps[current].description}
-              </p>
+            <div className="mb-0 flex items-center justify-between">
+              <div className="flex items-baseline">
+                <h2 className="text-3xl font-bold gradient-text">
+                  {steps[current].title}
+                </h2>
+                <p className="text-gray-600 text-base ml-4">
+                  {steps[current].description}
+                </p>
+              </div>
+              <Button
+                onClick={() => setShowSidebar(!showSidebar)}
+                icon={<RobotOutlined />}
+                size="large"
+                className="premium-button shadow-lg"
+                style={{
+                  background: showSidebar
+                    ? "linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%)"
+                    : "white",
+                  color: showSidebar ? "white" : "#06b6d4",
+                  border: showSidebar ? "none" : "2px solid #06b6d4",
+                  fontWeight: 600,
+                  height: "44px",
+                  padding: "0 24px",
+                }}
+              >
+                AI Assistant
+              </Button>
             </div>
 
             {/* Step Content with Animation */}
@@ -104,24 +125,7 @@ const App = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-between items-center mt-6 pt-6 border-t-2 border-gray-200">
-              <Button
-                onClick={() => setShowSidebar(!showSidebar)}
-                icon={<RobotOutlined />}
-                size="large"
-                className="premium-button"
-                style={{
-                  background: showSidebar
-                    ? "linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%)"
-                    : "white",
-                  color: showSidebar ? "white" : "#06b6d4",
-                  border: showSidebar ? "none" : "2px solid #06b6d4",
-                  fontWeight: 600,
-                }}
-              >
-                {showSidebar ? "Close Assistant" : "AI Assistant"}
-              </Button>
-
+            <div className="flex justify-end items-center mt-6 pt-6 border-t-2 border-gray-200">
               <div className="flex gap-3">
                 {current > 0 && (
                   <Button
@@ -189,18 +193,37 @@ const App = () => {
               padding: "24px",
             }}
           >
-            <div className="flex items-center gap-3 mb-4 pb-4 border-b-2 border-gray-200">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 flex items-center justify-center floating shadow-lg shadow-cyan-500/50">
-                <RobotOutlined className="text-white text-xl" />
+            <div className="flex items-center justify-between mb-4 pb-4 border-b-2 border-gray-200 flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 flex items-center justify-center floating shadow-lg shadow-cyan-500/50">
+                  <RobotOutlined className="text-white text-xl" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg text-gray-800 m-0">
+                    AI Assistant
+                  </h3>
+                  <p className="text-sm text-gray-500 m-0">Here to help you</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-lg text-gray-800 m-0">
-                  AI Assistant
-                </h3>
-                <p className="text-sm text-gray-500 m-0">Here to help you</p>
-              </div>
+              <Button
+                type="text"
+                icon={<CloseOutlined />}
+                onClick={() => setShowSidebar(false)}
+                className="hover:bg-gray-100 transition-colors"
+                style={{
+                  color: '#6b7280',
+                  width: '32px',
+                  height: '32px',
+                  padding: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              />
             </div>
-            <SideBot />
+            <div className="flex-1 overflow-hidden">
+              <SideBot />
+            </div>
           </Card>
         </div>
       )}

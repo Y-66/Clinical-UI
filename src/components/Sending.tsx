@@ -69,7 +69,7 @@ const Sending: React.FC = () => {
           {/* Left Column: Delivery Method Selection */}
           <div>
             <h3 className="text-lg font-bold text-gray-800 mb-4">Choose Delivery Method</h3>
-            <Radio.Group 
+    <Radio.Group
               value={deliveryMethod} 
               onChange={(e) => setDeliveryMethod(e.target.value)}
               className="w-full"

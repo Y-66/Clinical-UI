@@ -108,12 +108,11 @@ export default function SideBot() {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-hidden">
       {/* Messages Area */}
       <div
         ref={messagesBoxRef}
-        className="flex-1 overflow-y-auto p-3 space-y-4 bg-gradient-to-b from-white to-gray-50 rounded-xl"
-        style={{ minHeight: '450px', maxHeight: '520px' }}
+        className="flex-1 overflow-y-auto p-3 space-y-4 bg-gradient-to-b from-white to-gray-50 rounded-xl mb-0"
       >
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center p-6">
@@ -156,7 +155,7 @@ export default function SideBot() {
       </div>
 
       {/* Input Area */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
+      <div className="mt-4 pt-4 border-t border-gray-200 flex-shrink-0">
         <div className="flex gap-2">
           <input
             type="text"
