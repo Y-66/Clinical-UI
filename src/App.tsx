@@ -52,7 +52,7 @@ const App = () => {
     <div className="min-h-screen w-full p-8 relative">
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-0">
-        <h1 className="text-4xl font-bold text-white text-center mb-2 drop-shadow-lg">
+        <h1 className="text-4xl font-bold text-white text-center mb-0 drop-shadow-lg">
           Digital Prescription System
         </h1>
         <p className="text-white/90 text-center text-lg">
@@ -80,11 +80,11 @@ const App = () => {
         <div className="col-span-9">
           <div className="glass-card p-8 min-h-[600px] flex flex-col justify-between">
             {/* Step Title */}
-            <div className="mb-0">
+            <div className="mb-0 flex items-baseline">
               <h2 className="text-3xl font-bold gradient-text">
                 {steps[current].title}
               </h2>
-              <p className="text-gray-600 mt-2 text-base">
+              <p className="text-gray-600 text-base ml-4">
                 {steps[current].description}
               </p>
             </div>

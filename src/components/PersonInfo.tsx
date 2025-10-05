@@ -1,269 +1,459 @@
-import React from "react";
-import { Form, Input, DatePicker, Select, InputNumber, Row, Col, Collapse } from "antd";
+import React, { useState } from "react";
+import { Collapse, Row, Col } from "antd";
 import { 
   UserOutlined, 
   MailOutlined, 
-  PhoneOutlined, 
   HomeOutlined, 
-  IdcardOutlined,
   MedicineBoxOutlined
 } from "@ant-design/icons";
+import {
+  TextField,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+  InputAdornment,
+  Chip,
+  Box,
+} from "@mui/material";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Dayjs } from "dayjs";
 
 const PersonInfo: React.FC = () => {
-  const [form] = Form.useForm();
+  const [formData, setFormData] = useState({
+    fullName: "John Smith",
+    email: "john.smith@email.com",
+    phone: "+1 (555) 123-4567",
+    dateOfBirth: null as Dayjs | null,
+    gender: "male",
+    insuranceId: "INS-123456789",
+    bloodType: "A+",
+    address: "123 Main Street",
+    city: "New York",
+    state: "NY",
+    zipCode: "10001",
+  });
+
+  const handleChange = (field: string) => (event: any) => {
+    setFormData({ ...formData, [field]: event.target.value });
+  };
+
+  const handleDateChange = (date: Dayjs | null) => {
+    setFormData({ ...formData, dateOfBirth: date });
+  };
 
   return (
     <div className="w-full h-full">
-      <Form
-        form={form}
-        layout="vertical"
-        size="large"
-        className="w-full"
-        initialValues={{
-          fullName: "John Smith",
-          email: "john.smith@email.com",
-          phone: "+1 (555) 123-4567",
-          dateOfBirth: null,
-          gender: "male",
-          insuranceId: "INS-123456789",
-          bloodType: "A+",
-          address: "123 Main Street",
-          city: "New York",
-          state: "NY",
-          zipCode: "10001",
-        }}
-      >
-        <Collapse
-          defaultActiveKey={['1']}
-          ghost
-          className="bg-white"
-          items={[
-            {
-              key: '1',
-              label: (
-                <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
-                  <UserOutlined className="text-cyan-600" />
-                  Basic Information
-                </div>
-              ),
-              children: (
-                <>
-                  <Row gutter={[24, 0]}>
-                    <Col span={12}>
-                      <Form.Item
-                        label={<span className="font-semibold text-gray-700">Full Name</span>}
-                        name="fullName"
-                        rules={[{ required: true, message: "Please enter your full name" }]}
-                      >
-                        <Input 
-                          prefix={<UserOutlined className="text-gray-400" />} 
-                          placeholder="Enter your full name"
-                          className="rounded-lg"
-                        />
-                      </Form.Item>
-                    </Col>
-                    
-                    <Col span={12}>
-                      <Form.Item
-                        label={<span className="font-semibold text-gray-700">Date of Birth</span>}
-                        name="dateOfBirth"
-                        rules={[{ required: true, message: "Please select your date of birth" }]}
-                      >
-                        <DatePicker 
-                          className="w-full rounded-lg" 
-                          placeholder="Select date"
-                          format="MM/DD/YYYY"
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-
-                  <Row gutter={[24, 0]}>
-                    <Col span={12}>
-                      <Form.Item
-                        label={<span className="font-semibold text-gray-700">Gender</span>}
-                        name="gender"
-                        rules={[{ required: true, message: "Please select your gender" }]}
-                      >
-                        <Select 
-                          placeholder="Select gender"
-                          className="rounded-lg"
-                        >
-                          <Select.Option value="male">Male</Select.Option>
-                          <Select.Option value="female">Female</Select.Option>
-                          <Select.Option value="other">Other</Select.Option>
-                          <Select.Option value="prefer-not-to-say">Prefer not to say</Select.Option>
-                        </Select>
-                      </Form.Item>
-                    </Col>
-                    
-                    <Col span={12}>
-                      <Form.Item
-                        label={<span className="font-semibold text-gray-700">Blood Type</span>}
-                        name="bloodType"
-                      >
-                        <Select 
-                          placeholder="Select blood type"
-                          className="rounded-lg"
-                        >
-                          <Select.Option value="A+">A+</Select.Option>
-                          <Select.Option value="A-">A-</Select.Option>
-                          <Select.Option value="B+">B+</Select.Option>
-                          <Select.Option value="B-">B-</Select.Option>
-                          <Select.Option value="AB+">AB+</Select.Option>
-                          <Select.Option value="AB-">AB-</Select.Option>
-                          <Select.Option value="O+">O+</Select.Option>
-                          <Select.Option value="O-">O-</Select.Option>
-                        </Select>
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </>
-              ),
-            },
-            {
-              key: '2',
-              label: (
-                <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
-                  <MailOutlined className="text-cyan-600" />
-                  Contact Information
-                </div>
-              ),
-              children: (
-                <>
-                  <Row gutter={[24, 0]}>
-                    <Col span={12}>
-                      <Form.Item
-                        label={<span className="font-semibold text-gray-700">Email Address</span>}
-                        name="email"
-                        rules={[
-                          { required: true, message: "Please enter your email" },
-                          { type: "email", message: "Please enter a valid email" }
-                        ]}
-                      >
-                        <Input 
-                          prefix={<MailOutlined className="text-gray-400" />} 
-                          placeholder="your.email@example.com"
-                          className="rounded-lg"
-                        />
-                      </Form.Item>
-                    </Col>
-                    
-                    <Col span={12}>
-                      <Form.Item
-                        label={<span className="font-semibold text-gray-700">Phone Number</span>}
-                        name="phone"
-                        rules={[{ required: true, message: "Please enter your phone number" }]}
-                      >
-                        <Input 
-                          prefix={<PhoneOutlined className="text-gray-400" />} 
-                          placeholder="+1 (555) 000-0000"
-                          className="rounded-lg"
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </>
-              ),
-            },
-            {
-              key: '3',
-              label: (
-                <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
-                  <MedicineBoxOutlined className="text-cyan-600" />
-                  Insurance Information
-                </div>
-              ),
-              children: (
-                <Form.Item
-                  label={<span className="font-semibold text-gray-700">Insurance ID</span>}
-                  name="insuranceId"
-                  rules={[{ required: true, message: "Please enter your insurance ID" }]}
-                >
-                  <Input 
-                    prefix={<IdcardOutlined className="text-gray-400" />} 
-                    placeholder="Enter your insurance ID"
-                    className="rounded-lg"
-                  />
-                </Form.Item>
-              ),
-            },
-            {
-              key: '4',
-              label: (
-                <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
-                  <HomeOutlined className="text-cyan-600" />
-                  Address Information
-                </div>
-              ),
-              children: (
-                <>
-                  <Form.Item
-                    label={<span className="font-semibold text-gray-700">Street Address</span>}
-                    name="address"
-                    rules={[{ required: true, message: "Please enter your address" }]}
-                  >
-                    <Input 
-                      prefix={<HomeOutlined className="text-gray-400" />} 
-                      placeholder="123 Main Street"
-                      className="rounded-lg"
+      <Collapse
+        defaultActiveKey={['1']}
+        ghost
+        className="bg-white"
+        items={[
+          {
+            key: '1',
+            label: (
+              <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
+                <UserOutlined className="text-cyan-600" />
+                Basic Information
+              </div>
+            ),
+            children: (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <Row gutter={[24, 24]}>
+                  <Col span={12}>
+                    <TextField
+                      fullWidth
+                      label="Full Name"
+                      value={formData.fullName}
+                      onChange={handleChange('fullName')}
+                      required
+                      variant="outlined"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <UserOutlined style={{ color: '#06b6d4', fontSize: '18px' }} />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          '&:hover fieldset': {
+                            borderColor: '#06b6d4',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#06b6d4',
+                          },
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                          color: '#06b6d4',
+                        },
+                      }}
                     />
-                  </Form.Item>
+                  </Col>
+                  
+                  <Col span={12}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        label="Date of Birth"
+                        value={formData.dateOfBirth}
+                        onChange={handleDateChange}
+                        slotProps={{
+                          textField: {
+                            fullWidth: true,
+                            required: true,
+                            sx: {
+                              '& .MuiOutlinedInput-root': {
+                                '&:hover fieldset': {
+                                  borderColor: '#06b6d4',
+                                },
+                                '&.Mui-focused fieldset': {
+                                  borderColor: '#06b6d4',
+                                },
+                              },
+                              '& .MuiInputLabel-root.Mui-focused': {
+                                color: '#06b6d4',
+                              },
+                            },
+                          },
+                        }}
+                      />
+                    </LocalizationProvider>
+                  </Col>
+                </Row>
 
-                  <Row gutter={[24, 0]}>
-                    <Col span={10}>
-                      <Form.Item
-                        label={<span className="font-semibold text-gray-700">City</span>}
-                        name="city"
-                        rules={[{ required: true, message: "Please enter your city" }]}
+                <Row gutter={[24, 24]}>
+                  <Col span={12}>
+                    <FormControl 
+                      fullWidth
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          '&:hover fieldset': {
+                            borderColor: '#06b6d4',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#06b6d4',
+                          },
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                          color: '#06b6d4',
+                        },
+                      }}
+                    >
+                      <InputLabel>Gender</InputLabel>
+                      <Select
+                        value={formData.gender}
+                        label="Gender"
+                        onChange={handleChange('gender')}
                       >
-                        <Input 
-                          placeholder="City"
-                          className="rounded-lg"
-                        />
-                      </Form.Item>
-                    </Col>
-                    
-                    <Col span={7}>
-                      <Form.Item
-                        label={<span className="font-semibold text-gray-700">State</span>}
-                        name="state"
-                        rules={[{ required: true, message: "Please select your state" }]}
+                        <MenuItem value="male">Male</MenuItem>
+                        <MenuItem value="female">Female</MenuItem>
+                        <MenuItem value="other">Other</MenuItem>
+                        <MenuItem value="prefer-not-to-say">Prefer not to say</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Col>
+                  
+                  <Col span={12}>
+                    <FormControl 
+                      fullWidth
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          '&:hover fieldset': {
+                            borderColor: '#06b6d4',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#06b6d4',
+                          },
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                          color: '#06b6d4',
+                        },
+                      }}
+                    >
+                      <InputLabel>Blood Type</InputLabel>
+                      <Select
+                        value={formData.bloodType}
+                        label="Blood Type"
+                        onChange={handleChange('bloodType')}
+                        renderValue={(value) => (
+                          <Chip 
+                            label={value} 
+                            size="small" 
+                            sx={{ 
+                              background: 'linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%)',
+                              color: 'white',
+                              fontWeight: 600,
+                            }} 
+                          />
+                        )}
                       >
-                        <Select 
-                          placeholder="State"
-                          className="rounded-lg"
-                          showSearch
-                        >
-                          <Select.Option value="NY">NY</Select.Option>
-                          <Select.Option value="CA">CA</Select.Option>
-                          <Select.Option value="TX">TX</Select.Option>
-                          <Select.Option value="FL">FL</Select.Option>
-                          <Select.Option value="IL">IL</Select.Option>
-                        </Select>
-                      </Form.Item>
-                    </Col>
-                    
-                    <Col span={7}>
-                      <Form.Item
-                        label={<span className="font-semibold text-gray-700">ZIP Code</span>}
-                        name="zipCode"
-                        rules={[{ required: true, message: "Please enter your ZIP code" }]}
+                        <MenuItem value="A+">A+</MenuItem>
+                        <MenuItem value="A-">A-</MenuItem>
+                        <MenuItem value="B+">B+</MenuItem>
+                        <MenuItem value="B-">B-</MenuItem>
+                        <MenuItem value="AB+">AB+</MenuItem>
+                        <MenuItem value="AB-">AB-</MenuItem>
+                        <MenuItem value="O+">O+</MenuItem>
+                        <MenuItem value="O-">O-</MenuItem>
+          </Select>
+                    </FormControl>
+                  </Col>
+                </Row>
+              </Box>
+            ),
+          },
+          {
+            key: '2',
+            label: (
+              <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
+                <MailOutlined className="text-cyan-600" />
+                Contact Information
+              </div>
+            ),
+            children: (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <Row gutter={[24, 24]}>
+                  <Col span={12}>
+                    <TextField
+                      fullWidth
+                      label="Email Address"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange('email')}
+                      required
+                      variant="outlined"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <MailOutlined style={{ color: '#06b6d4', fontSize: '18px' }} />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          '&:hover fieldset': {
+                            borderColor: '#06b6d4',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#06b6d4',
+                          },
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                          color: '#06b6d4',
+                        },
+                      }}
+                    />
+                  </Col>
+                  
+                  <Col span={12}>
+                    <TextField
+                      fullWidth
+                      label="Phone Number"
+                      value={formData.phone}
+                      onChange={handleChange('phone')}
+                      required
+                      variant="outlined"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <span style={{ color: '#06b6d4', fontSize: '18px' }}>📱</span>
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          '&:hover fieldset': {
+                            borderColor: '#06b6d4',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#06b6d4',
+                          },
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                          color: '#06b6d4',
+                        },
+                      }}
+                    />
+                  </Col>
+                </Row>
+              </Box>
+            ),
+          },
+          {
+            key: '3',
+            label: (
+              <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
+                <MedicineBoxOutlined className="text-cyan-600" />
+                Insurance Information
+              </div>
+            ),
+            children: (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <TextField
+                  fullWidth
+                  label="Insurance ID"
+                  value={formData.insuranceId}
+                  onChange={handleChange('insuranceId')}
+                  required
+                  variant="outlined"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <span style={{ color: '#06b6d4', fontSize: '18px' }}>🆔</span>
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      '&:hover fieldset': {
+                        borderColor: '#06b6d4',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#06b6d4',
+                      },
+                    },
+                    '& .MuiInputLabel-root.Mui-focused': {
+                      color: '#06b6d4',
+                    },
+                  }}
+                />
+              </Box>
+            ),
+          },
+          {
+            key: '4',
+            label: (
+              <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
+                <HomeOutlined className="text-cyan-600" />
+                Address Information
+              </div>
+            ),
+            children: (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <TextField
+                  fullWidth
+                  label="Street Address"
+                  value={formData.address}
+                  onChange={handleChange('address')}
+                  required
+                  variant="outlined"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <HomeOutlined style={{ color: '#06b6d4', fontSize: '18px' }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      '&:hover fieldset': {
+                        borderColor: '#06b6d4',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#06b6d4',
+                      },
+                    },
+                    '& .MuiInputLabel-root.Mui-focused': {
+                      color: '#06b6d4',
+                    },
+                  }}
+                />
+
+                <Row gutter={[24, 24]}>
+                  <Col span={10}>
+                    <TextField
+                      fullWidth
+                      label="City"
+                      value={formData.city}
+                      onChange={handleChange('city')}
+                      required
+                      variant="outlined"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <span style={{ color: '#06b6d4', fontSize: '18px' }}>🏙️</span>
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          '&:hover fieldset': {
+                            borderColor: '#06b6d4',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#06b6d4',
+                          },
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                          color: '#06b6d4',
+                        },
+                      }}
+                    />
+                  </Col>
+                  
+                  <Col span={7}>
+                    <FormControl 
+                      fullWidth
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          '&:hover fieldset': {
+                            borderColor: '#06b6d4',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#06b6d4',
+                          },
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                          color: '#06b6d4',
+                        },
+                      }}
+                    >
+                      <InputLabel>State</InputLabel>
+                      <Select
+                        value={formData.state}
+                        label="State"
+                        onChange={handleChange('state')}
                       >
-                        <InputNumber 
-                          placeholder="10001"
-                          className="w-full rounded-lg"
-                          controls={false}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </>
-              ),
-            },
-          ]}
-        />
-      </Form>
+                        <MenuItem value="NY">NY</MenuItem>
+                        <MenuItem value="CA">CA</MenuItem>
+                        <MenuItem value="TX">TX</MenuItem>
+                        <MenuItem value="FL">FL</MenuItem>
+                        <MenuItem value="IL">IL</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Col>
+                  
+                  <Col span={7}>
+                    <TextField
+                      fullWidth
+                      label="ZIP Code"
+                      value={formData.zipCode}
+                      onChange={handleChange('zipCode')}
+                      required
+                      variant="outlined"
+                      inputProps={{ maxLength: 5 }}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          '&:hover fieldset': {
+                            borderColor: '#06b6d4',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#06b6d4',
+                          },
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                          color: '#06b6d4',
+                        },
+                      }}
+                    />
+                  </Col>
+                </Row>
+              </Box>
+            ),
+              },
+            ]}
+          />
     </div>
   );
 };
