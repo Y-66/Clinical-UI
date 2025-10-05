@@ -1,7 +1,7 @@
 import "./App.css";
 import "antd/dist/reset.css";
 import { useState } from "react";
-import { Button, message, Steps, Card } from "antd";
+import { Button, message, Card } from "antd";
 import {
   RobotOutlined,
   CheckCircleOutlined,
@@ -14,6 +14,8 @@ import { Step3 } from "./pages/step3";
 import { Step4 } from "./pages/step4";
 import { Step2 } from "./pages/step2";
 import SideBot from "./components/SideBot";
+import CustomSteps from "./components/CustomSteps";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 const App = () => {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -46,51 +48,63 @@ const App = () => {
   const prev = () => {
     setCurrent(current - 1);
   };
-  const items = steps.map((item) => ({
-    title: item.title,
-    description: item.description,
-    icon: item.icon,
-  }));
-
   return (
     <div className="min-h-screen w-full p-8 relative">
+      {/* Header */}
+      <div className="max-w-7xl mx-auto mb-0">
+        <h1 className="text-4xl font-bold text-white text-center mb-2 drop-shadow-lg">
+          Digital Prescription System
+        </h1>
+        <p className="text-white/90 text-center text-lg">
+          Your health, simplified and secured
+        </p>
+      </div>
+
       <div className="max-w-7xl mx-auto grid grid-cols-12 gap-6">
         {/* Left Steps Panel */}
         <div className="col-span-3">
           <div className="glass-card p-6 sticky top-8">
-            <h3 className="text-xl font-semibold mb-6 text-gray-800">
-              Progress
-            </h3>
-            <Steps
-              direction="vertical"
-              current={current}
-              items={items}
-              className="custom-steps"
-            />
+            <div className="mb-6">
+              <h3 className="text-xl font-bold text-gray-800 mb-1">
+                Progress Tracker
+              </h3>
+              <p className="text-sm text-gray-500">
+                Step {current + 1} of {steps.length}
+              </p>
+            </div>
+            <CustomSteps steps={steps} current={current} />
           </div>
         </div>
 
         {/* Main Content Area */}
         <div className="col-span-9">
-          <div className="glass-card p-8 min-h-[600px] flex flex-col justify-between step-animation">
+          <div className="glass-card p-8 min-h-[600px] flex flex-col justify-between">
             {/* Step Title */}
             <div className="mb-0">
-              <h2 className="text-2xl font-bold gradient-text">
+              <h2 className="text-3xl font-bold gradient-text">
                 {steps[current].title}
               </h2>
-              <p className="text-gray-600 mt-1">{steps[current].description}</p>
+              <p className="text-gray-600 mt-2 text-base">
+                {steps[current].description}
+              </p>
             </div>
 
-            {/* Step Content */}
-            <div className="flex-1 overflow-auto">
-              {current === 0 && <Step1 />}
-              {current === 1 && <Step2 />}
-              {current === 2 && <Step3 />}
-              {current === 3 && <Step4 />}
+            {/* Step Content with Animation */}
+            <div className="flex-1 overflow-hidden relative">
+              <TransitionGroup component={null}>
+                <CSSTransition key={current} timeout={500} classNames="page">
+                  <div className="absolute inset-0 overflow-auto">
+                    {current === 0 && <Step1 />}
+                    {current === 1 && <Step2 />}
+                    {current === 2 && <Step3 />}
+                    {current === 3 && <Step4 />}
+                  </div>
+                </CSSTransition>
+              </TransitionGroup>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-between items-center mt-6 pt-6 border-t border-gray-200">
+            <div className="flex justify-between items-center mt-6 pt-6 border-t-2 border-gray-200">
               <Button
                 onClick={() => setShowSidebar(!showSidebar)}
                 icon={<RobotOutlined />}
@@ -98,10 +112,10 @@ const App = () => {
                 className="premium-button"
                 style={{
                   background: showSidebar
-                    ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                    ? "linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%)"
                     : "white",
-                  color: showSidebar ? "white" : "#667eea",
-                  border: "none",
+                  color: showSidebar ? "white" : "#06b6d4",
+                  border: showSidebar ? "none" : "2px solid #06b6d4",
                   fontWeight: 600,
                 }}
               >
@@ -114,7 +128,10 @@ const App = () => {
                     onClick={() => prev()}
                     size="large"
                     className="premium-button"
-                    style={{ fontWeight: 600 }}
+                    style={{
+                      fontWeight: 600,
+                      border: "2px solid #d1d5db",
+                    }}
                   >
                     Previous
                   </Button>
@@ -127,7 +144,7 @@ const App = () => {
                     className="premium-button"
                     style={{
                       background:
-                        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                        "linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%)",
                       border: "none",
                       fontWeight: 600,
                     }}
@@ -164,7 +181,7 @@ const App = () => {
       {showSidebar && (
         <div className="fixed top-8 bottom-8 right-8 w-[380px] z-50 animate-in slide-in-from-right duration-300">
           <Card
-            className="glass-card h-full border-2 border-white/30 shadow-2xl"
+            className="glass-card h-full border-2 border-cyan-200/50 shadow-2xl"
             bodyStyle={{
               height: "100%",
               display: "flex",
@@ -172,8 +189,8 @@ const App = () => {
               padding: "24px",
             }}
           >
-            <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-200">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center floating">
+            <div className="flex items-center gap-3 mb-4 pb-4 border-b-2 border-gray-200">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 flex items-center justify-center floating shadow-lg shadow-cyan-500/50">
                 <RobotOutlined className="text-white text-xl" />
               </div>
               <div>

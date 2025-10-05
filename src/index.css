@@ -5,7 +5,7 @@
 
   color-scheme: light;
   color: #1a202c;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 50%, #10b981 100%);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -25,7 +25,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 50%, #10b981 100%);
   background-attachment: fixed;
 }
 
@@ -44,11 +44,11 @@ h1, h2, h3, h4, h5, h6 {
 
 a {
   font-weight: 500;
-  color: #667eea;
+  color: #06b6d4;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 a:hover {
-  color: #764ba2;
+  color: #14b8a6;
 }

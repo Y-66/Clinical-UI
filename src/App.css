@@ -12,8 +12,31 @@
   }
   
   .gradient-text {
-    @apply bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text text-transparent;
   }
+}
+
+/* Page transition animations */
+.page-enter {
+  opacity: 0;
+  transform: translateX(30px) scale(0.98);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.page-exit {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: translateX(-30px) scale(0.98);
+  transition: all 0.4s ease-in-out;
 }
 
 .step-animation {
@@ -56,18 +79,18 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%);
   border-radius: 10px;
   transition: all 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%);
   width: 8px;
 }
 
 /* For Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #667eea transparent;
+  scrollbar-color: #06b6d4 transparent;
 }

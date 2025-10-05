@@ -117,8 +117,8 @@ export default function SideBot() {
       >
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center p-6">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 flex items-center justify-center mb-4">
-              <RobotOutlined className="text-purple-600 text-2xl" />
+            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-cyan-100 to-teal-100 flex items-center justify-center mb-4">
+              <RobotOutlined className="text-cyan-600 text-2xl" />
             </div>
             <p className="text-gray-500 font-medium mb-2">How can I assist you?</p>
             <p className="text-gray-400 text-sm">
@@ -136,14 +136,14 @@ export default function SideBot() {
               size={32}
               icon={msg.sender === "user" ? <UserOutlined /> : <RobotOutlined />}
               style={{
-                backgroundColor: msg.sender === "user" ? "#667eea" : "#f093fb",
+                backgroundColor: msg.sender === "user" ? "#06b6d4" : "#14b8a6",
                 flexShrink: 0,
               }}
             />
             <div
               className={`max-w-[75%] whitespace-pre-wrap break-words px-4 py-3 rounded-2xl shadow-sm ${
                 msg.sender === "user"
-                  ? "bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-tr-sm"
+                  ? "bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-tr-sm"
                   : "bg-white text-gray-800 border border-gray-200 rounded-tl-sm"
               }`}
             >
@@ -163,7 +163,7 @@ export default function SideBot() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
-            className="flex-1 border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-400 transition-colors"
+            className="flex-1 border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 transition-colors"
             onKeyDown={(e) => {
               if (e.key === "Enter" && !isStreaming) handleSend();
             }}
@@ -178,7 +178,7 @@ export default function SideBot() {
             style={{
               background: isStreaming || !input.trim() 
                 ? '#d1d5db' 
-                : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                : 'linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%)',
               border: 'none',
               width: '56px',
               height: '48px',

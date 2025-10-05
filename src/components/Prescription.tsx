@@ -10,15 +10,15 @@ import {
 } from "@ant-design/icons";
 
 const Prescription: React.FC = () => (
-  <div className="w-full max-w-4xl mx-auto max-h-[420px] overflow-y-auto pr-2">
+  <div className="w-full max-w-4xl mx-auto h-full">
     <Card 
-      className="shadow-lg rounded-2xl border-2 border-purple-100"
+      className="shadow-lg rounded-2xl border-2 border-cyan-100"
       bodyStyle={{ padding: '32px' }}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-6 pb-6 border-b-2 border-gray-100">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 flex items-center justify-center shadow-lg shadow-cyan-500/50">
             <FileTextOutlined className="text-white text-2xl" />
           </div>
           <div>
@@ -34,7 +34,7 @@ const Prescription: React.FC = () => (
       {/* Patient Information */}
       <div className="mb-6">
         <h3 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
-          <UserOutlined className="text-purple-600" />
+          <UserOutlined className="text-cyan-600" />
           Patient Information
         </h3>
         <Row gutter={[24, 16]}>
@@ -60,7 +60,7 @@ const Prescription: React.FC = () => (
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-gray-500 text-sm mb-1">Issue Date</p>
               <p className="text-gray-800 font-semibold text-base m-0 flex items-center gap-2">
-                <CalendarOutlined className="text-purple-600" />
+                <CalendarOutlined className="text-cyan-600" />
                 October 5, 2025
               </p>
             </div>
@@ -73,13 +73,13 @@ const Prescription: React.FC = () => (
       {/* Medication Details */}
       <div className="mb-6">
         <h3 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
-          <MedicineBoxOutlined className="text-purple-600" />
+          <MedicineBoxOutlined className="text-cyan-600" />
           Prescribed Medications
         </h3>
         
         <div className="space-y-4">
           {/* Medication 1 */}
-          <div className="border-2 border-purple-100 rounded-xl p-5 bg-gradient-to-r from-purple-50/50 to-pink-50/50">
+          <div className="border-2 border-cyan-100 rounded-xl p-5 bg-gradient-to-r from-cyan-50/50 to-teal-50/50">
             <div className="flex justify-between items-start mb-3">
               <div>
                 <h4 className="text-lg font-bold text-gray-800 m-0">Amoxicillin 500mg</h4>
@@ -107,7 +107,7 @@ const Prescription: React.FC = () => (
           </div>
 
           {/* Medication 2 */}
-          <div className="border-2 border-purple-100 rounded-xl p-5 bg-gradient-to-r from-purple-50/50 to-pink-50/50">
+          <div className="border-2 border-cyan-100 rounded-xl p-5 bg-gradient-to-r from-cyan-50/50 to-teal-50/50">
             <div className="flex justify-between items-start mb-3">
               <div>
                 <h4 className="text-lg font-bold text-gray-800 m-0">Ibuprofen 400mg</h4>
@@ -145,7 +145,7 @@ const Prescription: React.FC = () => (
           <Avatar 
             size={56} 
             icon={<UserOutlined />}
-            style={{ backgroundColor: '#667eea' }}
+            style={{ backgroundColor: '#06b6d4' }}
           />
           <div>
             <p className="text-gray-800 font-bold text-base m-0">Dr. Sarah Johnson, MD</p>
@@ -170,7 +170,7 @@ const Prescription: React.FC = () => (
           size="large"
           className="premium-button"
           style={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%)',
             border: 'none',
           }}
         >

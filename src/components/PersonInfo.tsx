@@ -13,7 +13,7 @@ const PersonInfo: React.FC = () => {
   const [form] = Form.useForm();
 
   return (
-    <div className="w-full max-h-[420px] overflow-y-auto pr-2">
+    <div className="w-full h-full">
       <Form
         form={form}
         layout="vertical"
@@ -42,7 +42,7 @@ const PersonInfo: React.FC = () => {
               key: '1',
               label: (
                 <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
-                  <UserOutlined className="text-purple-600" />
+                  <UserOutlined className="text-cyan-600" />
                   Basic Information
                 </div>
               ),
@@ -125,7 +125,7 @@ const PersonInfo: React.FC = () => {
               key: '2',
               label: (
                 <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
-                  <MailOutlined className="text-purple-600" />
+                  <MailOutlined className="text-cyan-600" />
                   Contact Information
                 </div>
               ),
@@ -170,7 +170,7 @@ const PersonInfo: React.FC = () => {
               key: '3',
               label: (
                 <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
-                  <MedicineBoxOutlined className="text-purple-600" />
+                  <MedicineBoxOutlined className="text-cyan-600" />
                   Insurance Information
                 </div>
               ),
@@ -192,7 +192,7 @@ const PersonInfo: React.FC = () => {
               key: '4',
               label: (
                 <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
-                  <HomeOutlined className="text-purple-600" />
+                  <HomeOutlined className="text-cyan-600" />
                   Address Information
                 </div>
               ),
