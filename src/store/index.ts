@@ -2,25 +2,20 @@
 import { create } from "zustand";
 import type { Poi } from "../types/Poi";
 
-export const useCurrentPoiStore = create((set) => ({
-  currentPoi: {
-    latitude: 0,
-    longitude: 0,
-  },
+interface CurrentPoiStore {
+  currentPoi: Poi | null;
+  updateSelectedPoi: (poi: Poi | null) => void;
+}
+export const useCurrentPoiStore = create<CurrentPoiStore>((set) => ({
+  currentPoi: null,
   // 更新经纬度
-  updatePoi: (lat: number, lng: number): void => 
+  updateSelectedPoi: (poi) =>
     set(() => ({
-      currentPoi: { latitude: lat, longitude: lng },
+      currentPoi: poi,
     })),
-
-  // 重置为 {0,0}
-  resetPoi: () =>
-    set(() => ({
-      currentPoi: { latitude: 0, longitude: 0 },
-    })),
-
 
 }));
+
 // 定义 store 的类型结构
 interface PoisListStore {
   poisList: Poi[];

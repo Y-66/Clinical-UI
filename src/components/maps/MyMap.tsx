@@ -13,14 +13,14 @@ import {
   INITIAL_LATITUDE,
   INITIAL_LONGITUDE,
 } from "../../constants";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Poi } from "../../types/Poi";
-import { Card, Chip, Box, CardHeader, CardContent } from "@mui/material";
+import { Card, Box } from "@mui/material";
 import { Badge } from "antd";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
-import { usePoisListStore } from "../../store";
+import { useCurrentPoiStore, usePoisListStore } from "../../store";
 
 const center = { lat: INITIAL_LATITUDE, lng: INITIAL_LONGITUDE };
 
@@ -36,7 +36,7 @@ const NearbyPharmacies = () => {
 
     const request: google.maps.places.PlaceSearchRequest = {
       location: center,
-      radius: 2000,
+      radius: 1000,
       type: "pharmacy",
     };
 
@@ -76,6 +76,21 @@ const NearbyPharmacies = () => {
 export const MyMap = () => {
   const [pharmacyCount, setPharmacyCount] = useState(0);
   const { poisList } = usePoisListStore();
+  const { currentPoi, updateSelectedPoi } = useCurrentPoiStore();
+  const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  // 每当选中项变化时，滚动到对应的 div
+  useEffect(() => {
+    if (currentPoi?.key && itemRefs.current[currentPoi.key]) {
+      itemRefs.current[currentPoi.key]?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [currentPoi]);
+
+  const handlePoisListClick = (poi: Poi) => {
+    updateSelectedPoi(poi);
+  };
 
   return (
     <div className="w-full h-full space-y-4">
@@ -171,7 +186,15 @@ export const MyMap = () => {
               poisList.map((poi) => (
                 <div
                   key={poi.key}
-                  className="border rounded-xl p-2 bg-white shadow-sm hover:shadow-md transition-shadow"
+                  ref={(el) => void (itemRefs.current[poi.key] = el)}
+                  onClick={() => handlePoisListClick(poi)}
+                  className={`border rounded-xl p-2 bg-white shadow-sm hover:shadow-md transition-shadow 
+                    ${
+                      currentPoi &&
+                      (currentPoi.key === poi.key
+                        ? "bg-blue-100 border-blue-500 shadow-md"
+                        : "bg-white shadow-sm hover:shadow-md")
+                    }`}
                 >
                   <p className="font-medium text-gray-900 mb-0.5">{poi.name}</p>
                   <p className="text-sm text-gray-600 mb-0.5">{poi.vicinity}</p>

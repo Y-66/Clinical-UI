@@ -16,6 +16,7 @@ import {
   INITIAL_LONGITUDE,
 } from "../../constants";
 import DirectionsMap from "./DirectionsMap";
+import { useCurrentPoiStore } from "../../store";
 
 export const PoiMarkers = (props: { pois: Poi[] }) => {
   const loaded = useGoogleMapsApi(GOOGLE_API_KEY);
@@ -68,17 +69,22 @@ export const PoiMarkers = (props: { pois: Poi[] }) => {
     null
   );
 
-  const [selectedPoi, setSelectedPoi] = useState<Poi | null>(null);
+  // const [selectedPoi, setSelectedPoi] = useState<Poi | null>(null);
+
+  const { currentPoi, updateSelectedPoi } = useCurrentPoiStore();
 
   const handleSelectedPoiClick = (poi: Poi) => {
-    setSelectedPoi(poi);
+    // setSelectedPoi(poi);
+    updateSelectedPoi(poi);
   };
 
   const handleClose = () => {
-    setSelectedPoi(null);
+    // setSelectedPoi(null);
+    updateSelectedPoi(null);
   };
 
   if (!loaded) return <div>Loading Google Maps...</div>;
+
   return (
     <>
       {/* <Circle
@@ -108,26 +114,23 @@ export const PoiMarkers = (props: { pois: Poi[] }) => {
           />
         </AdvancedMarker>
       ))}
-      {selectedPoi && (
+      {currentPoi && (
         <>
-          <InfoWindow
-            position={selectedPoi.location}
-            onCloseClick={handleClose}
-          >
+          <InfoWindow position={currentPoi.location} onCloseClick={handleClose}>
             {/* <MapInfo selectedPoi={selectedPoi} /> */}
             <div style={{ width: "400px" }}>
-              <PlaceDetailsCompact placeId={selectedPoi.key} />
+              <PlaceDetailsCompact placeId={currentPoi.key} />
             </div>
           </InfoWindow>
         </>
       )}
-      {selectedPoi && (
+      {currentPoi?.location && (
         <>
           <DirectionsMap
             start={{ lat: INITIAL_LATITUDE, lng: INITIAL_LONGITUDE }}
             end={{
-              lat: selectedPoi.location.lat,
-              lng: selectedPoi.location.lng,
+              lat: currentPoi.location.lat,
+              lng: currentPoi.location.lng,
             }}
             zoom={6}
           />
