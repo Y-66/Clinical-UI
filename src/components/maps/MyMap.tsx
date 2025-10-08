@@ -3,17 +3,14 @@ import {
   APIProvider,
   Map,
   Pin,
-  useMap,
-  useMapsLibrary,
 } from "@vis.gl/react-google-maps";
 import type { MapCameraChangedEvent } from "@vis.gl/react-google-maps";
-import { PoiMarkers } from "./PoiMarkers";
 import {
   GOOGLE_API_KEY,
   INITIAL_LATITUDE,
   INITIAL_LONGITUDE,
 } from "../../constants";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import type { Poi } from "../../types/Poi";
 import { Card, Box } from "@mui/material";
 import { Badge, Tag } from "antd";
@@ -21,60 +18,13 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import { useCurrentPoiStore, usePoisListStore } from "../../store";
+import { NearbyPharmacies } from "./NearbyPharmacies";
+import type { Center } from "../../types/Center";
 
-const center = { lat: INITIAL_LATITUDE, lng: INITIAL_LONGITUDE };
-
-const NearbyPharmacies = () => {
-  const map = useMap();
-  const placesLib = useMapsLibrary("places");
-  const [pois, setPois] = useState<Poi[]>([]);
-
-  useEffect(() => {
-    if (!map || !placesLib) return;
-
-    const service = new google.maps.places.PlacesService(map);
-
-    const request: google.maps.places.PlaceSearchRequest = {
-      location: center,
-      radius: 1000,
-      type: "pharmacy",
-    };
-
-    service.nearbySearch(request, (results, status) => {
-      if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-        console.log(results);
-        setPois(
-          results.map((place, i) => ({
-            key: place.place_id ?? `pharmacy-${i}`,
-            location: {
-              lat: place.geometry!.location!.lat(),
-              lng: place.geometry!.location!.lng(),
-            },
-            business_status: place.business_status,
-            name: place.name,
-            vicinity: place.vicinity,
-            rating: place.rating,
-            user_ratings_total: place.user_ratings_total,
-            icon: place.icon,
-            plus_code: place.plus_code,
-            types: place.types,
-          }))
-        );
-      }
-    });
-  }, [map, placesLib]);
-
-  const { updataPoisList } = usePoisListStore();
-  useEffect(() => {
-    updataPoisList(pois);
-    console.log("zustand测试", usePoisListStore.getState().poisList);
-  }, [pois]);
-
-  return <PoiMarkers pois={pois} />;
-};
+const center: Center = { lat: INITIAL_LATITUDE, lng: INITIAL_LONGITUDE };
 
 export const MyMap = () => {
-  const [pharmacyCount, setPharmacyCount] = useState(0);
+  // const [pharmacyCount, setPharmacyCount] = useState(0);
   const { poisList } = usePoisListStore();
   const { currentPoi, updateSelectedPoi, distance } = useCurrentPoiStore();
   const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -126,7 +76,7 @@ export const MyMap = () => {
                   scale={1.5}
                 />
               </AdvancedMarker>
-              <NearbyPharmacies />
+              <NearbyPharmacies center={center} />
             </Map>
           </APIProvider>
 
@@ -294,7 +244,7 @@ export const MyMap = () => {
                 Available Now
               </p>
               <p className="text-lg font-bold text-teal-700 m-0">
-                {pharmacyCount} Stores
+                {/* {pharmacyCount} Stores */}
               </p>
             </Box>
           </Card>
