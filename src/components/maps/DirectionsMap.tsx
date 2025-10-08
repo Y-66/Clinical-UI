@@ -1,5 +1,6 @@
 import { useMap } from "@vis.gl/react-google-maps";
 import React, { useEffect, useRef } from "react";
+import { useCurrentPoiStore } from "../../store";
 
 interface LatLng {
   lat: number;
@@ -51,26 +52,37 @@ const DirectionsMap: React.FC<DirectionsMapProps> = ({ start, end }) => {
     });
   }, [map]);
 
+  const { setDistance } = useCurrentPoiStore();
+  const lastEndRef = useRef<LatLng | null>(null);
+
   useEffect(() => {
     if (!directionsServiceRef.current || !directionsRendererRef.current) return;
 
+    // 如果 end 没变，直接 return
+    if (
+      lastEndRef.current &&
+      lastEndRef.current.lat === end.lat &&
+      lastEndRef.current.lng === end.lng
+    ) {
+      return;
+    }
+    lastEndRef.current = end;
     // 构建路线请求
     const request: google.maps.DirectionsRequest = {
       origin: start,
       destination: end,
       travelMode: google.maps.TravelMode.WALKING,
     };
-
     // 计算路线并渲染
     directionsServiceRef.current.route(request, (result, status) => {
       if (status === "OK" && result) {
-        console.log("完整路线结果:", result); // 打印整个 DirectionsResult 对象
         directionsRendererRef.current!.setDirections(result);
+        setDistance(result.routes?.[0]?.legs?.[0]?.distance?.text ?? "");
       } else {
         console.error("Directions request failed:", status);
       }
     });
-  }, [start, end]);
+  }, [start, end, setDistance]);
 
   return (
     <>

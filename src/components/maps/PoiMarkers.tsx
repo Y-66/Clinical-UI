@@ -127,6 +127,7 @@ export const PoiMarkers = (props: { pois: Poi[] }) => {
       {currentPoi?.location && (
         <>
           <DirectionsMap
+            key={currentPoi.key}
             start={{ lat: INITIAL_LATITUDE, lng: INITIAL_LONGITUDE }}
             end={{
               lat: currentPoi.location.lat,

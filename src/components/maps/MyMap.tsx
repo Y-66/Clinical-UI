@@ -16,7 +16,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import type { Poi } from "../../types/Poi";
 import { Card, Box } from "@mui/material";
-import { Badge } from "antd";
+import { Badge, Tag } from "antd";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
@@ -76,7 +76,7 @@ const NearbyPharmacies = () => {
 export const MyMap = () => {
   const [pharmacyCount, setPharmacyCount] = useState(0);
   const { poisList } = usePoisListStore();
-  const { currentPoi, updateSelectedPoi } = useCurrentPoiStore();
+  const { currentPoi, updateSelectedPoi, distance } = useCurrentPoiStore();
   const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
   // 每当选中项变化时，滚动到对应的 div
   useEffect(() => {
@@ -188,21 +188,27 @@ export const MyMap = () => {
                   key={poi.key}
                   ref={(el) => void (itemRefs.current[poi.key] = el)}
                   onClick={() => handlePoisListClick(poi)}
-                  className={`border rounded-xl p-2 bg-white shadow-sm hover:shadow-md transition-shadow 
-                    ${
-                      currentPoi &&
-                      (currentPoi.key === poi.key
-                        ? "bg-blue-100 border-blue-500 shadow-md"
-                        : "bg-white shadow-sm hover:shadow-md")
-                    }`}
+                  className={`border rounded-xl p-2 transition-shadow
+                  ${
+                    currentPoi?.key === poi.key
+                      ? "bg-blue-100 border-blue-500 shadow-md"
+                      : "bg-white shadow-sm hover:shadow-md"
+                  }`}
                 >
                   <p className="font-medium text-gray-900 mb-0.5">{poi.name}</p>
                   <p className="text-sm text-gray-600 mb-0.5">{poi.vicinity}</p>
-                  {poi.rating && (
-                    <p className="text-xs text-yellow-600">
-                      ⭐ {poi.rating} ({poi.user_ratings_total} reviews)
-                    </p>
-                  )}
+                  <div className="flex flex-row items-center gap-2">
+                    {poi.rating && (
+                      <p className="text-xs text-yellow-600">
+                        ⭐ {poi.rating} ({poi.user_ratings_total} reviews)
+                      </p>
+                    )}
+                    {currentPoi?.key === poi.key && (
+                      <Tag color="green" className="text-xs">
+                        {distance}
+                      </Tag>
+                    )}
+                  </div>
                 </div>
               ))
             ) : (

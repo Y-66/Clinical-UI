@@ -4,19 +4,26 @@ import type { Poi } from "../types/Poi";
 
 interface CurrentPoiStore {
   currentPoi: Poi | null;
+  distance: string;
   updateSelectedPoi: (poi: Poi | null) => void;
+  setDistance: (distance: string) => void;
 }
 export const useCurrentPoiStore = create<CurrentPoiStore>((set) => ({
   currentPoi: null,
-  // 更新经纬度
+  distance: '',
+  
   updateSelectedPoi: (poi) =>
     set(() => ({
       currentPoi: poi,
     })),
+  setDistance: (distance) =>
+    set(() =>({
+      distance: distance
+    }))
 
 }));
 
-// 定义 store 的类型结构
+
 interface PoisListStore {
   poisList: Poi[];
   updataPoisList: (pois: Poi[]) => void;
