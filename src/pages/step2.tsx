@@ -5,7 +5,7 @@ import MyMap from "../components/maps/MyMap";
 export const Step2 = () => {
   const tabItems = [
     {
-      key: '1',
+      key: "1",
       label: (
         <span className="flex items-center gap-2">
           <ShopOutlined />
@@ -19,7 +19,7 @@ export const Step2 = () => {
       ),
     },
     {
-      key: '2',
+      key: "2",
       label: (
         <span className="flex items-center gap-2">
           <FileTextOutlined />
@@ -36,11 +36,12 @@ export const Step2 = () => {
 
   return (
     <div className="w-full h-full px-4">
-      <Tabs 
-        defaultActiveKey="1" 
-        items={tabItems} 
-        size="large"
+      <Tabs
+        defaultActiveKey="1"
+        items={tabItems}
+        size="middle"
         className="requisition-tabs"
+        tabBarStyle={{ marginBottom: 10 }}
       />
     </div>
   );

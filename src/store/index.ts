@@ -1,7 +1,8 @@
 // src/store/useStore.ts
 import { create } from "zustand";
+import type { Poi } from "../types/Poi";
 
-export const useStore = create((set) => ({
+export const useCurrentPoiStore = create((set) => ({
   currentPoi: {
     latitude: 0,
     longitude: 0,
@@ -20,3 +21,12 @@ export const useStore = create((set) => ({
 
 
 }));
+// 定义 store 的类型结构
+interface PoisListStore {
+  poisList: Poi[];
+  updataPoisList: (pois: Poi[]) => void;
+}
+export const usePoisListStore = create<PoisListStore>((set) => ({
+  poisList: [],
+  updataPoisList: (pois) => set({ poisList: pois }),
+}))

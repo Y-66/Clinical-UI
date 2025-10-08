@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Collapse, Row, Col } from "antd";
-import { 
-  UserOutlined, 
-  MailOutlined, 
-  HomeOutlined, 
-  MedicineBoxOutlined
+import {
+  UserOutlined,
+  MailOutlined,
+  HomeOutlined,
+  MedicineBoxOutlined,
 } from "@ant-design/icons";
 import {
   TextField,
@@ -46,12 +46,12 @@ const PersonInfo: React.FC = () => {
   return (
     <div className="w-full h-full">
       <Collapse
-        defaultActiveKey={['1']}
+        defaultActiveKey={["1"]}
         ghost
         className="bg-white"
         items={[
           {
-            key: '1',
+            key: "1",
             label: (
               <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
                 <UserOutlined className="text-cyan-600" />
@@ -59,39 +59,41 @@ const PersonInfo: React.FC = () => {
               </div>
             ),
             children: (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
                 <Row gutter={[24, 24]}>
                   <Col span={12}>
                     <TextField
                       fullWidth
                       label="Full Name"
                       value={formData.fullName}
-                      onChange={handleChange('fullName')}
+                      onChange={handleChange("fullName")}
                       required
                       variant="outlined"
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <UserOutlined style={{ color: '#06b6d4', fontSize: '18px' }} />
+                            <UserOutlined
+                              style={{ color: "#06b6d4", fontSize: "18px" }}
+                            />
                           </InputAdornment>
                         ),
                       }}
                       sx={{
-                        '& .MuiOutlinedInput-root': {
-                          '&:hover fieldset': {
-                            borderColor: '#06b6d4',
+                        "& .MuiOutlinedInput-root": {
+                          "&:hover fieldset": {
+                            borderColor: "#06b6d4",
                           },
-                          '&.Mui-focused fieldset': {
-                            borderColor: '#06b6d4',
+                          "&.Mui-focused fieldset": {
+                            borderColor: "#06b6d4",
                           },
                         },
-                        '& .MuiInputLabel-root.Mui-focused': {
-                          color: '#06b6d4',
+                        "& .MuiInputLabel-root.Mui-focused": {
+                          color: "#06b6d4",
                         },
                       }}
                     />
                   </Col>
-                  
+
                   <Col span={12}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
@@ -103,16 +105,16 @@ const PersonInfo: React.FC = () => {
                             fullWidth: true,
                             required: true,
                             sx: {
-                              '& .MuiOutlinedInput-root': {
-                                '&:hover fieldset': {
-                                  borderColor: '#06b6d4',
+                              "& .MuiOutlinedInput-root": {
+                                "&:hover fieldset": {
+                                  borderColor: "#06b6d4",
                                 },
-                                '&.Mui-focused fieldset': {
-                                  borderColor: '#06b6d4',
+                                "&.Mui-focused fieldset": {
+                                  borderColor: "#06b6d4",
                                 },
                               },
-                              '& .MuiInputLabel-root.Mui-focused': {
-                                color: '#06b6d4',
+                              "& .MuiInputLabel-root.Mui-focused": {
+                                color: "#06b6d4",
                               },
                             },
                           },
@@ -124,19 +126,19 @@ const PersonInfo: React.FC = () => {
 
                 <Row gutter={[24, 24]}>
                   <Col span={12}>
-                    <FormControl 
+                    <FormControl
                       fullWidth
                       sx={{
-                        '& .MuiOutlinedInput-root': {
-                          '&:hover fieldset': {
-                            borderColor: '#06b6d4',
+                        "& .MuiOutlinedInput-root": {
+                          "&:hover fieldset": {
+                            borderColor: "#06b6d4",
                           },
-                          '&.Mui-focused fieldset': {
-                            borderColor: '#06b6d4',
+                          "&.Mui-focused fieldset": {
+                            borderColor: "#06b6d4",
                           },
                         },
-                        '& .MuiInputLabel-root.Mui-focused': {
-                          color: '#06b6d4',
+                        "& .MuiInputLabel-root.Mui-focused": {
+                          color: "#06b6d4",
                         },
                       }}
                     >
@@ -144,30 +146,32 @@ const PersonInfo: React.FC = () => {
                       <Select
                         value={formData.gender}
                         label="Gender"
-                        onChange={handleChange('gender')}
+                        onChange={handleChange("gender")}
                       >
                         <MenuItem value="male">Male</MenuItem>
                         <MenuItem value="female">Female</MenuItem>
                         <MenuItem value="other">Other</MenuItem>
-                        <MenuItem value="prefer-not-to-say">Prefer not to say</MenuItem>
+                        <MenuItem value="prefer-not-to-say">
+                          Prefer not to say
+                        </MenuItem>
                       </Select>
                     </FormControl>
                   </Col>
-                  
+
                   <Col span={12}>
-                    <FormControl 
+                    <FormControl
                       fullWidth
                       sx={{
-                        '& .MuiOutlinedInput-root': {
-                          '&:hover fieldset': {
-                            borderColor: '#06b6d4',
+                        "& .MuiOutlinedInput-root": {
+                          "&:hover fieldset": {
+                            borderColor: "#06b6d4",
                           },
-                          '&.Mui-focused fieldset': {
-                            borderColor: '#06b6d4',
+                          "&.Mui-focused fieldset": {
+                            borderColor: "#06b6d4",
                           },
                         },
-                        '& .MuiInputLabel-root.Mui-focused': {
-                          color: '#06b6d4',
+                        "& .MuiInputLabel-root.Mui-focused": {
+                          color: "#06b6d4",
                         },
                       }}
                     >
@@ -175,16 +179,17 @@ const PersonInfo: React.FC = () => {
                       <Select
                         value={formData.bloodType}
                         label="Blood Type"
-                        onChange={handleChange('bloodType')}
+                        onChange={handleChange("bloodType")}
                         renderValue={(value) => (
-                          <Chip 
-                            label={value} 
-                            size="small" 
-                            sx={{ 
-                              background: 'linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%)',
-                              color: 'white',
+                          <Chip
+                            label={value}
+                            size="small"
+                            sx={{
+                              background:
+                                "linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%)",
+                              color: "white",
                               fontWeight: 600,
-                            }} 
+                            }}
                           />
                         )}
                       >
@@ -196,7 +201,7 @@ const PersonInfo: React.FC = () => {
                         <MenuItem value="AB-">AB-</MenuItem>
                         <MenuItem value="O+">O+</MenuItem>
                         <MenuItem value="O-">O-</MenuItem>
-          </Select>
+                      </Select>
                     </FormControl>
                   </Col>
                 </Row>
@@ -204,7 +209,7 @@ const PersonInfo: React.FC = () => {
             ),
           },
           {
-            key: '2',
+            key: "2",
             label: (
               <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
                 <MailOutlined className="text-cyan-600" />
@@ -212,7 +217,7 @@ const PersonInfo: React.FC = () => {
               </div>
             ),
             children: (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
                 <Row gutter={[24, 24]}>
                   <Col span={12}>
                     <TextField
@@ -220,58 +225,64 @@ const PersonInfo: React.FC = () => {
                       label="Email Address"
                       type="email"
                       value={formData.email}
-                      onChange={handleChange('email')}
+                      onChange={handleChange("email")}
                       required
                       variant="outlined"
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <MailOutlined style={{ color: '#06b6d4', fontSize: '18px' }} />
+                            <MailOutlined
+                              style={{ color: "#06b6d4", fontSize: "18px" }}
+                            />
                           </InputAdornment>
                         ),
                       }}
                       sx={{
-                        '& .MuiOutlinedInput-root': {
-                          '&:hover fieldset': {
-                            borderColor: '#06b6d4',
+                        "& .MuiOutlinedInput-root": {
+                          "&:hover fieldset": {
+                            borderColor: "#06b6d4",
                           },
-                          '&.Mui-focused fieldset': {
-                            borderColor: '#06b6d4',
+                          "&.Mui-focused fieldset": {
+                            borderColor: "#06b6d4",
                           },
                         },
-                        '& .MuiInputLabel-root.Mui-focused': {
-                          color: '#06b6d4',
+                        "& .MuiInputLabel-root.Mui-focused": {
+                          color: "#06b6d4",
                         },
                       }}
                     />
                   </Col>
-                  
+
                   <Col span={12}>
                     <TextField
                       fullWidth
                       label="Phone Number"
                       value={formData.phone}
-                      onChange={handleChange('phone')}
+                      onChange={handleChange("phone")}
                       required
                       variant="outlined"
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <span style={{ color: '#06b6d4', fontSize: '18px' }}>📱</span>
+                            <span
+                              style={{ color: "#06b6d4", fontSize: "18px" }}
+                            >
+                              📱
+                            </span>
                           </InputAdornment>
                         ),
                       }}
                       sx={{
-                        '& .MuiOutlinedInput-root': {
-                          '&:hover fieldset': {
-                            borderColor: '#06b6d4',
+                        "& .MuiOutlinedInput-root": {
+                          "&:hover fieldset": {
+                            borderColor: "#06b6d4",
                           },
-                          '&.Mui-focused fieldset': {
-                            borderColor: '#06b6d4',
+                          "&.Mui-focused fieldset": {
+                            borderColor: "#06b6d4",
                           },
                         },
-                        '& .MuiInputLabel-root.Mui-focused': {
-                          color: '#06b6d4',
+                        "& .MuiInputLabel-root.Mui-focused": {
+                          color: "#06b6d4",
                         },
                       }}
                     />
@@ -281,7 +292,7 @@ const PersonInfo: React.FC = () => {
             ),
           },
           {
-            key: '3',
+            key: "3",
             label: (
               <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
                 <MedicineBoxOutlined className="text-cyan-600" />
@@ -289,32 +300,34 @@ const PersonInfo: React.FC = () => {
               </div>
             ),
             children: (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
                 <TextField
                   fullWidth
                   label="Insurance ID"
                   value={formData.insuranceId}
-                  onChange={handleChange('insuranceId')}
+                  onChange={handleChange("insuranceId")}
                   required
                   variant="outlined"
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <span style={{ color: '#06b6d4', fontSize: '18px' }}>🆔</span>
+                        <span style={{ color: "#06b6d4", fontSize: "18px" }}>
+                          🆔
+                        </span>
                       </InputAdornment>
                     ),
                   }}
                   sx={{
-                    '& .MuiOutlinedInput-root': {
-                      '&:hover fieldset': {
-                        borderColor: '#06b6d4',
+                    "& .MuiOutlinedInput-root": {
+                      "&:hover fieldset": {
+                        borderColor: "#06b6d4",
                       },
-                      '&.Mui-focused fieldset': {
-                        borderColor: '#06b6d4',
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#06b6d4",
                       },
                     },
-                    '& .MuiInputLabel-root.Mui-focused': {
-                      color: '#06b6d4',
+                    "& .MuiInputLabel-root.Mui-focused": {
+                      color: "#06b6d4",
                     },
                   }}
                 />
@@ -322,7 +335,7 @@ const PersonInfo: React.FC = () => {
             ),
           },
           {
-            key: '4',
+            key: "4",
             label: (
               <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
                 <HomeOutlined className="text-cyan-600" />
@@ -330,32 +343,34 @@ const PersonInfo: React.FC = () => {
               </div>
             ),
             children: (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
                 <TextField
                   fullWidth
                   label="Street Address"
                   value={formData.address}
-                  onChange={handleChange('address')}
+                  onChange={handleChange("address")}
                   required
                   variant="outlined"
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <HomeOutlined style={{ color: '#06b6d4', fontSize: '18px' }} />
+                        <HomeOutlined
+                          style={{ color: "#06b6d4", fontSize: "18px" }}
+                        />
                       </InputAdornment>
                     ),
                   }}
                   sx={{
-                    '& .MuiOutlinedInput-root': {
-                      '&:hover fieldset': {
-                        borderColor: '#06b6d4',
+                    "& .MuiOutlinedInput-root": {
+                      "&:hover fieldset": {
+                        borderColor: "#06b6d4",
                       },
-                      '&.Mui-focused fieldset': {
-                        borderColor: '#06b6d4',
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#06b6d4",
                       },
                     },
-                    '& .MuiInputLabel-root.Mui-focused': {
-                      color: '#06b6d4',
+                    "& .MuiInputLabel-root.Mui-focused": {
+                      color: "#06b6d4",
                     },
                   }}
                 />
@@ -366,46 +381,50 @@ const PersonInfo: React.FC = () => {
                       fullWidth
                       label="City"
                       value={formData.city}
-                      onChange={handleChange('city')}
+                      onChange={handleChange("city")}
                       required
                       variant="outlined"
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <span style={{ color: '#06b6d4', fontSize: '18px' }}>🏙️</span>
+                            <span
+                              style={{ color: "#06b6d4", fontSize: "18px" }}
+                            >
+                              🏙️
+                            </span>
                           </InputAdornment>
                         ),
                       }}
                       sx={{
-                        '& .MuiOutlinedInput-root': {
-                          '&:hover fieldset': {
-                            borderColor: '#06b6d4',
+                        "& .MuiOutlinedInput-root": {
+                          "&:hover fieldset": {
+                            borderColor: "#06b6d4",
                           },
-                          '&.Mui-focused fieldset': {
-                            borderColor: '#06b6d4',
+                          "&.Mui-focused fieldset": {
+                            borderColor: "#06b6d4",
                           },
                         },
-                        '& .MuiInputLabel-root.Mui-focused': {
-                          color: '#06b6d4',
+                        "& .MuiInputLabel-root.Mui-focused": {
+                          color: "#06b6d4",
                         },
                       }}
                     />
                   </Col>
-                  
+
                   <Col span={7}>
-                    <FormControl 
+                    <FormControl
                       fullWidth
                       sx={{
-                        '& .MuiOutlinedInput-root': {
-                          '&:hover fieldset': {
-                            borderColor: '#06b6d4',
+                        "& .MuiOutlinedInput-root": {
+                          "&:hover fieldset": {
+                            borderColor: "#06b6d4",
                           },
-                          '&.Mui-focused fieldset': {
-                            borderColor: '#06b6d4',
+                          "&.Mui-focused fieldset": {
+                            borderColor: "#06b6d4",
                           },
                         },
-                        '& .MuiInputLabel-root.Mui-focused': {
-                          color: '#06b6d4',
+                        "& .MuiInputLabel-root.Mui-focused": {
+                          color: "#06b6d4",
                         },
                       }}
                     >
@@ -413,7 +432,7 @@ const PersonInfo: React.FC = () => {
                       <Select
                         value={formData.state}
                         label="State"
-                        onChange={handleChange('state')}
+                        onChange={handleChange("state")}
                       >
                         <MenuItem value="NY">NY</MenuItem>
                         <MenuItem value="CA">CA</MenuItem>
@@ -423,27 +442,27 @@ const PersonInfo: React.FC = () => {
                       </Select>
                     </FormControl>
                   </Col>
-                  
+
                   <Col span={7}>
                     <TextField
                       fullWidth
                       label="ZIP Code"
                       value={formData.zipCode}
-                      onChange={handleChange('zipCode')}
+                      onChange={handleChange("zipCode")}
                       required
                       variant="outlined"
                       inputProps={{ maxLength: 5 }}
                       sx={{
-                        '& .MuiOutlinedInput-root': {
-                          '&:hover fieldset': {
-                            borderColor: '#06b6d4',
+                        "& .MuiOutlinedInput-root": {
+                          "&:hover fieldset": {
+                            borderColor: "#06b6d4",
                           },
-                          '&.Mui-focused fieldset': {
-                            borderColor: '#06b6d4',
+                          "&.Mui-focused fieldset": {
+                            borderColor: "#06b6d4",
                           },
                         },
-                        '& .MuiInputLabel-root.Mui-focused': {
-                          color: '#06b6d4',
+                        "& .MuiInputLabel-root.Mui-focused": {
+                          color: "#06b6d4",
                         },
                       }}
                     />
@@ -451,9 +470,9 @@ const PersonInfo: React.FC = () => {
                 </Row>
               </Box>
             ),
-              },
-            ]}
-          />
+          },
+        ]}
+      />
     </div>
   );
 };

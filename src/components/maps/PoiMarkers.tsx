@@ -7,7 +7,6 @@ import {
 } from "@vis.gl/react-google-maps";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Circle } from "./Circle";
-import MapInfo from "./MapInfo";
 import type { Poi } from "../../types/Poi";
 import PlaceDetailsCompact from "./PlaceDetailsCompact";
 import { useGoogleMapsApi } from "./useGoogleMapsApi";
@@ -16,7 +15,6 @@ import {
   INITIAL_LATITUDE,
   INITIAL_LONGITUDE,
 } from "../../constants";
-import { useStore } from "../../store";
 import DirectionsMap from "./DirectionsMap";
 
 export const PoiMarkers = (props: { pois: Poi[] }) => {
@@ -71,13 +69,9 @@ export const PoiMarkers = (props: { pois: Poi[] }) => {
   );
 
   const [selectedPoi, setSelectedPoi] = useState<Poi | null>(null);
-  const { updatePoi } = useStore() as {
-    updatePoi: (lat: number, lng: number) => void;
-  };
 
   const handleSelectedPoiClick = (poi: Poi) => {
     setSelectedPoi(poi);
-    updatePoi(poi.location.lat, poi.location.lng);
   };
 
   const handleClose = () => {

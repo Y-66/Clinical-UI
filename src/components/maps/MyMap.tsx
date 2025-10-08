@@ -15,11 +15,12 @@ import {
 } from "../../constants";
 import { useEffect, useState } from "react";
 import type { Poi } from "../../types/Poi";
-import { Card, Chip, Box } from "@mui/material";
+import { Card, Chip, Box, CardHeader, CardContent } from "@mui/material";
 import { Badge } from "antd";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
+import { usePoisListStore } from "../../store";
 
 const center = { lat: INITIAL_LATITUDE, lng: INITIAL_LONGITUDE };
 
@@ -63,54 +64,24 @@ const NearbyPharmacies = () => {
     });
   }, [map, placesLib]);
 
+  const { updataPoisList } = usePoisListStore();
+  useEffect(() => {
+    updataPoisList(pois);
+    console.log("zustand测试", usePoisListStore.getState().poisList);
+  }, [pois]);
+
   return <PoiMarkers pois={pois} />;
 };
 
 export const MyMap = () => {
   const [pharmacyCount, setPharmacyCount] = useState(0);
+  const { poisList } = usePoisListStore();
 
   return (
     <div className="w-full h-full space-y-4">
-      {/* Info Header Card */}
-      <Card
-        elevation={3}
-        sx={{
-          background: "linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%)",
-          borderRadius: "16px",
-          padding: "16px 24px",
-        }}
-      >
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Box display="flex" alignItems="center" gap={2}>
-            <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-              <LocationOnIcon sx={{ color: "white", fontSize: 28 }} />
-            </div>
-            <div>
-              <h3 className="text-white font-bold text-lg m-0">
-                Find Nearby Pharmacies
-              </h3>
-              <p className="text-white/90 text-sm m-0">
-                Select your preferred location from the map
-              </p>
-            </div>
-          </Box>
-          <Badge
-            count={`${pharmacyCount} Found`}
-            style={{
-              backgroundColor: "#10b981",
-              color: "white",
-              fontSize: "14px",
-              fontWeight: 600,
-              padding: "4px 12px",
-              height: "auto",
-            }}
-          />
-        </Box>
-      </Card>
-
       {/* Map Container with Legend */}
-      <div className="relative">
-        <div className="w-full h-[350px] rounded-xl overflow-hidden shadow-2xl border-2 border-cyan-100 relative ">
+      <div className="grid grid-cols-3 gap-4 h-full items-stretch">
+        <div className="col-span-2 h-[350px] rounded-xl overflow-hidden shadow-2xl border-2 border-cyan-100 relative ">
           <APIProvider
             apiKey={GOOGLE_API_KEY}
             onLoad={() => console.log("Maps API has loaded.")}
@@ -191,6 +162,69 @@ export const MyMap = () => {
             <MyLocationIcon sx={{ color: "white", fontSize: 24 }} />
           </button>
         </div>
+        {/* 右侧卡片区域 */}
+
+        <Card className="h-[350px] flex flex-col col-span-1 bg-gray-50 border-l rounded-xl overflow-y-auto p-4">
+          {/* 列表区 */}
+          <div className="flex-1 overflow-y-auto space-y-1 ">
+            {poisList.length > 0 ? (
+              poisList.map((poi) => (
+                <div
+                  key={poi.key}
+                  className="border rounded-xl p-2 bg-white shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <p className="font-medium text-gray-900 mb-0.5">{poi.name}</p>
+                  <p className="text-sm text-gray-600 mb-0.5">{poi.vicinity}</p>
+                  {poi.rating && (
+                    <p className="text-xs text-yellow-600">
+                      ⭐ {poi.rating} ({poi.user_ratings_total} reviews)
+                    </p>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-gray-500">
+                No nearby pharmacies found.
+              </p>
+            )}
+          </div>
+
+          {/* 底部说明 */}
+          <Card
+            elevation={3}
+            sx={{
+              background: "linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%)",
+              borderRadius: "16px",
+              padding: "2px 2px",
+              width: "230px",
+            }}
+          >
+            <Box display="flex" alignItems="center" width={10}>
+              <Box display="flex" alignItems="center" gap={2}>
+                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                  <LocationOnIcon sx={{ color: "white", fontSize: 20 }} />
+                </div>
+                <div>
+                  <p className="text-white font-bold text-sm m-0">
+                    Find Nearby Pharmacies
+                  </p>
+                </div>
+              </Box>
+              <Badge
+                count={`${poisList.length} Found`}
+                style={{
+                  backgroundColor: "#10b981",
+                  color: "white",
+                  fontSize: "12px",
+                  fontWeight: 400,
+                  padding: "4px 2px",
+                  height: "auto",
+                  width: "60px",
+                }}
+              />
+            </Box>
+          </Card>
+        </Card>
 
         {/* Info Cards Below Map */}
         <div className="grid grid-cols-3 gap-4 mt-4">
