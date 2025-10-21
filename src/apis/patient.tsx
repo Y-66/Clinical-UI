@@ -1,7 +1,7 @@
 const BASE_URL: string = "http://localhost:8080";
 
 // get patient and create docs by patient ID
-export const getPatientAndCreateDocsById = async (patientId: string) => {
+export const getPatientAndCreateDocsById = async (patientId: number) => {
   try {
     const res = await fetch(
       `${BASE_URL}/api/ehealth/init?clientId=${patientId}`,

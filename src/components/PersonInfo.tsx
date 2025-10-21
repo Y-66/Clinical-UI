@@ -1,487 +1,418 @@
-import React, { useEffect, useState } from "react";
-import { Collapse, Row, Col } from "antd";
+import React, { useState } from "react";
+import { Card, Input, Button, Form, Descriptions, message, Spin, Alert } from "antd";
 import {
   UserOutlined,
+  SearchOutlined,
+  PhoneOutlined,
   MailOutlined,
   HomeOutlined,
-  MedicineBoxOutlined,
+  IdcardOutlined,
+  CalendarOutlined,
+  ContactsOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
-import {
-  TextField,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
-  InputAdornment,
-  Chip,
-  Box,
-} from "@mui/material";
-import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Dayjs } from "dayjs";
 import { getPatientAndCreateDocsById } from "../apis/patient";
 
-const PersonInfo: React.FC = () => {
-  const [formData, setFormData] = useState({});
-  useEffect(() => {
-    const loadData = async () => {
-      const data = await getPatientAndCreateDocsById("1");
-      console.log("Fetched patient data:", data);
-    };
-    loadData();
-  }, []);
-  // const [formData, setFormData] = useState({
-  //   fullName: "John Smith",
-  //   email: "john.smith@email.com",
-  //   phone: "+1 (555) 123-4567",
-  //   dateOfBirth: null as Dayjs | null,
-  //   gender: "male",
-  //   insuranceId: "INS-123456789",
-  //   bloodType: "A+",
-  //   address: "123 Main Street",
-  //   city: "New York",
-  //   state: "NY",
-  //   zipCode: "10001",
-  // });
+interface PatientInfo {
+  clientId: number;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  gender: string;
+  healthCardNum: string;
+  phone: string;
+  email: string;
+  address: string;
+  postalCode: string;
+  emergencyContact: string;
+  notes: string;
+}
 
-  const handleChange = (field: string) => (event: any) => {
-    setFormData({ ...formData, [field]: event.target.value });
+interface ApiResponse {
+  client: PatientInfo;
+}
+
+const PersonInfo: React.FC = () => {
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const [patientInfo, setPatientInfo] = useState<PatientInfo | null>(null);
+  const [error, setError] = useState<string>("");
+  const [loadingStep, setLoadingStep] = useState<string>("");
+
+  const handleSearch = async (values: { patientId: string }) => {
+    const patientId = parseInt(values.patientId);
+
+    if (!patientId || patientId <= 0) {
+      message.error("Please enter a valid client ID");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      // Show loading steps
+      setLoadingStep('Searching for patient information...');
+      const response: ApiResponse = await getPatientAndCreateDocsById(patientId);
+      
+      if (response && response.client) {
+        setLoadingStep('Initializing prescription form...');
+        await new Promise(resolve => setTimeout(resolve, 800)); // Simulate prescription init
+        
+        setLoadingStep('Preparing requisition documents...');
+        await new Promise(resolve => setTimeout(resolve, 800)); // Simulate requisition init
+        
+        setPatientInfo(response.client);
+        message.success("Patient information loaded successfully");
+      } else {
+        setError("Patient information not found");
+        setPatientInfo(null);
+      }
+    } catch (err) {
+      setError("Network error, please try again later");
+      setPatientInfo(null);
+      console.error("Error:", err);
+    } finally {
+      setLoadingStep('');
+      setLoading(false);
+    }
   };
 
-  const handleDateChange = (date: Dayjs | null) => {
-    setFormData({ ...formData, dateOfBirth: date });
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "--";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
+  };
+
+  const getGenderDisplay = (gender: string) => {
+    const genderMap: { [key: string]: string } = {
+      male: "Male",
+      female: "Female",
+      M: "Male",
+      F: "Female",
+      other: "Other",
+    };
+    return genderMap[gender] || gender || "--";
   };
 
   return (
-    <div className="w-full h-full">
-      <Collapse
-        defaultActiveKey={["1"]}
-        ghost
-        className="bg-white"
-        items={[
-          {
-            key: "1",
-            label: (
-              <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
-                <UserOutlined className="text-cyan-600" />
-                Basic Information
+    <div className="w-full h-full space-y-6">
+      {/* Client ID Search Area */}
+      <Card
+        title={
+          <div className="flex items-center gap-2">
+            <SearchOutlined className="text-cyan-600" />
+            <span className="text-lg font-semibold">Patient Information Search</span>
+          </div>
+        }
+        className="shadow-sm border-l-4 border-l-cyan-500"
+      >
+        <Form
+          form={form}
+          onFinish={handleSearch}
+          layout="inline"
+          className="w-full"
+        >
+          <Form.Item
+            name="clientId"
+            label={<span className="font-medium">Client ID</span>}
+            rules={[
+              { required: true, message: "Please enter client ID" },
+              { pattern: /^\d+$/, message: "Please enter a valid numeric ID" },
+            ]}
+            className="flex-1"
+          >
+            <Input
+              placeholder="Enter client ID to search"
+              size="large"
+              disabled={loading}
+              prefix={<IdcardOutlined className="text-gray-400" />}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              size="large"
+              loading={loading}
+              icon={<SearchOutlined />}
+              style={{
+                background: "linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%)",
+                border: "none",
+                fontWeight: 600,
+                height: "40px",
+                paddingLeft: "24px",
+                paddingRight: "24px",
+              }}
+            >
+              Search Patient
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
+
+      {/* Error Message Display */}
+      {error && (
+        <Alert
+          message="Search Failed"
+          description={error}
+          type="error"
+          showIcon
+          className="shadow-sm"
+          closable
+        />
+      )}
+
+      {/* Loading State */}
+      {loading && (
+        <Card className="text-center py-12 shadow-sm">
+          <Spin size="large" />
+          <div className="mt-6 space-y-4">
+            <div className="flex flex-col items-center space-y-3">
+              <div className="text-gray-700 font-medium flex items-center gap-2">
+                <span className="inline-block w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+                Searching for client information
               </div>
-            ),
-            children: (
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                <Row gutter={[24, 24]}>
-                  <Col span={12}>
-                    <TextField
-                      fullWidth
-                      label="Full Name"
-                      value={formData.fullName}
-                      onChange={handleChange("fullName")}
-                      required
-                      variant="outlined"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <UserOutlined
-                              style={{ color: "#06b6d4", fontSize: "18px" }}
-                            />
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "&:hover fieldset": {
-                            borderColor: "#06b6d4",
-                          },
-                          "&.Mui-focused fieldset": {
-                            borderColor: "#06b6d4",
-                          },
-                        },
-                        "& .MuiInputLabel-root.Mui-focused": {
-                          color: "#06b6d4",
-                        },
-                      }}
-                    />
-                  </Col>
-
-                  <Col span={12}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker
-                        label="Date of Birth"
-                        value={formData.dateOfBirth}
-                        onChange={handleDateChange}
-                        slotProps={{
-                          textField: {
-                            fullWidth: true,
-                            required: true,
-                            sx: {
-                              "& .MuiOutlinedInput-root": {
-                                "&:hover fieldset": {
-                                  borderColor: "#06b6d4",
-                                },
-                                "&.Mui-focused fieldset": {
-                                  borderColor: "#06b6d4",
-                                },
-                              },
-                              "& .MuiInputLabel-root.Mui-focused": {
-                                color: "#06b6d4",
-                              },
-                            },
-                          },
-                        }}
-                      />
-                    </LocalizationProvider>
-                  </Col>
-                </Row>
-
-                <Row gutter={[24, 24]}>
-                  <Col span={12}>
-                    <FormControl
-                      fullWidth
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "&:hover fieldset": {
-                            borderColor: "#06b6d4",
-                          },
-                          "&.Mui-focused fieldset": {
-                            borderColor: "#06b6d4",
-                          },
-                        },
-                        "& .MuiInputLabel-root.Mui-focused": {
-                          color: "#06b6d4",
-                        },
-                      }}
-                    >
-                      <InputLabel>Gender</InputLabel>
-                      <Select
-                        value={formData.gender}
-                        label="Gender"
-                        onChange={handleChange("gender")}
-                      >
-                        <MenuItem value="male">Male</MenuItem>
-                        <MenuItem value="female">Female</MenuItem>
-                        <MenuItem value="other">Other</MenuItem>
-                        <MenuItem value="prefer-not-to-say">
-                          Prefer not to say
-                        </MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Col>
-
-                  <Col span={12}>
-                    <FormControl
-                      fullWidth
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "&:hover fieldset": {
-                            borderColor: "#06b6d4",
-                          },
-                          "&.Mui-focused fieldset": {
-                            borderColor: "#06b6d4",
-                          },
-                        },
-                        "& .MuiInputLabel-root.Mui-focused": {
-                          color: "#06b6d4",
-                        },
-                      }}
-                    >
-                      <InputLabel>Blood Type</InputLabel>
-                      <Select
-                        value={formData.bloodType}
-                        label="Blood Type"
-                        onChange={handleChange("bloodType")}
-                        renderValue={(value) => (
-                          <Chip
-                            label={value}
-                            size="small"
-                            sx={{
-                              background:
-                                "linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%)",
-                              color: "white",
-                              fontWeight: 600,
-                            }}
-                          />
-                        )}
-                      >
-                        <MenuItem value="A+">A+</MenuItem>
-                        <MenuItem value="A-">A-</MenuItem>
-                        <MenuItem value="B+">B+</MenuItem>
-                        <MenuItem value="B-">B-</MenuItem>
-                        <MenuItem value="AB+">AB+</MenuItem>
-                        <MenuItem value="AB-">AB-</MenuItem>
-                        <MenuItem value="O+">O+</MenuItem>
-                        <MenuItem value="O-">O-</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Col>
-                </Row>
-              </Box>
-            ),
-          },
-          {
-            key: "2",
-            label: (
-              <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
-                <MailOutlined className="text-cyan-600" />
-                Contact Information
+              <div className="text-gray-700 font-medium flex items-center gap-2">
+                <span className="inline-block w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+                Initializing prescription form
               </div>
-            ),
-            children: (
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                <Row gutter={[24, 24]}>
-                  <Col span={12}>
-                    <TextField
-                      fullWidth
-                      label="Email Address"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleChange("email")}
-                      required
-                      variant="outlined"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <MailOutlined
-                              style={{ color: "#06b6d4", fontSize: "18px" }}
-                            />
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "&:hover fieldset": {
-                            borderColor: "#06b6d4",
-                          },
-                          "&.Mui-focused fieldset": {
-                            borderColor: "#06b6d4",
-                          },
-                        },
-                        "& .MuiInputLabel-root.Mui-focused": {
-                          color: "#06b6d4",
-                        },
-                      }}
-                    />
-                  </Col>
-
-                  <Col span={12}>
-                    <TextField
-                      fullWidth
-                      label="Phone Number"
-                      value={formData.phone}
-                      onChange={handleChange("phone")}
-                      required
-                      variant="outlined"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <span
-                              style={{ color: "#06b6d4", fontSize: "18px" }}
-                            >
-                              📱
-                            </span>
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "&:hover fieldset": {
-                            borderColor: "#06b6d4",
-                          },
-                          "&.Mui-focused fieldset": {
-                            borderColor: "#06b6d4",
-                          },
-                        },
-                        "& .MuiInputLabel-root.Mui-focused": {
-                          color: "#06b6d4",
-                        },
-                      }}
-                    />
-                  </Col>
-                </Row>
-              </Box>
-            ),
-          },
-          {
-            key: "3",
-            label: (
-              <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
-                <MedicineBoxOutlined className="text-cyan-600" />
-                Insurance Information
+              <div className="text-gray-700 font-medium flex items-center gap-2">
+                <span className="inline-block w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+                Initializing requisition form
               </div>
-            ),
-            children: (
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                <TextField
-                  fullWidth
-                  label="Insurance ID"
-                  value={formData.insuranceId}
-                  onChange={handleChange("insuranceId")}
-                  required
-                  variant="outlined"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <span style={{ color: "#06b6d4", fontSize: "18px" }}>
-                          🆔
-                        </span>
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      "&:hover fieldset": {
-                        borderColor: "#06b6d4",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#06b6d4",
-                      },
-                    },
-                    "& .MuiInputLabel-root.Mui-focused": {
-                      color: "#06b6d4",
-                    },
-                  }}
-                />
-              </Box>
-            ),
-          },
-          {
-            key: "4",
-            label: (
-              <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
-                <HomeOutlined className="text-cyan-600" />
-                Address Information
+            </div>
+            <p className="text-sm text-gray-500 mt-4">
+              This may take a few moments...
+            </p>
+          </div>
+        </Card>
+      )}
+
+      {/* Patient Information Display */}
+      {patientInfo && !loading && (
+        <div className="space-y-4">
+          {/* Basic Information Card */}
+          <Card
+            title={
+              <div className="flex items-center gap-2">
+                <UserOutlined className="text-green-600" />
+                <span className="text-lg font-semibold">Patient Basic Information</span>
               </div>
-            ),
-            children: (
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                <TextField
-                  fullWidth
-                  label="Street Address"
-                  value={formData.address}
-                  onChange={handleChange("address")}
-                  required
-                  variant="outlined"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <HomeOutlined
-                          style={{ color: "#06b6d4", fontSize: "18px" }}
-                        />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      "&:hover fieldset": {
-                        borderColor: "#06b6d4",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#06b6d4",
-                      },
-                    },
-                    "& .MuiInputLabel-root.Mui-focused": {
-                      color: "#06b6d4",
-                    },
-                  }}
-                />
+            }
+            className="shadow-sm border-l-4 border-l-green-500"
+          >
+            <Descriptions
+              bordered
+              column={{ xs: 1, sm: 2, md: 2, lg: 3 }}
+              size="middle"
+              labelStyle={{
+                backgroundColor: "#f8fafc",
+                fontWeight: 600,
+                color: "#374151",
+                width: "160px",
+                fontSize: "13px",
+                whiteSpace: "nowrap",
+              }}
+              contentStyle={{
+                fontSize: "14px",
+              }}
+            >
+              <Descriptions.Item
+                label={
+                  <div className="flex items-center gap-1">
+                    <IdcardOutlined className="text-cyan-600 text-sm" />
+                    <span>Client ID</span>
+                  </div>
+                }
+              >
+                <span className="font-bold text-cyan-600 text-base">
+                  #{patientInfo.clientId}
+                </span>
+              </Descriptions.Item>
 
-                <Row gutter={[24, 24]}>
-                  <Col span={10}>
-                    <TextField
-                      fullWidth
-                      label="City"
-                      value={formData.city}
-                      onChange={handleChange("city")}
-                      required
-                      variant="outlined"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <span
-                              style={{ color: "#06b6d4", fontSize: "18px" }}
-                            >
-                              🏙️
-                            </span>
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "&:hover fieldset": {
-                            borderColor: "#06b6d4",
-                          },
-                          "&.Mui-focused fieldset": {
-                            borderColor: "#06b6d4",
-                          },
-                        },
-                        "& .MuiInputLabel-root.Mui-focused": {
-                          color: "#06b6d4",
-                        },
-                      }}
-                    />
-                  </Col>
+              <Descriptions.Item
+                label={
+                  <div className="flex items-center gap-1">
+                    <UserOutlined className="text-blue-600 text-sm" />
+                    <span>Full Name</span>
+                  </div>
+                }
+                span={2}
+              >
+                <span className="font-semibold text-base">
+                  {patientInfo.firstName} {patientInfo.lastName}
+                </span>
+              </Descriptions.Item>
 
-                  <Col span={7}>
-                    <FormControl
-                      fullWidth
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "&:hover fieldset": {
-                            borderColor: "#06b6d4",
-                          },
-                          "&.Mui-focused fieldset": {
-                            borderColor: "#06b6d4",
-                          },
-                        },
-                        "& .MuiInputLabel-root.Mui-focused": {
-                          color: "#06b6d4",
-                        },
-                      }}
-                    >
-                      <InputLabel>State</InputLabel>
-                      <Select
-                        value={formData.state}
-                        label="State"
-                        onChange={handleChange("state")}
-                      >
-                        <MenuItem value="NY">NY</MenuItem>
-                        <MenuItem value="CA">CA</MenuItem>
-                        <MenuItem value="TX">TX</MenuItem>
-                        <MenuItem value="FL">FL</MenuItem>
-                        <MenuItem value="IL">IL</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Col>
+              <Descriptions.Item
+                label={
+                  <div className="flex items-center gap-1">
+                    <CalendarOutlined className="text-purple-600 text-sm" />
+                    <span>Date of Birth</span>
+                  </div>
+                }
+              >
+                {formatDate(patientInfo.dateOfBirth)}
+              </Descriptions.Item>
 
-                  <Col span={7}>
-                    <TextField
-                      fullWidth
-                      label="ZIP Code"
-                      value={formData.zipCode}
-                      onChange={handleChange("zipCode")}
-                      required
-                      variant="outlined"
-                      inputProps={{ maxLength: 5 }}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "&:hover fieldset": {
-                            borderColor: "#06b6d4",
-                          },
-                          "&.Mui-focused fieldset": {
-                            borderColor: "#06b6d4",
-                          },
-                        },
-                        "& .MuiInputLabel-root.Mui-focused": {
-                          color: "#06b6d4",
-                        },
-                      }}
-                    />
-                  </Col>
-                </Row>
-              </Box>
-            ),
-          },
-        ]}
-      />
+              <Descriptions.Item
+                label={
+                  <div className="flex items-center gap-1">
+                    <UserOutlined className="text-pink-600 text-sm" />
+                    <span>Gender</span>
+                  </div>
+                }
+              >
+                {getGenderDisplay(patientInfo.gender)}
+              </Descriptions.Item>
+
+              <Descriptions.Item
+                label={
+                  <div className="flex items-center gap-1">
+                    <IdcardOutlined className="text-green-600 text-sm" />
+                    <span>Health Card Number</span>
+                  </div>
+                }
+              >
+                <span className="font-mono bg-gray-100 px-2 py-1 rounded text-sm">
+                  {patientInfo.healthCardNum || "--"}
+                </span>
+              </Descriptions.Item>
+            </Descriptions>
+          </Card>
+
+          {/* Contact Information Card */}
+          <Card
+            title={
+              <div className="flex items-center gap-2">
+                <ContactsOutlined className="text-blue-600" />
+                <span className="text-lg font-semibold">Contact Information</span>
+              </div>
+            }
+            className="shadow-sm border-l-4 border-l-blue-500"
+          >
+            <Descriptions
+              bordered
+              column={1}
+              size="middle"
+              labelStyle={{
+                backgroundColor: "#f8fafc",
+                fontWeight: 600,
+                color: "#374151",
+                width: "160px",
+                fontSize: "13px",
+                whiteSpace: "nowrap",
+              }}
+              contentStyle={{
+                fontSize: "14px",
+              }}
+            >
+              <Descriptions.Item
+                label={
+                  <div className="flex items-center gap-1">
+                    <PhoneOutlined className="text-green-600 text-sm" />
+                    <span>Phone</span>
+                  </div>
+                }
+                span={1}
+              >
+                <span className="font-mono">{patientInfo.phone || "--"}</span>
+              </Descriptions.Item>
+
+              <Descriptions.Item
+                label={
+                  <div className="flex items-center gap-1">
+                    <MailOutlined className="text-red-600 text-sm" />
+                    <span>Email</span>
+                  </div>
+                }
+                span={1}
+              >
+                <span className="text-blue-600 underline">
+                  {patientInfo.email || "--"}
+                </span>
+              </Descriptions.Item>
+
+              <Descriptions.Item
+                label={
+                  <div className="flex items-center gap-1">
+                    <HomeOutlined className="text-orange-600 text-sm" />
+                    <span>Address</span>
+                  </div>
+                }
+                span={1}
+              >
+                {patientInfo.address || "--"}
+              </Descriptions.Item>
+
+              <Descriptions.Item
+                label={
+                  <div className="flex items-center gap-1">
+                    <HomeOutlined className="text-purple-600 text-sm" />
+                    <span>Postal Code</span>
+                  </div>
+                }
+                span={1}
+              >
+                <span className="font-mono bg-gray-50 px-2 py-1 rounded text-sm" style={{ fontSize: "14px" }}>
+                  {patientInfo.postalCode || "--"}
+                </span>
+              </Descriptions.Item>
+
+              <Descriptions.Item
+                label={
+                  <div className="flex items-center gap-1">
+                    <ContactsOutlined className="text-amber-600 text-sm" />
+                    <span>Emergency Contact</span>
+                  </div>
+                }
+                span={1}
+              >
+                {patientInfo.emergencyContact || "--"}
+              </Descriptions.Item>
+            </Descriptions>
+          </Card>
+
+          {/* Notes Information Card */}
+          {patientInfo.notes && (
+            <Card
+              title={
+                <div className="flex items-center gap-2">
+                  <FileTextOutlined className="text-amber-600" />
+                  <span className="text-lg font-semibold">Notes</span>
+                </div>
+              }
+              className="shadow-sm border-l-4 border-l-amber-500"
+            >
+              <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
+                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  {patientInfo.notes}
+                </p>
+              </div>
+            </Card>
+          )}
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!patientInfo && !loading && !error && (
+        <Card className="text-center py-16 shadow-sm border-2 border-dashed border-gray-300">
+          <div className="flex flex-col items-center justify-center">
+            <UserOutlined className="text-6xl text-gray-300 mb-4" />
+            <h3 className="text-xl font-semibold text-gray-500 mb-2">
+              No Patient Information
+            </h3>
+            <p className="text-gray-400 text-base">
+              Please enter a client ID above to search for client details
+            </p>
+          </div>
+        </Card>
+      )}
     </div>
   );
 };
