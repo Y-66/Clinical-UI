@@ -6,19 +6,19 @@ import {
   useMap,
 } from "@vis.gl/react-google-maps";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Circle } from "./Circle";
-import type { Poi } from "../../types/Poi";
-import PlaceDetailsCompact from "./PlaceDetailsCompact";
-import { useGoogleMapsApi } from "./useGoogleMapsApi";
+import { Circle } from "../Circle";
+import type { Poi } from "../../../types/Poi";
+import PlaceDetailsCompact from "../PlaceDetailsCompact";
+import { useGoogleMapsApi } from "../useGoogleMapsApi";
 import {
   GOOGLE_API_KEY,
   INITIAL_LATITUDE,
   INITIAL_LONGITUDE,
-} from "../../constants";
-import DirectionsMap from "./DirectionsMap";
-import { useCurrentPoiStore } from "../../store";
+} from "../../../constants";
+import DirectionsMapRequisition from "./DirectionsMapRequisition";
+import { useSelectedRequisitionPoiStore } from "../../../store";
 
-export const PoiMarkers = (props: { pois: Poi[] }) => {
+export const PoiMarkersRequisition = (props: { pois: Poi[] }) => {
   const loaded = useGoogleMapsApi(GOOGLE_API_KEY);
 
   const map = useMap();
@@ -71,16 +71,30 @@ export const PoiMarkers = (props: { pois: Poi[] }) => {
 
   // const [selectedPoi, setSelectedPoi] = useState<Poi | null>(null);
 
-  const { currentPoi, updateSelectedPoi } = useCurrentPoiStore();
+  const { selectedRequisitionPoi, updateSelectedRequisitionPoi } =
+    useSelectedRequisitionPoiStore();
+
+  // 在组件挂载时自动选择第一个 POI
+  useEffect(() => {
+    if (!map || !loaded || props.pois.length === 0) return;
+
+    const firstPoi = props.pois[0];
+    console.log("Auto-selecting first POI:", firstPoi);
+    if (firstPoi && !selectedRequisitionPoi) {
+      updateSelectedRequisitionPoi(firstPoi);
+      // 可选：将地图平移到第一个 POI
+      map.panTo(firstPoi.location);
+    }
+  }, [map, loaded, props.pois]);
 
   const handleSelectedPoiClick = (poi: Poi) => {
     // setSelectedPoi(poi);
-    updateSelectedPoi(poi);
+    updateSelectedRequisitionPoi(poi);
   };
 
   const handleClose = () => {
     // setSelectedPoi(null);
-    updateSelectedPoi(null);
+    updateSelectedRequisitionPoi(null);
   };
 
   if (!loaded) return <div>Loading Google Maps...</div>;
@@ -114,24 +128,27 @@ export const PoiMarkers = (props: { pois: Poi[] }) => {
           />
         </AdvancedMarker>
       ))}
-      {currentPoi && (
+      {selectedRequisitionPoi && (
         <>
-          <InfoWindow position={currentPoi.location} onCloseClick={handleClose}>
+          <InfoWindow
+            position={selectedRequisitionPoi.location}
+            onCloseClick={handleClose}
+          >
             {/* <MapInfo selectedPoi={selectedPoi} /> */}
             <div style={{ width: "400px" }}>
-              <PlaceDetailsCompact placeId={currentPoi.key} />
+              <PlaceDetailsCompact placeId={selectedRequisitionPoi.key} />
             </div>
           </InfoWindow>
         </>
       )}
-      {currentPoi?.location && (
+      {selectedRequisitionPoi?.location && (
         <>
-          <DirectionsMap
-            key={currentPoi.key}
+          <DirectionsMapRequisition
+            key={selectedRequisitionPoi.key}
             start={{ lat: INITIAL_LATITUDE, lng: INITIAL_LONGITUDE }}
             end={{
-              lat: currentPoi.location.lat,
-              lng: currentPoi.location.lng,
+              lat: selectedRequisitionPoi.location.lat,
+              lng: selectedRequisitionPoi.location.lng,
             }}
             zoom={6}
           />

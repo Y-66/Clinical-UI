@@ -32,3 +32,41 @@ export const usePoisListStore = create<PoisListStore>((set) => ({
   poisList: [],
   updataPoisList: (pois) => set({ poisList: pois }),
 }))
+
+interface selectedPharmacyPoi {
+  selectedPharmacyPoi: Poi | null;
+  distancePharmacy: string;
+  updateSelectedPharmacyPoi: (poi: Poi | null) => void;
+  setDistancePharmacy: (distance: string) => void;
+}
+export const useSelectedPharmacyPoiStore = create<selectedPharmacyPoi>((set) => ({
+  selectedPharmacyPoi: null,
+  distancePharmacy: '',
+  updateSelectedPharmacyPoi: (poi) =>
+    set(() => ({
+      selectedPharmacyPoi: poi,
+    })),
+  setDistancePharmacy: (distance) =>
+    set(() => ({
+      distancePharmacy: distance,
+    })),
+}));
+
+interface selectedRequisitionPoi {
+  selectedRequisitionPoi: Poi | null;
+  distanceRequisition: string;
+  updateSelectedRequisitionPoi: (poi: Poi | null) => void;
+  setDistanceRequisition: (distance: string) => void;
+}
+export const useSelectedRequisitionPoiStore = create<selectedRequisitionPoi>((set) => ({
+  selectedRequisitionPoi: null,
+  distanceRequisition: '',
+  updateSelectedRequisitionPoi: (poi) =>
+    set(() => ({
+      selectedRequisitionPoi: poi,
+    })),
+  setDistanceRequisition: (distance) =>
+    set(() => ({
+      distanceRequisition: distance,
+    })),
+}));

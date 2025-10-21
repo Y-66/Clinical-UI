@@ -1,6 +1,7 @@
 import { Tabs } from "antd";
 import { ShopOutlined, FileTextOutlined } from "@ant-design/icons";
-import MyMap from "../components/maps/MyMap";
+import MyPharmacyMap from "../components/maps/pharmacy/MyPharmacyMap";
+import MyRequisitionMap from "../components/maps/requisition/MyRequisitionMap";
 
 export const Step2 = () => {
   const tabItems = [
@@ -14,7 +15,7 @@ export const Step2 = () => {
       ),
       children: (
         <div className="w-full">
-          <MyMap />
+          <MyPharmacyMap />
         </div>
       ),
     },
@@ -28,7 +29,7 @@ export const Step2 = () => {
       ),
       children: (
         <div className="w-full">
-          <MyMap />
+          <MyRequisitionMap />
         </div>
       ),
     },

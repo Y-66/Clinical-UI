@@ -1,6 +1,6 @@
 import { useMap } from "@vis.gl/react-google-maps";
 import React, { useEffect, useRef } from "react";
-import { useCurrentPoiStore } from "../../store";
+import { useSelectedRequisitionPoiStore } from "../../../store";
 
 interface LatLng {
   lat: number;
@@ -13,7 +13,10 @@ interface DirectionsMapProps {
   zoom?: number;
 }
 
-const DirectionsMap: React.FC<DirectionsMapProps> = ({ start, end }) => {
+const DirectionsMapRequisition: React.FC<DirectionsMapProps> = ({
+  start,
+  end,
+}) => {
   const map = useMap();
   const mapRef = useRef<HTMLDivElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -52,7 +55,7 @@ const DirectionsMap: React.FC<DirectionsMapProps> = ({ start, end }) => {
     });
   }, [map]);
 
-  const { setDistance } = useCurrentPoiStore();
+  const { setDistanceRequisition } = useSelectedRequisitionPoiStore();
   const lastEndRef = useRef<LatLng | null>(null);
 
   useEffect(() => {
@@ -77,12 +80,14 @@ const DirectionsMap: React.FC<DirectionsMapProps> = ({ start, end }) => {
     directionsServiceRef.current.route(request, (result, status) => {
       if (status === "OK" && result) {
         directionsRendererRef.current!.setDirections(result);
-        setDistance(result.routes?.[0]?.legs?.[0]?.distance?.text ?? "");
+        setDistanceRequisition(
+          result.routes?.[0]?.legs?.[0]?.distance?.text ?? ""
+        );
       } else {
         console.error("Directions request failed:", status);
       }
     });
-  }, [start, end, setDistance]);
+  }, [start, end, setDistanceRequisition]);
 
   return (
     <>
@@ -95,4 +100,4 @@ const DirectionsMap: React.FC<DirectionsMapProps> = ({ start, end }) => {
   );
 };
 
-export default DirectionsMap;
+export default DirectionsMapRequisition;
