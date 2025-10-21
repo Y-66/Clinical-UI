@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Input, Button, Form, Descriptions, message, Spin, Alert } from "antd";
+import { Card, Input, Button, Form, Descriptions, message, Spin, Alert, Modal } from "antd";
 import {
   UserOutlined,
   SearchOutlined,
@@ -10,8 +10,11 @@ import {
   CalendarOutlined,
   ContactsOutlined,
   FileTextOutlined,
+  EyeOutlined,
+  MedicineBoxOutlined,
+  ExperimentOutlined,
 } from "@ant-design/icons";
-import { getPatientAndCreateDocsById } from "../apis/patient";
+import { getPatientAndCreateDocsById, getLatestPrescriptionByClientId, getLatestRequisitionByClientId } from "../apis/patient";
 
 interface PatientInfo {
   clientId: number;
@@ -32,12 +35,52 @@ interface ApiResponse {
   client: PatientInfo;
 }
 
+interface PrescriptionInfo {
+  prescriptionId: string;
+  clientId: number;
+  prescriberId: string;
+  medicationName: string;
+  medicationStrength: string;
+  medicationForm: string;
+  dosageInstructions: string;
+  quantity: number;
+  refillsAllowed: number;
+  datePrescribed: string;
+  expiryDate: string;
+  pharmacyName: string;
+  pharmacyAddress: string;
+  status: string;
+  notes: string;
+}
+
+interface RequisitionInfo {
+  requisitionId: string;
+  clientId: number;
+  requesterId: string;
+  department: string;
+  testType: string;
+  testCode: string;
+  clinicalInfo: string;
+  dateRequested: string;
+  priority: string;
+  status: string;
+  labName: string;
+  labAddress: string;
+  resultDate: string;
+  notes: string;
+}
+
 const PersonInfo: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [patientInfo, setPatientInfo] = useState<PatientInfo | null>(null);
   const [error, setError] = useState<string>("");
   const [loadingStep, setLoadingStep] = useState<string>("");
+  const [prescriptionModalVisible, setPrescriptionModalVisible] = useState(false);
+  const [requisitionModalVisible, setRequisitionModalVisible] = useState(false);
+  const [prescriptionData, setPrescriptionData] = useState<PrescriptionInfo | null>(null);
+  const [requisitionData, setRequisitionData] = useState<RequisitionInfo | null>(null);
+  const [previewLoading, setPreviewLoading] = useState<string>("");
 
   const handleSearch = async (values: { patientId: string }) => {
     const patientId = parseInt(values.patientId);
@@ -99,6 +142,38 @@ const PersonInfo: React.FC = () => {
     return genderMap[gender] || gender || "--";
   };
 
+  const handlePreviewPrescription = async () => {
+    if (!patientInfo) return;
+    
+    setPreviewLoading("prescription");
+    try {
+      const data = await getLatestPrescriptionByClientId(patientInfo.clientId);
+      setPrescriptionData(data);
+      setPrescriptionModalVisible(true);
+    } catch (error) {
+      message.error("Failed to fetch prescription data");
+      console.error("Error fetching prescription:", error);
+    } finally {
+      setPreviewLoading("");
+    }
+  };
+
+  const handlePreviewRequisition = async () => {
+    if (!patientInfo) return;
+    
+    setPreviewLoading("requisition");
+    try {
+      const data = await getLatestRequisitionByClientId(patientInfo.clientId);
+      setRequisitionData(data);
+      setRequisitionModalVisible(true);
+    } catch (error) {
+      message.error("Failed to fetch requisition data");
+      console.error("Error fetching requisition:", error);
+    } finally {
+      setPreviewLoading("");
+    }
+  };
+
   return (
     <div className="w-full h-full space-y-6">
       {/* Client ID Search Area */}
@@ -153,6 +228,28 @@ const PersonInfo: React.FC = () => {
             </Button>
           </Form.Item>
         </Form>
+        
+        {/* Preview Buttons */}
+        {patientInfo && !loading && (
+          <div className="flex gap-3 mt-4">
+            <Button
+              icon={<MedicineBoxOutlined />}
+              loading={previewLoading === "prescription"}
+              onClick={handlePreviewPrescription}
+              className="bg-blue-50 border-blue-200 text-blue-600 hover:bg-blue-100"
+            >
+              Preview Latest Prescription
+            </Button>
+            <Button
+              icon={<ExperimentOutlined />}
+              loading={previewLoading === "requisition"}
+              onClick={handlePreviewRequisition}
+              className="bg-green-50 border-green-200 text-green-600 hover:bg-green-100"
+            >
+              Preview Latest Requisition
+            </Button>
+          </div>
+        )}
       </Card>
 
       {/* Error Message Display */}
@@ -413,6 +510,131 @@ const PersonInfo: React.FC = () => {
           </div>
         </Card>
       )}
+
+      {/* Prescription Preview Modal */}
+      <Modal
+        title={
+          <div className="flex items-center gap-2">
+            <MedicineBoxOutlined className="text-blue-600" />
+            <span>Latest Prescription Form</span>
+          </div>
+        }
+        open={prescriptionModalVisible}
+        onCancel={() => setPrescriptionModalVisible(false)}
+        footer={null}
+        width={700}
+        style={{
+          borderRadius: "12px",
+        }}
+        bodyStyle={{
+          backgroundColor: "rgba(255, 255, 255, 0.95)",
+          borderRadius: "8px",
+        }}
+      >
+        {prescriptionData && (
+          <Descriptions
+            bordered
+            column={1}
+            size="small"
+            labelStyle={{
+              backgroundColor: "#f8fafc",
+              fontWeight: 600,
+              width: "180px",
+            }}
+          >
+            <Descriptions.Item label="Prescription ID">{prescriptionData.prescriptionId}</Descriptions.Item>
+            <Descriptions.Item label="Prescriber ID">{prescriptionData.prescriberId}</Descriptions.Item>
+            <Descriptions.Item label="Medication Name">{prescriptionData.medicationName}</Descriptions.Item>
+            <Descriptions.Item label="Strength">{prescriptionData.medicationStrength}</Descriptions.Item>
+            <Descriptions.Item label="Form">{prescriptionData.medicationForm}</Descriptions.Item>
+            <Descriptions.Item label="Dosage Instructions">{prescriptionData.dosageInstructions}</Descriptions.Item>
+            <Descriptions.Item label="Quantity">{prescriptionData.quantity}</Descriptions.Item>
+            <Descriptions.Item label="Refills Allowed">{prescriptionData.refillsAllowed}</Descriptions.Item>
+            <Descriptions.Item label="Date Prescribed">{formatDate(prescriptionData.datePrescribed)}</Descriptions.Item>
+            <Descriptions.Item label="Expiry Date">{formatDate(prescriptionData.expiryDate)}</Descriptions.Item>
+            <Descriptions.Item label="Pharmacy Name">{prescriptionData.pharmacyName}</Descriptions.Item>
+            <Descriptions.Item label="Pharmacy Address">{prescriptionData.pharmacyAddress}</Descriptions.Item>
+            <Descriptions.Item label="Status">
+              <span className={`px-2 py-1 rounded text-sm ${
+                prescriptionData.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+              }`}>
+                {prescriptionData.status}
+              </span>
+            </Descriptions.Item>
+            {prescriptionData.notes && (
+              <Descriptions.Item label="Notes">{prescriptionData.notes}</Descriptions.Item>
+            )}
+          </Descriptions>
+        )}
+      </Modal>
+
+      {/* Requisition Preview Modal */}
+      <Modal
+        title={
+          <div className="flex items-center gap-2">
+            <ExperimentOutlined className="text-green-600" />
+            <span>Latest Requisition Form</span>
+          </div>
+        }
+        open={requisitionModalVisible}
+        onCancel={() => setRequisitionModalVisible(false)}
+        footer={null}
+        width={700}
+        style={{
+          borderRadius: "12px",
+        }}
+        bodyStyle={{
+          backgroundColor: "rgba(255, 255, 255, 0.95)",
+          borderRadius: "8px",
+        }}
+      >
+        {requisitionData && (
+          <Descriptions
+            bordered
+            column={1}
+            size="small"
+            labelStyle={{
+              backgroundColor: "#f8fafc",
+              fontWeight: 600,
+              width: "180px",
+            }}
+          >
+            <Descriptions.Item label="Requisition ID">{requisitionData.requisitionId}</Descriptions.Item>
+            <Descriptions.Item label="Requester ID">{requisitionData.requesterId}</Descriptions.Item>
+            <Descriptions.Item label="Department">{requisitionData.department}</Descriptions.Item>
+            <Descriptions.Item label="Test Type">{requisitionData.testType}</Descriptions.Item>
+            <Descriptions.Item label="Test Code">{requisitionData.testCode}</Descriptions.Item>
+            <Descriptions.Item label="Clinical Info">{requisitionData.clinicalInfo}</Descriptions.Item>
+            <Descriptions.Item label="Date Requested">{formatDate(requisitionData.dateRequested)}</Descriptions.Item>
+            <Descriptions.Item label="Priority">
+              <span className={`px-2 py-1 rounded text-sm ${
+                requisitionData.priority === 'High' ? 'bg-red-100 text-red-800' :
+                requisitionData.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-green-100 text-green-800'
+              }`}>
+                {requisitionData.priority}
+              </span>
+            </Descriptions.Item>
+            <Descriptions.Item label="Status">
+              <span className={`px-2 py-1 rounded text-sm ${
+                requisitionData.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                requisitionData.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-gray-100 text-gray-800'
+              }`}>
+                {requisitionData.status}
+              </span>
+            </Descriptions.Item>
+            <Descriptions.Item label="Lab Name">{requisitionData.labName}</Descriptions.Item>
+            <Descriptions.Item label="Lab Address">{requisitionData.labAddress}</Descriptions.Item>
+            {requisitionData.resultDate && (
+              <Descriptions.Item label="Result Date">{formatDate(requisitionData.resultDate)}</Descriptions.Item>
+            )}
+            {requisitionData.notes && (
+              <Descriptions.Item label="Notes">{requisitionData.notes}</Descriptions.Item>
+            )}
+          </Descriptions>
+        )}
+      </Modal>
     </div>
   );
 };
