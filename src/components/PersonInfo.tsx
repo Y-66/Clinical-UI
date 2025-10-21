@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Collapse, Row, Col } from "antd";
 import {
   UserOutlined,
@@ -19,21 +19,30 @@ import {
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
+import { getPatientAndCreateDocsById } from "../apis/patient";
 
 const PersonInfo: React.FC = () => {
-  const [formData, setFormData] = useState({
-    fullName: "John Smith",
-    email: "john.smith@email.com",
-    phone: "+1 (555) 123-4567",
-    dateOfBirth: null as Dayjs | null,
-    gender: "male",
-    insuranceId: "INS-123456789",
-    bloodType: "A+",
-    address: "123 Main Street",
-    city: "New York",
-    state: "NY",
-    zipCode: "10001",
-  });
+  const [formData, setFormData] = useState({});
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await getPatientAndCreateDocsById("1");
+      console.log("Fetched patient data:", data);
+    };
+    loadData();
+  }, []);
+  // const [formData, setFormData] = useState({
+  //   fullName: "John Smith",
+  //   email: "john.smith@email.com",
+  //   phone: "+1 (555) 123-4567",
+  //   dateOfBirth: null as Dayjs | null,
+  //   gender: "male",
+  //   insuranceId: "INS-123456789",
+  //   bloodType: "A+",
+  //   address: "123 Main Street",
+  //   city: "New York",
+  //   state: "NY",
+  //   zipCode: "10001",
+  // });
 
   const handleChange = (field: string) => (event: any) => {
     setFormData({ ...formData, [field]: event.target.value });
