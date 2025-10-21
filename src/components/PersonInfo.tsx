@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Card, Input, Button, Form, Descriptions, message, Spin, Alert, Modal } from "antd";
+import {
+  Card,
+  Input,
+  Button,
+  Form,
+  Descriptions,
+  message,
+  Spin,
+  Alert,
+  Modal,
+} from "antd";
 import {
   UserOutlined,
   SearchOutlined,
@@ -10,64 +20,21 @@ import {
   CalendarOutlined,
   ContactsOutlined,
   FileTextOutlined,
-  EyeOutlined,
   MedicineBoxOutlined,
   ExperimentOutlined,
 } from "@ant-design/icons";
-import { getPatientAndCreateDocsById, getLatestPrescriptionByClientId, getLatestRequisitionByClientId } from "../apis/patient";
-
-interface PatientInfo {
-  clientId: number;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  gender: string;
-  healthCardNum: string;
-  phone: string;
-  email: string;
-  address: string;
-  postalCode: string;
-  emergencyContact: string;
-  notes: string;
-}
+import {
+  getPatientAndCreateDocsById,
+  getLatestPrescriptionByClientId,
+  getLatestRequisitionByClientId,
+} from "../apis/patient";
+import type { PatientInfo } from "../types/Patient";
+import { useCurrentPatientInfoStore } from "../store";
+import type { PrescriptionInfo } from "../types/Perscription";
+import type { RequisitionInfo } from "../types/Requisition";
 
 interface ApiResponse {
   client: PatientInfo;
-}
-
-interface PrescriptionInfo {
-  prescriptionId: string;
-  clientId: number;
-  prescriberId: string;
-  medicationName: string;
-  medicationStrength: string;
-  medicationForm: string;
-  dosageInstructions: string;
-  quantity: number;
-  refillsAllowed: number;
-  datePrescribed: string;
-  expiryDate: string;
-  pharmacyName: string;
-  pharmacyAddress: string;
-  status: string;
-  notes: string;
-}
-
-interface RequisitionInfo {
-  requisitionId: string;
-  clientId: number;
-  requesterId: string;
-  department: string;
-  testType: string;
-  testCode: string;
-  clinicalInfo: string;
-  dateRequested: string;
-  priority: string;
-  status: string;
-  labName: string;
-  labAddress: string;
-  resultDate: string;
-  notes: string;
 }
 
 const PersonInfo: React.FC = () => {
@@ -76,11 +43,16 @@ const PersonInfo: React.FC = () => {
   const [patientInfo, setPatientInfo] = useState<PatientInfo | null>(null);
   const [error, setError] = useState<string>("");
   const [loadingStep, setLoadingStep] = useState<string>("");
-  const [prescriptionModalVisible, setPrescriptionModalVisible] = useState(false);
+  const [prescriptionModalVisible, setPrescriptionModalVisible] =
+    useState(false);
   const [requisitionModalVisible, setRequisitionModalVisible] = useState(false);
-  const [prescriptionData, setPrescriptionData] = useState<PrescriptionInfo | null>(null);
-  const [requisitionData, setRequisitionData] = useState<RequisitionInfo | null>(null);
+  const [prescriptionData, setPrescriptionData] =
+    useState<PrescriptionInfo | null>(null);
+  const [requisitionData, setRequisitionData] =
+    useState<RequisitionInfo | null>(null);
   const [previewLoading, setPreviewLoading] = useState<string>("");
+
+  const { updatePatientInfo } = useCurrentPatientInfoStore();
 
   const handleSearch = async (values: { patientId: string }) => {
     const patientId = parseInt(values.patientId);
@@ -95,18 +67,21 @@ const PersonInfo: React.FC = () => {
 
     try {
       // Show loading steps
-      setLoadingStep('Searching for patient information...');
-      const response: ApiResponse = await getPatientAndCreateDocsById(patientId);
-      
+      setLoadingStep("Searching for patient information...");
+      const response: ApiResponse = await getPatientAndCreateDocsById(
+        patientId
+      );
+
       if (response && response.client) {
-        setLoadingStep('Initializing prescription form...');
-        await new Promise(resolve => setTimeout(resolve, 800)); // Simulate prescription init
-        
-        setLoadingStep('Preparing requisition documents...');
-        await new Promise(resolve => setTimeout(resolve, 800)); // Simulate requisition init
-        
+        setLoadingStep("Initializing prescription form...");
+        await new Promise((resolve) => setTimeout(resolve, 800)); // Simulate prescription init
+
+        setLoadingStep("Preparing requisition documents...");
+        await new Promise((resolve) => setTimeout(resolve, 800)); // Simulate requisition init
+
         setPatientInfo(response.client);
         message.success("Patient information loaded successfully");
+        updatePatientInfo(response.client);
       } else {
         setError("Patient information not found");
         setPatientInfo(null);
@@ -116,7 +91,7 @@ const PersonInfo: React.FC = () => {
       setPatientInfo(null);
       console.error("Error:", err);
     } finally {
-      setLoadingStep('');
+      setLoadingStep("");
       setLoading(false);
     }
   };
@@ -127,7 +102,7 @@ const PersonInfo: React.FC = () => {
     return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
-      day: "numeric"
+      day: "numeric",
     });
   };
 
@@ -144,7 +119,7 @@ const PersonInfo: React.FC = () => {
 
   const handlePreviewPrescription = async () => {
     if (!patientInfo) return;
-    
+
     setPreviewLoading("prescription");
     try {
       const data = await getLatestPrescriptionByClientId(patientInfo.clientId);
@@ -160,7 +135,7 @@ const PersonInfo: React.FC = () => {
 
   const handlePreviewRequisition = async () => {
     if (!patientInfo) return;
-    
+
     setPreviewLoading("requisition");
     try {
       const data = await getLatestRequisitionByClientId(patientInfo.clientId);
@@ -181,7 +156,9 @@ const PersonInfo: React.FC = () => {
         title={
           <div className="flex items-center gap-2">
             <SearchOutlined className="text-cyan-600" />
-            <span className="text-lg font-semibold">Patient Information Search</span>
+            <span className="text-lg font-semibold">
+              Patient Information Search
+            </span>
           </div>
         }
         className="shadow-sm border-l-4 border-l-cyan-500"
@@ -228,7 +205,7 @@ const PersonInfo: React.FC = () => {
             </Button>
           </Form.Item>
         </Form>
-        
+
         {/* Preview Buttons */}
         {patientInfo && !loading && (
           <div className="flex gap-3 mt-4">
@@ -298,7 +275,9 @@ const PersonInfo: React.FC = () => {
             title={
               <div className="flex items-center gap-2">
                 <UserOutlined className="text-green-600" />
-                <span className="text-lg font-semibold">Patient Basic Information</span>
+                <span className="text-lg font-semibold">
+                  Patient Basic Information
+                </span>
               </div>
             }
             className="shadow-sm border-l-4 border-l-green-500"
@@ -388,7 +367,9 @@ const PersonInfo: React.FC = () => {
             title={
               <div className="flex items-center gap-2">
                 <ContactsOutlined className="text-blue-600" />
-                <span className="text-lg font-semibold">Contact Information</span>
+                <span className="text-lg font-semibold">
+                  Contact Information
+                </span>
               </div>
             }
             className="shadow-sm border-l-4 border-l-blue-500"
@@ -456,7 +437,10 @@ const PersonInfo: React.FC = () => {
                 }
                 span={1}
               >
-                <span className="font-mono bg-gray-50 px-2 py-1 rounded text-sm" style={{ fontSize: "14px" }}>
+                <span
+                  className="font-mono bg-gray-50 px-2 py-1 rounded text-sm"
+                  style={{ fontSize: "14px" }}
+                >
                   {patientInfo.postalCode || "--"}
                 </span>
               </Descriptions.Item>
@@ -542,26 +526,54 @@ const PersonInfo: React.FC = () => {
               width: "180px",
             }}
           >
-            <Descriptions.Item label="Prescription ID">{prescriptionData.prescriptionId}</Descriptions.Item>
-            <Descriptions.Item label="Prescriber ID">{prescriptionData.prescriberId}</Descriptions.Item>
-            <Descriptions.Item label="Medication Name">{prescriptionData.medicationName}</Descriptions.Item>
-            <Descriptions.Item label="Strength">{prescriptionData.medicationStrength}</Descriptions.Item>
-            <Descriptions.Item label="Form">{prescriptionData.medicationForm}</Descriptions.Item>
-            <Descriptions.Item label="Dosage Instructions">{prescriptionData.dosageInstructions}</Descriptions.Item>
-            <Descriptions.Item label="Quantity">{prescriptionData.quantity}</Descriptions.Item>
-            <Descriptions.Item label="Refills Allowed">{prescriptionData.refillsAllowed}</Descriptions.Item>
-            <Descriptions.Item label="Date Prescribed">{formatDate(prescriptionData.datePrescribed)}</Descriptions.Item>
+            <Descriptions.Item label="Prescription ID">
+              {prescriptionData.prescriptionId}
+            </Descriptions.Item>
+            <Descriptions.Item label="Prescriber ID">
+              {prescriptionData.prescriberId}
+            </Descriptions.Item>
+            <Descriptions.Item label="Medication Name">
+              {prescriptionData.medicationName}
+            </Descriptions.Item>
+            <Descriptions.Item label="Strength">
+              {prescriptionData.medicationStrength}
+            </Descriptions.Item>
+            <Descriptions.Item label="Form">
+              {prescriptionData.medicationForm}
+            </Descriptions.Item>
+            <Descriptions.Item label="Dosage Instructions">
+              {prescriptionData.dosageInstructions}
+            </Descriptions.Item>
+            <Descriptions.Item label="Quantity">
+              {prescriptionData.quantity}
+            </Descriptions.Item>
+            <Descriptions.Item label="Refills Allowed">
+              {prescriptionData.refillsAllowed}
+            </Descriptions.Item>
+            <Descriptions.Item label="Date Prescribed">
+              {formatDate(prescriptionData.datePrescribed)}
+            </Descriptions.Item>
             <Descriptions.Item label="Status">
-              <span className={`px-2 py-1 rounded text-sm ${
-                prescriptionData.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-              }`}>
+              <span
+                className={`px-2 py-1 rounded text-sm ${
+                  prescriptionData.status === "Active"
+                    ? "bg-green-100 text-green-800"
+                    : "bg-gray-100 text-gray-800"
+                }`}
+              >
                 {prescriptionData.status}
               </span>
             </Descriptions.Item>
-            <Descriptions.Item label="Pharmacy Name">{prescriptionData.pharmacyName}</Descriptions.Item>
-            <Descriptions.Item label="Pharmacy Address">{prescriptionData.pharmacyAddress}</Descriptions.Item>
+            <Descriptions.Item label="Pharmacy Name">
+              {prescriptionData.pharmacyName}
+            </Descriptions.Item>
+            <Descriptions.Item label="Pharmacy Address">
+              {prescriptionData.pharmacyAddress}
+            </Descriptions.Item>
             {prescriptionData.notes && (
-              <Descriptions.Item label="Notes">{prescriptionData.notes}</Descriptions.Item>
+              <Descriptions.Item label="Notes">
+                {prescriptionData.notes}
+              </Descriptions.Item>
             )}
           </Descriptions>
         )}
@@ -598,38 +610,68 @@ const PersonInfo: React.FC = () => {
               width: "180px",
             }}
           >
-            <Descriptions.Item label="Requisition ID">{requisitionData.requisitionId}</Descriptions.Item>
-            <Descriptions.Item label="Requester ID">{requisitionData.requesterId}</Descriptions.Item>
-            <Descriptions.Item label="Department">{requisitionData.department}</Descriptions.Item>
-            <Descriptions.Item label="Test Type">{requisitionData.testType}</Descriptions.Item>
-            <Descriptions.Item label="Test Code">{requisitionData.testCode}</Descriptions.Item>
-            <Descriptions.Item label="Clinical Info">{requisitionData.clinicalInfo}</Descriptions.Item>
-            <Descriptions.Item label="Date Requested">{formatDate(requisitionData.dateRequested)}</Descriptions.Item>
+            <Descriptions.Item label="Requisition ID">
+              {requisitionData.requisitionId}
+            </Descriptions.Item>
+            <Descriptions.Item label="Requester ID">
+              {requisitionData.requesterId}
+            </Descriptions.Item>
+            <Descriptions.Item label="Department">
+              {requisitionData.department}
+            </Descriptions.Item>
+            <Descriptions.Item label="Test Type">
+              {requisitionData.testType}
+            </Descriptions.Item>
+            <Descriptions.Item label="Test Code">
+              {requisitionData.testCode}
+            </Descriptions.Item>
+            <Descriptions.Item label="Clinical Info">
+              {requisitionData.clinicalInfo}
+            </Descriptions.Item>
+            <Descriptions.Item label="Date Requested">
+              {formatDate(requisitionData.dateRequested)}
+            </Descriptions.Item>
             <Descriptions.Item label="Priority">
-              <span className={`px-2 py-1 rounded text-sm ${
-                requisitionData.priority === 'High' ? 'bg-red-100 text-red-800' :
-                requisitionData.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                'bg-green-100 text-green-800'
-              }`}>
+              <span
+                className={`px-2 py-1 rounded text-sm ${
+                  requisitionData.priority === "High"
+                    ? "bg-red-100 text-red-800"
+                    : requisitionData.priority === "Medium"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : "bg-green-100 text-green-800"
+                }`}
+              >
                 {requisitionData.priority}
               </span>
             </Descriptions.Item>
             <Descriptions.Item label="Status">
-              <span className={`px-2 py-1 rounded text-sm ${
-                requisitionData.status === 'Completed' ? 'bg-green-100 text-green-800' :
-                requisitionData.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                'bg-gray-100 text-gray-800'
-              }`}>
+              <span
+                className={`px-2 py-1 rounded text-sm ${
+                  requisitionData.status === "Completed"
+                    ? "bg-green-100 text-green-800"
+                    : requisitionData.status === "Pending"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : "bg-gray-100 text-gray-800"
+                }`}
+              >
                 {requisitionData.status}
               </span>
             </Descriptions.Item>
-            <Descriptions.Item label="Lab Name">{requisitionData.labName}</Descriptions.Item>
-            <Descriptions.Item label="Lab Address">{requisitionData.labAddress}</Descriptions.Item>
+            <Descriptions.Item label="Lab Name">
+              {requisitionData.labName}
+            </Descriptions.Item>
+            <Descriptions.Item label="Lab Address">
+              {requisitionData.labAddress}
+            </Descriptions.Item>
             {requisitionData.resultDate && (
-              <Descriptions.Item label="Result Date">{formatDate(requisitionData.resultDate)}</Descriptions.Item>
+              <Descriptions.Item label="Result Date">
+                {formatDate(requisitionData.resultDate)}
+              </Descriptions.Item>
             )}
             {requisitionData.notes && (
-              <Descriptions.Item label="Notes">{requisitionData.notes}</Descriptions.Item>
+              <Descriptions.Item label="Notes">
+                {requisitionData.notes}
+              </Descriptions.Item>
             )}
           </Descriptions>
         )}
