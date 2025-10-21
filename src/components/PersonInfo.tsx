@@ -551,9 +551,6 @@ const PersonInfo: React.FC = () => {
             <Descriptions.Item label="Quantity">{prescriptionData.quantity}</Descriptions.Item>
             <Descriptions.Item label="Refills Allowed">{prescriptionData.refillsAllowed}</Descriptions.Item>
             <Descriptions.Item label="Date Prescribed">{formatDate(prescriptionData.datePrescribed)}</Descriptions.Item>
-            <Descriptions.Item label="Expiry Date">{formatDate(prescriptionData.expiryDate)}</Descriptions.Item>
-            <Descriptions.Item label="Pharmacy Name">{prescriptionData.pharmacyName}</Descriptions.Item>
-            <Descriptions.Item label="Pharmacy Address">{prescriptionData.pharmacyAddress}</Descriptions.Item>
             <Descriptions.Item label="Status">
               <span className={`px-2 py-1 rounded text-sm ${
                 prescriptionData.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
@@ -561,6 +558,8 @@ const PersonInfo: React.FC = () => {
                 {prescriptionData.status}
               </span>
             </Descriptions.Item>
+            <Descriptions.Item label="Pharmacy Name">{prescriptionData.pharmacyName}</Descriptions.Item>
+            <Descriptions.Item label="Pharmacy Address">{prescriptionData.pharmacyAddress}</Descriptions.Item>
             {prescriptionData.notes && (
               <Descriptions.Item label="Notes">{prescriptionData.notes}</Descriptions.Item>
             )}
