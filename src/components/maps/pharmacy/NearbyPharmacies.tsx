@@ -1,11 +1,11 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
-import { PoiMarkers } from "./PoiMarkers";
+import { PoiMarkersPharmacy } from "./PoiMarkersPharmacy";
 import { useEffect, useState } from "react";
-import type { Poi } from "../../types/Poi";
-import { usePoisListStore } from "../../store";
-import type { Center } from "../../types/Center";
-import { SEARCH_RADIUS } from "../../constants";
-import { calculateDistance } from "../../utils/map";
+import type { Poi } from "../../../types/Poi";
+import { usePoisListStore } from "../../../store";
+import type { Center } from "../../../types/Center";
+import { SEARCH_RADIUS } from "../../../constants";
+import { calculateDistance } from "../../../utils/map";
 
 export const NearbyPharmacies = ({ center }: { center: Center }) => {
   const map = useMap();
@@ -67,5 +67,5 @@ export const NearbyPharmacies = ({ center }: { center: Center }) => {
     console.log("zustand测试", usePoisListStore.getState().poisList);
   }, [pois]);
 
-  return <PoiMarkers pois={pois} />;
+  return <PoiMarkersPharmacy pois={pois} />;
 };

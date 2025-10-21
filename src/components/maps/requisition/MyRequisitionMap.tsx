@@ -9,17 +9,20 @@ import {
   GOOGLE_API_KEY,
   INITIAL_LATITUDE,
   INITIAL_LONGITUDE,
-} from "../../constants";
+} from "../../../constants";
 import { useEffect, useRef } from "react";
-import type { Poi } from "../../types/Poi";
+import type { Poi } from "../../../types/Poi";
 import { Card, Box } from "@mui/material";
 import { Badge, Tag } from "antd";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
-import { useCurrentPoiStore, usePoisListStore } from "../../store";
+import {
+  usePoisListStore,
+  useSelectedRequisitionPoiStore,
+} from "../../../store";
 
-import type { Center } from "../../types/Center";
+import type { Center } from "../../../types/Center";
 import { NearbyRequisitions } from "./NearbyRequisitons";
 
 const center: Center = { lat: INITIAL_LATITUDE, lng: INITIAL_LONGITUDE };
@@ -27,20 +30,28 @@ const center: Center = { lat: INITIAL_LATITUDE, lng: INITIAL_LONGITUDE };
 export const MyRequisitionMap = () => {
   // const [pharmacyCount, setPharmacyCount] = useState(0);
   const { poisList } = usePoisListStore();
-  const { currentPoi, updateSelectedPoi, distance } = useCurrentPoiStore();
+  const {
+    selectedRequisitionPoi,
+    updateSelectedRequisitionPoi,
+    distanceRequisition,
+  } = useSelectedRequisitionPoiStore();
+  console.log("cesjo", distanceRequisition);
   const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
   // 每当选中项变化时，滚动到对应的 div
   useEffect(() => {
-    if (currentPoi?.key && itemRefs.current[currentPoi.key]) {
-      itemRefs.current[currentPoi.key]?.scrollIntoView({
+    if (
+      selectedRequisitionPoi?.key &&
+      itemRefs.current[selectedRequisitionPoi.key]
+    ) {
+      itemRefs.current[selectedRequisitionPoi.key]?.scrollIntoView({
         behavior: "smooth",
         block: "center",
       });
     }
-  }, [currentPoi]);
+  }, [selectedRequisitionPoi]);
 
   const handlePoisListClick = (poi: Poi) => {
-    updateSelectedPoi(poi);
+    updateSelectedRequisitionPoi(poi);
   };
 
   return (
@@ -141,7 +152,7 @@ export const MyRequisitionMap = () => {
                   onClick={() => handlePoisListClick(poi)}
                   className={`border rounded-xl p-2 transition-shadow
                   ${
-                    currentPoi?.key === poi.key
+                    selectedRequisitionPoi?.key === poi.key
                       ? "bg-blue-100 border-blue-500 shadow-md"
                       : "bg-white shadow-sm hover:shadow-md"
                   }`}
@@ -154,9 +165,9 @@ export const MyRequisitionMap = () => {
                         ⭐ {poi.rating} ({poi.user_ratings_total} reviews)
                       </p>
                     )}
-                    {currentPoi?.key === poi.key && (
+                    {selectedRequisitionPoi?.key === poi.key && (
                       <Tag color="green" className="text-xs">
-                        {distance}
+                        {distanceRequisition}
                       </Tag>
                     )}
                   </div>
@@ -164,7 +175,7 @@ export const MyRequisitionMap = () => {
               ))
             ) : (
               <p className="text-sm text-gray-500">
-                No nearby pharmacies found.
+                No nearby requisitions found.
               </p>
             )}
           </div>

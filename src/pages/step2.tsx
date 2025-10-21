@@ -1,7 +1,7 @@
 import { Tabs } from "antd";
 import { ShopOutlined, FileTextOutlined } from "@ant-design/icons";
-import MyPharmacyMap from "../components/maps/MyPharmacyMap";
-import MyRequisitionMap from "../components/maps/MyRequisitionMap";
+import MyPharmacyMap from "../components/maps/pharmacy/MyPharmacyMap";
+import MyRequisitionMap from "../components/maps/requisition/MyRequisitionMap";
 
 export const Step2 = () => {
   const tabItems = [

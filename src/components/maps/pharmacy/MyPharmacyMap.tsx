@@ -9,37 +9,38 @@ import {
   GOOGLE_API_KEY,
   INITIAL_LATITUDE,
   INITIAL_LONGITUDE,
-} from "../../constants";
+} from "../../../constants";
 import { useEffect, useRef } from "react";
-import type { Poi } from "../../types/Poi";
+import type { Poi } from "../../../types/Poi";
 import { Card, Box } from "@mui/material";
 import { Badge, Tag } from "antd";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
-import { useCurrentPoiStore, usePoisListStore } from "../../store";
+import { usePoisListStore, useSelectedPharmacyPoiStore } from "../../../store";
 import { NearbyPharmacies } from "./NearbyPharmacies";
-import type { Center } from "../../types/Center";
+import type { Center } from "../../../types/Center";
 
 const center: Center = { lat: INITIAL_LATITUDE, lng: INITIAL_LONGITUDE };
 
 export const MyPharmacyMap = () => {
   // const [pharmacyCount, setPharmacyCount] = useState(0);
   const { poisList } = usePoisListStore();
-  const { currentPoi, updateSelectedPoi, distance } = useCurrentPoiStore();
+  const { selectedPharmacyPoi, updateSelectedPharmacyPoi, distancePharmacy } =
+    useSelectedPharmacyPoiStore();
   const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
   // 每当选中项变化时，滚动到对应的 div
   useEffect(() => {
-    if (currentPoi?.key && itemRefs.current[currentPoi.key]) {
-      itemRefs.current[currentPoi.key]?.scrollIntoView({
+    if (selectedPharmacyPoi?.key && itemRefs.current[selectedPharmacyPoi.key]) {
+      itemRefs.current[selectedPharmacyPoi.key]?.scrollIntoView({
         behavior: "smooth",
         block: "center",
       });
     }
-  }, [currentPoi]);
+  }, [selectedPharmacyPoi]);
 
   const handlePoisListClick = (poi: Poi) => {
-    updateSelectedPoi(poi);
+    updateSelectedPharmacyPoi(poi);
   };
 
   return (
@@ -140,7 +141,7 @@ export const MyPharmacyMap = () => {
                   onClick={() => handlePoisListClick(poi)}
                   className={`border rounded-xl p-2 transition-shadow
                   ${
-                    currentPoi?.key === poi.key
+                    selectedPharmacyPoi?.key === poi.key
                       ? "bg-blue-100 border-blue-500 shadow-md"
                       : "bg-white shadow-sm hover:shadow-md"
                   }`}
@@ -153,9 +154,9 @@ export const MyPharmacyMap = () => {
                         ⭐ {poi.rating} ({poi.user_ratings_total} reviews)
                       </p>
                     )}
-                    {currentPoi?.key === poi.key && (
+                    {selectedPharmacyPoi?.key === poi.key && (
                       <Tag color="green" className="text-xs">
-                        {distance}
+                        {distancePharmacy}
                       </Tag>
                     )}
                   </div>
