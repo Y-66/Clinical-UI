@@ -73,6 +73,19 @@ export const PoiMarkers = (props: { pois: Poi[] }) => {
 
   const { currentPoi, updateSelectedPoi } = useCurrentPoiStore();
 
+  // 在组件挂载时自动选择第一个 POI
+  useEffect(() => {
+    if (!map || !loaded || props.pois.length === 0) return;
+
+    const firstPoi = props.pois[0];
+    console.log("Auto-selecting first POI:", firstPoi);
+    if (firstPoi && !currentPoi) {
+      updateSelectedPoi(firstPoi);
+      // 可选：将地图平移到第一个 POI
+      map.panTo(firstPoi.location);
+    }
+  }, [map, loaded, props.pois]);
+
   const handleSelectedPoiClick = (poi: Poi) => {
     // setSelectedPoi(poi);
     updateSelectedPoi(poi);

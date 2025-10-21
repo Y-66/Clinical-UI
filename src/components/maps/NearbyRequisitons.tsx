@@ -7,7 +7,7 @@ import type { Center } from "../../types/Center";
 import { SEARCH_RADIUS } from "../../constants";
 import { calculateDistance } from "../../utils/map";
 
-export const NearbyPharmacies = ({ center }: { center: Center }) => {
+export const NearbyRequisitions = ({ center }: { center: Center }) => {
   const map = useMap();
   const placesLib = useMapsLibrary("places");
   const [pois, setPois] = useState<Poi[]>([]);
@@ -20,7 +20,8 @@ export const NearbyPharmacies = ({ center }: { center: Center }) => {
     const request: google.maps.places.PlaceSearchRequest = {
       location: center,
       radius: SEARCH_RADIUS,
-      type: "pharmacy",
+      type: "doctor",
+      keyword: "medical check up OR health screening",
     };
 
     service.nearbySearch(request, (results, status) => {

@@ -23,7 +23,7 @@ import type { Center } from "../../types/Center";
 
 const center: Center = { lat: INITIAL_LATITUDE, lng: INITIAL_LONGITUDE };
 
-export const MyMap = () => {
+export const MyPharmacyMap = () => {
   // const [pharmacyCount, setPharmacyCount] = useState(0);
   const { poisList } = usePoisListStore();
   const { currentPoi, updateSelectedPoi, distance } = useCurrentPoiStore();
@@ -276,4 +276,4 @@ export const MyMap = () => {
   );
 };
 
-export default MyMap;
+export default MyPharmacyMap;
