@@ -118,16 +118,16 @@ const PersonInfo: React.FC = () => {
           className="w-full"
         >
           <Form.Item
-            name="clientId"
+            name="patientId"
             label={<span className="font-medium">Client ID</span>}
             rules={[
-              { required: true, message: "Please enter client ID" },
+              { required: true, message: "Please enter patient ID" },
               { pattern: /^\d+$/, message: "Please enter a valid numeric ID" },
             ]}
             className="flex-1"
           >
             <Input
-              placeholder="Enter client ID to search"
+              placeholder="Enter patient ID to search"
               size="large"
               disabled={loading}
               prefix={<IdcardOutlined className="text-gray-400" />}
