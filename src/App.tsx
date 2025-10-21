@@ -64,7 +64,7 @@ const App = () => {
       <div className="max-w-7xl mx-auto grid grid-cols-12 gap-6">
         {/* Left Steps Panel */}
         <div className="col-span-3">
-          <div className="glass-card p-6 sticky top-8">
+          <div className="glass-card p-6 min-h-[calc(100vh-8rem)]">
             <div className="mb-6">
               <h3 className="text-xl font-bold text-gray-800 mb-1">
                 Progress Tracker
@@ -79,7 +79,7 @@ const App = () => {
 
         {/* Main Content Area */}
         <div className="col-span-9">
-          <div className="glass-card p-8 min-h-[600px] flex flex-col justify-between">
+          <div className="glass-card p-8 min-h-[calc(100vh-8rem)] flex flex-col justify-between">
             {/* Step Title */}
             <div className="mb-0 flex items-center justify-between">
               <div className="flex items-baseline">
