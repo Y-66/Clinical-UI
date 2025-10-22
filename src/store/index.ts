@@ -1,6 +1,7 @@
 // src/store/useStore.ts
 import { create } from "zustand";
 import type { Poi } from "../types/Poi";
+import type { PatientInfo } from "../types/Patient";
 
 interface CurrentPoiStore {
   currentPoi: Poi | null;
@@ -69,4 +70,13 @@ export const useSelectedRequisitionPoiStore = create<selectedRequisitionPoi>((se
     set(() => ({
       distanceRequisition: distance,
     })),
+}));
+
+interface currentPatientInfo {
+  patientInfo: PatientInfo | null;
+  updatePatientInfo: (info: PatientInfo | null) => void;
+}
+export const useCurrentPatientInfoStore = create<currentPatientInfo>((set) => ({
+  patientInfo: null,
+  updatePatientInfo: (info) => set(() => ({ patientInfo: info })),
 }));
