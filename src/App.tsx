@@ -23,22 +23,22 @@ const App = () => {
   const steps = [
     {
       title: "Personal Info",
-      description: "Confirm Your Information",
+      description: "Confirm Client Information",
       icon: <CheckCircleOutlined />,
     },
     {
-      title: "Pharmacy",
-      description: "Select Your Pharmacy",
+      title: "Facility Selection",
+      description: "Select the Pharmacy & Lab",
       icon: <EnvironmentOutlined />,
     },
     {
-      title: "Prescription",
-      description: "Review Your Prescription",
+      title: "Form Review",
+      description: "Review the Prescription and Requisition",
       icon: <FileTextOutlined />,
     },
     {
       title: "Submit",
-      description: "Send to Pharmacy",
+      description: "Send fax to Pharmacy & Lab",
       icon: <SendOutlined />,
     },
   ];
@@ -54,7 +54,7 @@ const App = () => {
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-0">
         <h1 className="text-4xl font-bold text-white text-center mb-0 drop-shadow-lg">
-          Digital Prescription System
+          Digital Medical Document System
         </h1>
         <p className="text-white/90 text-center text-lg">
           Your health, simplified and secured

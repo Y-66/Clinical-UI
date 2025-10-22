@@ -24,7 +24,7 @@ export const Step2 = () => {
       label: (
         <span className="flex items-center gap-2">
           <FileTextOutlined />
-          Requisition Center
+          Lab
         </span>
       ),
       children: (
