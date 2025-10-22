@@ -207,7 +207,7 @@ export const MyPharmacyMap = () => {
         </Card>
 
         {/* Info Cards Below Map */}
-        <div className="grid grid-cols-3 gap-4 mt-4">
+        <div className="col-span-3 grid grid-cols-3 gap-4 mt-4">
           <Card
             elevation={2}
             sx={{
@@ -217,11 +217,11 @@ export const MyPharmacyMap = () => {
               border: "1px solid #14b8a6",
             }}
           >
-            <Box display="flex" flexDirection="column" alignItems="center">
+            <Box display="flex" flexDirection="row" alignItems="center" gap={2}>
               <div className="w-10 h-10 rounded-full bg-cyan-500 flex items-center justify-center mb-2">
                 <span className="text-white text-lg">🎯</span>
               </div>
-              <p className="text-xs text-gray-600 font-medium m-0">
+              <p className="text-sm text-gray-600 font-medium m-0">
                 Search Radius
               </p>
               <p className="text-lg font-bold text-cyan-700 m-0">2.0 km</p>
@@ -237,11 +237,11 @@ export const MyPharmacyMap = () => {
               border: "1px solid #14b8a6",
             }}
           >
-            <Box display="flex" flexDirection="column" alignItems="center">
+            <Box display="flex" flexDirection="row" alignItems="center" gap={2}>
               <div className="w-10 h-10 rounded-full bg-teal-500 flex items-center justify-center mb-2">
                 <LocalPharmacyIcon sx={{ color: "white", fontSize: 20 }} />
               </div>
-              <p className="text-xs text-gray-600 font-medium m-0">
+              <p className="text-sm text-gray-600 font-medium m-0">
                 Available Now
               </p>
               <p className="text-lg font-bold text-teal-700 m-0">
@@ -259,7 +259,7 @@ export const MyPharmacyMap = () => {
               border: "1px solid #14b8a6",
             }}
           >
-            <Box display="flex" flexDirection="column" alignItems="center">
+            <Box display="flex" flexDirection="row" alignItems="center" gap={2}>
               <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center mb-2">
                 <span className="text-white text-lg">⚡</span>
               </div>
