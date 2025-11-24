@@ -2,6 +2,7 @@
 import { create } from "zustand";
 import type { Poi } from "../types/Poi";
 import type { PatientInfo } from "../types/Patient";
+import type { DiagnosisInfo } from "../types/Diagnosis";
 
 interface CurrentPoiStore {
   currentPoi: Poi | null;
@@ -97,4 +98,13 @@ interface currentPatientInfo {
 export const useCurrentPatientInfoStore = create<currentPatientInfo>((set) => ({
   patientInfo: null,
   updatePatientInfo: (info) => set(() => ({ patientInfo: info })),
+}));
+
+interface currentDiagnosisInfo {
+  diagnosisInfo: DiagnosisInfo[] | null;
+  updateDiagnosisInfo: (info: DiagnosisInfo[] | null) => void;
+}
+export const useCurrentDiagnosisInfoStore = create<currentDiagnosisInfo>((set) => ({
+  diagnosisInfo: null,
+  updateDiagnosisInfo: (info) => set(() => ({ diagnosisInfo: info })),
 }));

@@ -18,6 +18,7 @@ import {
 } from "@ant-design/icons";
 import { getLatestDiagnosisByPatientId } from "../apis/patient";
 import type { DiagnosisInfo } from "../types/Diagnosis";
+import { useCurrentDiagnosisInfoStore } from "../store";
 
 const PersonInfo: React.FC = () => {
   const [form] = Form.useForm();
@@ -26,6 +27,7 @@ const PersonInfo: React.FC = () => {
   const [diagnosisData, setDiagnosisData] = useState<DiagnosisInfo[] | null>(
     null
   );
+  const { updateDiagnosisInfo } = useCurrentDiagnosisInfoStore();
 
   const handleSearch = async (values: { patientId: string }) => {
     const patientId = parseInt(values.patientId);
@@ -50,7 +52,9 @@ const PersonInfo: React.FC = () => {
         return;
       }
 
-      setDiagnosisData(Array.isArray(data) ? data : [data]);
+      const diagnosisArray = Array.isArray(data) ? data : [data];
+      setDiagnosisData(diagnosisArray);
+      updateDiagnosisInfo(diagnosisArray);
       message.success("Diagnosis information loaded successfully");
     } catch (err) {
       const errorMessage =

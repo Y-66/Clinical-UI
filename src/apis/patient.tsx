@@ -70,3 +70,27 @@ export const getLatestDiagnosisByPatientId = async (patientId: number) => {
     throw error;
   }
 };
+
+// generate workflow orders (prescription and requisition)
+export const generateWorkflowOrders = async (patientId: number) => {
+  try {
+    const res = await fetch(`${BASE_URL}/workflow/generate-orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ patient_id: patientId }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Workflow orders response:", data);
+    return data;
+  } catch (error) {
+    console.error("Error generating workflow orders:", error);
+    throw error;
+  }
+};
