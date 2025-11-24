@@ -39,9 +39,10 @@ const MapSearchBox = ({
 }) => {
   const places = useMapsLibrary("places");
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
-    if (!places || !inputRef.current) return;
+    if (!places || !inputRef.current || !isExpanded) return;
 
     const autocompleteInstance = new places.Autocomplete(inputRef.current, {
       fields: ["geometry", "name", "formatted_address"],
@@ -50,6 +51,7 @@ const MapSearchBox = ({
     autocompleteInstance.addListener("place_changed", () => {
       const place = autocompleteInstance.getPlace();
       onPlaceSelect(place);
+      setIsExpanded(false); // 选择地址后收起
     });
 
     return () => {
@@ -57,33 +59,63 @@ const MapSearchBox = ({
         google.maps.event.clearInstanceListeners(autocompleteInstance);
       }
     };
-  }, [places, onPlaceSelect]);
+  }, [places, onPlaceSelect, isExpanded]);
 
   return (
-    <TextField
-      inputRef={inputRef}
-      placeholder="Search for an address..."
-      size="small"
-      sx={{
+    <div
+      style={{
         position: "absolute",
         top: 10,
         right: 10,
-        width: "300px",
-        backgroundColor: "white",
-        borderRadius: "8px",
-        boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
-        "& .MuiOutlinedInput-root": {
+        display: "flex",
+        alignItems: "center",
+        gap: "8px",
+      }}
+    >
+      {isExpanded && (
+        <TextField
+          inputRef={inputRef}
+          placeholder="Search for an address..."
+          size="small"
+          autoFocus
+          sx={{
+            width: "300px",
+            backgroundColor: "white",
+            borderRadius: "8px",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "8px",
+            },
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon sx={{ color: "#06b6d4" }} />
+              </InputAdornment>
+            ),
+          }}
+        />
+      )}
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        style={{
+          width: "40px",
+          height: "40px",
           borderRadius: "8px",
-        },
-      }}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <SearchIcon sx={{ color: "#06b6d4" }} />
-          </InputAdornment>
-        ),
-      }}
-    />
+          backgroundColor: "white",
+          border: "none",
+          cursor: "pointer",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          transition: "all 0.3s ease",
+        }}
+        title={isExpanded ? "Close search" : "Search address"}
+      >
+        <SearchIcon sx={{ color: "#06b6d4", fontSize: 20 }} />
+      </button>
+    </div>
   );
 };
 
@@ -223,7 +255,7 @@ export const MyRequisitionMap = () => {
               borderRadius: "12px",
               background: "rgba(255, 255, 255, 0.95)",
               backdropFilter: "blur(10px)",
-              minWidth: "200px",
+              minWidth: "170px",
             }}
           >
             <Box display="flex" flexDirection="column" gap={1.5}>
