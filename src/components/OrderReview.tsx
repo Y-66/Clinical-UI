@@ -91,6 +91,76 @@ const OrderReview: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleUpdatePrescription = async () => {
+    try {
+      const prescriptionValues = await prescriptionForm.validateFields();
+
+      if (!prescriptionId) {
+        message.error("Prescription ID not found.");
+        return;
+      }
+
+      setLoading(true);
+
+      // Prepare prescription update data
+      const prescriptionUpdateData = {
+        status: prescriptionValues.status,
+        notes: prescriptionValues.notes,
+        medication_name: prescriptionValues.medication_name,
+        medication_strength: prescriptionValues.medication_strength,
+        medication_form: prescriptionValues.medication_form,
+        dosage_instructions: prescriptionValues.dosage_instructions,
+        quantity: prescriptionValues.quantity,
+        refills_allowed: prescriptionValues.refills_allowed,
+        expiry_date: prescriptionValues.expiry_date
+          ? prescriptionValues.expiry_date.format("YYYY-MM-DD")
+          : undefined,
+      };
+
+      await updatePrescriptionById(prescriptionId, prescriptionUpdateData);
+      message.success("Prescription updated successfully!");
+      await fetchOrderData();
+    } catch (error) {
+      message.error("Failed to update prescription. Please try again.");
+      console.error("Update prescription failed:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateRequisition = async () => {
+    try {
+      const requisitionValues = await requisitionForm.validateFields();
+
+      if (!requisitionId) {
+        message.error("Requisition ID not found.");
+        return;
+      }
+
+      setLoading(true);
+
+      // Prepare requisition update data
+      const requisitionUpdateData = {
+        status: requisitionValues.status,
+        notes: requisitionValues.notes,
+        department: requisitionValues.department,
+        test_type: requisitionValues.test_type,
+        test_code: requisitionValues.test_code,
+        clinical_info: requisitionValues.clinical_info,
+        priority: requisitionValues.priority,
+      };
+
+      await updateRequisitionById(requisitionId, requisitionUpdateData);
+      message.success("Requisition updated successfully!");
+      await fetchOrderData();
+    } catch (error) {
+      message.error("Failed to update requisition. Please try again.");
+      console.error("Update requisition failed:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmitOrders = async () => {
     try {
       // Validate both forms
@@ -405,6 +475,20 @@ const OrderReview: React.FC = () => {
                     />
                   </Form.Item>
                 </div>
+
+                {/* Update Button */}
+                <div className="flex justify-end pt-4">
+                  <Button
+                    type="primary"
+                    size="large"
+                    icon={<CheckCircleOutlined />}
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 border-none h-12 px-8 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg"
+                    onClick={handleUpdatePrescription}
+                    loading={loading}
+                  >
+                    Update Prescription
+                  </Button>
+                </div>
               </Form>
             </div>
           </Card>
@@ -607,6 +691,20 @@ const OrderReview: React.FC = () => {
                       }}
                     />
                   </Form.Item>
+                </div>
+
+                {/* Update Button */}
+                <div className="flex justify-end pt-4">
+                  <Button
+                    type="primary"
+                    size="large"
+                    icon={<CheckCircleOutlined />}
+                    className="bg-gradient-to-r from-green-500 to-green-600 border-none h-12 px-8 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg"
+                    onClick={handleUpdateRequisition}
+                    loading={loading}
+                  >
+                    Update Requisition
+                  </Button>
                 </div>
               </Form>
             </div>
