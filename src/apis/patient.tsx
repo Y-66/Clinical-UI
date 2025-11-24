@@ -180,3 +180,173 @@ export const getLabPreferences = async (patientId: number) => {
     throw error;
   }
 };
+
+// get prescription by ID
+export const getPrescriptionById = async (prescriptionId: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/prescriptions/${prescriptionId}`, {
+      method: "GET",
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Prescription response:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching prescription:", error);
+    throw error;
+  }
+};
+
+// get requisition by ID
+export const getRequisitionById = async (requisitionId: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/requisitions/${requisitionId}`, {
+      method: "GET",
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Requisition response:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching requisition:", error);
+    throw error;
+  }
+};
+
+// update prescription by ID (partial update)
+export const updatePrescriptionById = async (
+  prescriptionId: string,
+  updateData: Partial<{
+    status: string;
+    notes: string;
+    medication_name: string;
+    medication_strength: string;
+    medication_form: string;
+    dosage_instructions: string;
+    quantity: number;
+    refills_allowed: number;
+    expiry_date: string;
+  }>
+) => {
+  try {
+    const res = await fetch(`${BASE_URL}/prescriptions/${prescriptionId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updateData),
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Updated prescription response:", data);
+    return data;
+  } catch (error) {
+    console.error("Error updating prescription:", error);
+    throw error;
+  }
+};
+
+// update requisition by ID (partial update)
+export const updateRequisitionById = async (
+  requisitionId: string,
+  updateData: Partial<{
+    status: string;
+    notes: string;
+    department: string;
+    test_type: string;
+    test_code: string;
+    clinical_info: string;
+    priority: string;
+    result_date: string;
+  }>
+) => {
+  try {
+    const res = await fetch(`${BASE_URL}/requisitions/${requisitionId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updateData),
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Updated requisition response:", data);
+    return data;
+  } catch (error) {
+    console.error("Error updating requisition:", error);
+    throw error;
+  }
+};
+
+// set pharmacy for prescription
+export const setPrescriptionPharmacy = async (
+  prescriptionId: string,
+  pharmacyId: number
+) => {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/prescriptions/${prescriptionId}/pharmacy`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ pharmacy_id: pharmacyId }),
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Set prescription pharmacy response:", data);
+    return data;
+  } catch (error) {
+    console.error("Error setting prescription pharmacy:", error);
+    throw error;
+  }
+};
+
+// set lab for requisition
+export const setRequisitionLab = async (
+  requisitionId: string,
+  labId: number
+) => {
+  try {
+    const res = await fetch(`${BASE_URL}/requisitions/${requisitionId}/lab`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ lab_id: labId }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Set requisition lab response:", data);
+    return data;
+  } catch (error) {
+    console.error("Error setting requisition lab:", error);
+    throw error;
+  }
+};

@@ -21,7 +21,11 @@ import {
   getNearestLabs,
   getLabPreferences,
 } from "../apis/patient";
-import { useCurrentDiagnosisInfoStore } from "../store";
+import {
+  useCurrentDiagnosisInfoStore,
+  useSelectedPharmacyStore,
+  useSelectedLabStore,
+} from "../store";
 import type {
   Pharmacy,
   PharmacyPreference,
@@ -56,6 +60,8 @@ const LocationSelector: React.FC = () => {
     lng: number;
   } | null>(null);
   const { diagnosisInfo } = useCurrentDiagnosisInfoStore();
+  const { updateSelectedPharmacy } = useSelectedPharmacyStore();
+  const { updateSelectedLab } = useSelectedLabStore();
 
   const fetchPharmacyData = async () => {
     if (!diagnosisInfo || diagnosisInfo.length === 0) {
@@ -123,6 +129,13 @@ const LocationSelector: React.FC = () => {
     if (pharmacy.coordinates) {
       setPharmacyMapCenter(pharmacy.coordinates);
     }
+    // Save to store for step4
+    updateSelectedPharmacy({
+      pharmacy_id: pharmacy.pharmacy_id,
+      name: pharmacy.name,
+      address: pharmacy.address,
+    });
+    message.success(`Selected: ${pharmacy.name}`);
   };
 
   const handleSelectLab = (lab: Lab) => {
@@ -130,6 +143,13 @@ const LocationSelector: React.FC = () => {
     if (lab.coordinates) {
       setLabMapCenter(lab.coordinates);
     }
+    // Save to store for step4
+    updateSelectedLab({
+      lab_id: lab.lab_id,
+      name: lab.name,
+      address: lab.address,
+    });
+    message.success(`Selected: ${lab.name}`);
   };
 
   const formatDistance = (distanceKm?: number) => {

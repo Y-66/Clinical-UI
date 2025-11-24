@@ -7,7 +7,10 @@ import {
   ExperimentOutlined,
 } from "@ant-design/icons";
 import { generateWorkflowOrders } from "../apis/patient";
-import { useCurrentDiagnosisInfoStore } from "../store";
+import {
+  useCurrentDiagnosisInfoStore,
+  useGeneratedOrdersStore,
+} from "../store";
 import type { WorkflowOrderResponse } from "../types/WorkflowOrder";
 
 const OrderGeneration: React.FC = () => {
@@ -16,6 +19,7 @@ const OrderGeneration: React.FC = () => {
     null
   );
   const { diagnosisInfo } = useCurrentDiagnosisInfoStore();
+  const { updateOrderIds } = useGeneratedOrdersStore();
 
   const handleGenerateOrders = async () => {
     if (!diagnosisInfo || diagnosisInfo.length === 0) {
@@ -29,6 +33,11 @@ const OrderGeneration: React.FC = () => {
     try {
       const data = await generateWorkflowOrders(patientId);
       setOrderData(data);
+      // Save the generated IDs to store
+      updateOrderIds(
+        data.prescription.prescription_id,
+        data.requisition.requisition_id
+      );
       message.success("Orders generated successfully!");
     } catch (err) {
       const errorMessage =

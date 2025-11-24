@@ -1,9 +1,9 @@
-import Sending from "../components/Sending";
+import OrderReview from "../components/OrderReview";
 
 export const Step4 = () => {
   return (
     <div className="w-full">
-      <Sending />
+      <OrderReview />
     </div>
   );
 };
