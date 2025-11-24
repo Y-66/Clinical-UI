@@ -94,3 +94,89 @@ export const generateWorkflowOrders = async (patientId: number) => {
     throw error;
   }
 };
+
+// get nearest pharmacies by patient ID
+export const getNearestPharmacies = async (patientId: number) => {
+  try {
+    const res = await fetch(`${BASE_URL}/pharmacies/nearest/${patientId}`, {
+      method: "GET",
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Nearest pharmacies response:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching nearest pharmacies:", error);
+    throw error;
+  }
+};
+
+// get pharmacy preferences by patient ID
+export const getPharmacyPreferences = async (patientId: number) => {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/preferences/pharmacy?patient_id=${patientId}`,
+      {
+        method: "GET",
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Pharmacy preferences response:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching pharmacy preferences:", error);
+    throw error;
+  }
+};
+
+// get nearest labs by patient ID
+export const getNearestLabs = async (patientId: number) => {
+  try {
+    const res = await fetch(`${BASE_URL}/labs/nearest/${patientId}`, {
+      method: "GET",
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Nearest labs response:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching nearest labs:", error);
+    throw error;
+  }
+};
+
+// get lab preferences by patient ID
+export const getLabPreferences = async (patientId: number) => {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/preferences/lab?patient_id=${patientId}`,
+      {
+        method: "GET",
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Lab preferences response:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching lab preferences:", error);
+    throw error;
+  }
+};
