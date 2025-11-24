@@ -17,6 +17,7 @@ import { Step2 } from "./pages/step2";
 import SideBot from "./components/SideBot";
 import CustomSteps from "./components/CustomSteps";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { Step5 } from "./pages/step5";
 
 const App = () => {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -41,19 +42,26 @@ const App = () => {
       description: "Send fax to Pharmacy & Lab",
       icon: <SendOutlined />,
     },
+    {
+      title: "Fax",
+      description: "Send fax to Pharmacy & Lab",
+      icon: <SendOutlined />,
+    },
   ];
   const [current, setCurrent] = useState(0);
   const next = () => {
     setCurrent(current + 1);
+    window.scrollTo({ top: 200, behavior: "smooth" });
   };
   const prev = () => {
     setCurrent(current - 1);
+    window.scrollTo({ top: 200, behavior: "smooth" });
   };
   return (
     <div className="min-h-screen w-full p-8 relative">
       {/* Header */}
-      <div className="max-w-7xl mx-auto mb-0">
-        <h1 className="text-4xl font-bold text-white text-center mb-0 drop-shadow-lg">
+      <div className="max-w-7xl mx-auto mb-8 bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+        <h1 className="text-4xl font-bold text-white text-center mb-2 drop-shadow-lg">
           Digital Medical Document System
         </h1>
         <p className="text-white/90 text-center text-lg">
@@ -62,9 +70,9 @@ const App = () => {
       </div>
 
       <div className="max-w-7xl mx-auto grid grid-cols-12 gap-6">
-        {/* Left Steps Panel */}
+        {/* Left Steps Panel - Sticky */}
         <div className="col-span-3">
-          <div className="glass-card p-6 min-h-[calc(100vh-8rem)]">
+          <div className="sticky top-0 glass-card p-6">
             <div className="mb-6">
               <h3 className="text-xl font-bold text-gray-800 mb-1">
                 Progress Tracker
@@ -77,9 +85,9 @@ const App = () => {
           </div>
         </div>
 
-        {/* Main Content Area */}
+        {/* Main Content Area - No min height restriction */}
         <div className="col-span-9">
-          <div className="glass-card p-8 min-h-[calc(100vh-8rem)] flex flex-col justify-between">
+          <div className="glass-card p-8 flex flex-col">
             {/* Step Title */}
             <div className="mb-0 flex items-center justify-between">
               <div className="flex items-baseline">
@@ -111,14 +119,15 @@ const App = () => {
             </div>
 
             {/* Step Content with Animation */}
-            <div className="flex-1 overflow-hidden relative">
+            <div className="flex-1 relative">
               <TransitionGroup component={null}>
                 <CSSTransition key={current} timeout={500} classNames="page">
-                  <div className="absolute inset-0 overflow-auto">
+                  <div className="w-full">
                     {current === 0 && <Step1 />}
                     {current === 1 && <Step2 />}
                     {current === 2 && <Step3 />}
                     {current === 3 && <Step4 />}
+                    {current === 4 && <Step5 />}
                   </div>
                 </CSSTransition>
               </TransitionGroup>
