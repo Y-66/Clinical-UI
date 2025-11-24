@@ -34,7 +34,10 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 const OrderReview: React.FC = () => {
-  const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(false);
+  const [prescriptionLoading, setPrescriptionLoading] = useState(false);
+  const [requisitionLoading, setRequisitionLoading] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [prescriptionForm] = Form.useForm();
   const [requisitionForm] = Form.useForm();
   const { selectedPharmacy } = useSelectedPharmacyStore();
@@ -48,7 +51,7 @@ const OrderReview: React.FC = () => {
       return;
     }
 
-    setLoading(true);
+    setInitialLoading(true);
     try {
       const [prescriptionRes, requisitionRes] = await Promise.all([
         getPrescriptionById(prescriptionId),
@@ -82,7 +85,7 @@ const OrderReview: React.FC = () => {
       message.error("Failed to load order data");
       console.error("Error loading order data:", error);
     } finally {
-      setLoading(false);
+      setInitialLoading(false);
     }
   };
 
@@ -100,7 +103,7 @@ const OrderReview: React.FC = () => {
         return;
       }
 
-      setLoading(true);
+      setPrescriptionLoading(true);
 
       // Prepare prescription update data
       const prescriptionUpdateData = {
@@ -119,12 +122,11 @@ const OrderReview: React.FC = () => {
 
       await updatePrescriptionById(prescriptionId, prescriptionUpdateData);
       message.success("Prescription updated successfully!");
-      await fetchOrderData();
     } catch (error) {
       message.error("Failed to update prescription. Please try again.");
       console.error("Update prescription failed:", error);
     } finally {
-      setLoading(false);
+      setPrescriptionLoading(false);
     }
   };
 
@@ -137,7 +139,7 @@ const OrderReview: React.FC = () => {
         return;
       }
 
-      setLoading(true);
+      setRequisitionLoading(true);
 
       // Prepare requisition update data
       const requisitionUpdateData = {
@@ -152,12 +154,11 @@ const OrderReview: React.FC = () => {
 
       await updateRequisitionById(requisitionId, requisitionUpdateData);
       message.success("Requisition updated successfully!");
-      await fetchOrderData();
     } catch (error) {
       message.error("Failed to update requisition. Please try again.");
       console.error("Update requisition failed:", error);
     } finally {
-      setLoading(false);
+      setRequisitionLoading(false);
     }
   };
 
@@ -172,7 +173,7 @@ const OrderReview: React.FC = () => {
         return;
       }
 
-      setLoading(true);
+      setSubmitLoading(true);
 
       // Prepare prescription update data (only editable fields)
       const prescriptionUpdateData = {
@@ -222,18 +223,15 @@ const OrderReview: React.FC = () => {
       await Promise.all(apiCalls);
 
       message.success("Orders submitted successfully!");
-
-      // Optionally refresh the data
-      await fetchOrderData();
     } catch (error) {
       message.error("Failed to submit orders. Please try again.");
       console.error("Validation or submission failed:", error);
     } finally {
-      setLoading(false);
+      setSubmitLoading(false);
     }
   };
 
-  if (loading) {
+  if (initialLoading) {
     return (
       <div className="flex justify-center items-center h-96">
         <Spin size="large" />
@@ -484,7 +482,7 @@ const OrderReview: React.FC = () => {
                     icon={<CheckCircleOutlined />}
                     className="bg-gradient-to-r from-blue-500 to-blue-600 border-none h-12 px-8 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg"
                     onClick={handleUpdatePrescription}
-                    loading={loading}
+                    loading={prescriptionLoading}
                   >
                     Update Prescription
                   </Button>
@@ -701,7 +699,7 @@ const OrderReview: React.FC = () => {
                     icon={<CheckCircleOutlined />}
                     className="bg-gradient-to-r from-green-500 to-green-600 border-none h-12 px-8 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg"
                     onClick={handleUpdateRequisition}
-                    loading={loading}
+                    loading={requisitionLoading}
                   >
                     Update Requisition
                   </Button>
@@ -719,6 +717,7 @@ const OrderReview: React.FC = () => {
             icon={<CheckCircleOutlined />}
             className="bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 border-none h-14 px-12 text-xl font-bold shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300 rounded-xl"
             onClick={handleSubmitOrders}
+            loading={submitLoading}
           >
             Submit Orders
           </Button>
