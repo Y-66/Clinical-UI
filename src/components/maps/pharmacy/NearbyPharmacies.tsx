@@ -59,13 +59,13 @@ export const NearbyPharmacies = ({ center }: { center: Center }) => {
         );
       }
     });
-  }, [map, placesLib]);
+  }, [map, placesLib, center]);
 
   const { updataPoisList } = usePoisListStore();
   useEffect(() => {
     updataPoisList(pois);
     console.log("zustand测试", usePoisListStore.getState().poisList);
-  }, [pois]);
+  }, [pois, updataPoisList]);
 
   return <PoiMarkersPharmacy pois={pois} />;
 };

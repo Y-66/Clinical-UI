@@ -12,12 +12,20 @@ import {
   FileTextOutlined,
   ExperimentOutlined,
 } from "@ant-design/icons";
+import {
+  useSelectedPharmacyPoiStore,
+  useSelectedRequisitionPoiStore,
+} from "../store";
 
 const Sending: React.FC = () => {
   const [deliveryMethod, setDeliveryMethod] = useState<"pickup" | "delivery">(
     "pickup"
   );
   const [submitted, setSubmitted] = useState(false);
+  const { selectedPharmacyPoi } = useSelectedPharmacyPoiStore();
+  const { selectedRequisitionPoi } = useSelectedRequisitionPoiStore();
+  console.log("Selected Pharmacy POI in Sending:", selectedPharmacyPoi);
+  console.log("Selected Requisition POI in Sending:", selectedRequisitionPoi);
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6 h-full">

@@ -90,7 +90,7 @@ const App = () => {
                   {steps[current].description}
                 </p>
               </div>
-              <Button
+              {/* <Button
                 onClick={() => setShowSidebar(!showSidebar)}
                 icon={<RobotOutlined />}
                 size="large"
@@ -107,7 +107,7 @@ const App = () => {
                 }}
               >
                 AI Assistant
-              </Button>
+              </Button> */}
             </div>
 
             {/* Step Content with Animation */}
@@ -211,13 +211,13 @@ const App = () => {
                 onClick={() => setShowSidebar(false)}
                 className="hover:bg-gray-100 transition-colors"
                 style={{
-                  color: '#6b7280',
-                  width: '32px',
-                  height: '32px',
+                  color: "#6b7280",
+                  width: "32px",
+                  height: "32px",
                   padding: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               />
             </div>

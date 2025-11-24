@@ -40,8 +40,6 @@ const DirectionsMapPharmacy: React.FC<DirectionsMapProps> = ({
     if (!map) return;
 
     const directionsService = new google.maps.DirectionsService();
-    const directionsRenderer = new google.maps.DirectionsRenderer();
-    directionsRenderer.setMap(map);
 
     directionsServiceRef.current = directionsService;
     directionsRendererRef.current = new google.maps.DirectionsRenderer({

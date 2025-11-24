@@ -3,6 +3,8 @@ import {
   APIProvider,
   Map,
   Pin,
+  useMap,
+  useMapsLibrary,
 } from "@vis.gl/react-google-maps";
 import type { MapCameraChangedEvent } from "@vis.gl/react-google-maps";
 import {
@@ -10,24 +12,102 @@ import {
   INITIAL_LATITUDE,
   INITIAL_LONGITUDE,
 } from "../../../constants";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Poi } from "../../../types/Poi";
-import { Card, Box } from "@mui/material";
+import { Card, Box, TextField, InputAdornment } from "@mui/material";
 import { Badge, Tag } from "antd";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   usePoisListStore,
   useSelectedRequisitionPoiStore,
+  useRequisitionCenterStore,
 } from "../../../store";
 
 import type { Center } from "../../../types/Center";
 import { NearbyRequisitions } from "./NearbyRequisitons";
 
-const center: Center = { lat: INITIAL_LATITUDE, lng: INITIAL_LONGITUDE };
+const initialCenter: Center = { lat: INITIAL_LATITUDE, lng: INITIAL_LONGITUDE };
+
+// Search box component inside the map
+const MapSearchBox = ({
+  onPlaceSelect,
+}: {
+  onPlaceSelect: (place: google.maps.places.PlaceResult | null) => void;
+}) => {
+  const places = useMapsLibrary("places");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!places || !inputRef.current) return;
+
+    const autocompleteInstance = new places.Autocomplete(inputRef.current, {
+      fields: ["geometry", "name", "formatted_address"],
+    });
+
+    autocompleteInstance.addListener("place_changed", () => {
+      const place = autocompleteInstance.getPlace();
+      onPlaceSelect(place);
+    });
+
+    return () => {
+      if (autocompleteInstance) {
+        google.maps.event.clearInstanceListeners(autocompleteInstance);
+      }
+    };
+  }, [places, onPlaceSelect]);
+
+  return (
+    <TextField
+      inputRef={inputRef}
+      placeholder="Search for an address..."
+      size="small"
+      sx={{
+        position: "absolute",
+        top: 10,
+        right: 10,
+        width: "300px",
+        backgroundColor: "white",
+        borderRadius: "8px",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+        "& .MuiOutlinedInput-root": {
+          borderRadius: "8px",
+        },
+      }}
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <SearchIcon sx={{ color: "#06b6d4" }} />
+          </InputAdornment>
+        ),
+      }}
+    />
+  );
+};
+
+// Map controller component to handle map instance
+const MapController = ({
+  onMapReady,
+}: {
+  onMapReady: (map: google.maps.Map) => void;
+}) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (map) {
+      onMapReady(map);
+    }
+  }, [map, onMapReady]);
+
+  return null;
+};
 
 export const MyRequisitionMap = () => {
+  const [center, setCenter] = useState<Center>(initialCenter);
+  const [key, setKey] = useState(0);
+  const mapRef = useRef<google.maps.Map | null>(null);
   // const [pharmacyCount, setPharmacyCount] = useState(0);
   const { poisList } = usePoisListStore();
   const {
@@ -35,8 +115,46 @@ export const MyRequisitionMap = () => {
     updateSelectedRequisitionPoi,
     distanceRequisition,
   } = useSelectedRequisitionPoiStore();
+  const { updateRequisitionCenter } = useRequisitionCenterStore();
   console.log("cesjo", distanceRequisition);
   const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  // 初始化时设置默认中心点
+  useEffect(() => {
+    updateRequisitionCenter(initialCenter);
+  }, [updateRequisitionCenter]);
+
+  const handlePlaceSelect = (place: google.maps.places.PlaceResult | null) => {
+    if (place?.geometry?.location) {
+      const newCenter = {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+      };
+      setCenter(newCenter);
+      updateRequisitionCenter(newCenter); // 更新全局中心点
+      // Pan to the new location
+      if (mapRef.current) {
+        mapRef.current.panTo(newCenter);
+        mapRef.current.setZoom(15);
+      }
+      // Force re-render of NearbyRequisitions by changing key
+      setKey((prev) => prev + 1);
+    }
+  };
+
+  const handleCenterToMyLocation = () => {
+    setCenter(initialCenter);
+    updateRequisitionCenter(initialCenter); // 更新全局中心点
+    if (mapRef.current) {
+      mapRef.current.panTo(initialCenter);
+      mapRef.current.setZoom(15);
+    }
+    setKey((prev) => prev + 1);
+  };
+
+  const handleMapReady = (map: google.maps.Map) => {
+    mapRef.current = map;
+  };
   // 每当选中项变化时，滚动到对应的 div
   useEffect(() => {
     if (
@@ -66,7 +184,7 @@ export const MyRequisitionMap = () => {
             <Map
               className="w-full h-full"
               defaultZoom={15}
-              defaultCenter={center}
+              defaultCenter={initialCenter}
               mapId="320e09b3a26d8c60fe158e5a"
               renderingType="VECTOR"
               tiltInteractionEnabled={true}
@@ -80,6 +198,7 @@ export const MyRequisitionMap = () => {
                 )
               }
             >
+              <MapController onMapReady={handleMapReady} />
               <AdvancedMarker position={center}>
                 <Pin
                   background="#DB4437"
@@ -88,7 +207,8 @@ export const MyRequisitionMap = () => {
                   scale={1.5}
                 />
               </AdvancedMarker>
-              <NearbyRequisitions center={center} />
+              <NearbyRequisitions key={key} center={center} />
+              <MapSearchBox onPlaceSelect={handlePlaceSelect} />
             </Map>
           </APIProvider>
 
@@ -135,6 +255,7 @@ export const MyRequisitionMap = () => {
               cursor: "pointer",
             }}
             title="Center to your location"
+            onClick={handleCenterToMyLocation}
           >
             <MyLocationIcon sx={{ color: "white", fontSize: 24 }} />
           </button>

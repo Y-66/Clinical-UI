@@ -53,6 +53,15 @@ export const useSelectedPharmacyPoiStore = create<selectedPharmacyPoi>((set) => 
     })),
 }));
 
+interface PharmacyCenterStore {
+  pharmacyCenter: { lat: number; lng: number } | null;
+  updatePharmacyCenter: (center: { lat: number; lng: number }) => void;
+}
+export const usePharmacyCenterStore = create<PharmacyCenterStore>((set) => ({
+  pharmacyCenter: null,
+  updatePharmacyCenter: (center) => set({ pharmacyCenter: center }),
+}));
+
 interface selectedRequisitionPoi {
   selectedRequisitionPoi: Poi | null;
   distanceRequisition: string;
@@ -70,6 +79,15 @@ export const useSelectedRequisitionPoiStore = create<selectedRequisitionPoi>((se
     set(() => ({
       distanceRequisition: distance,
     })),
+}));
+
+interface RequisitionCenterStore {
+  requisitionCenter: { lat: number; lng: number } | null;
+  updateRequisitionCenter: (center: { lat: number; lng: number }) => void;
+}
+export const useRequisitionCenterStore = create<RequisitionCenterStore>((set) => ({
+  requisitionCenter: null,
+  updateRequisitionCenter: (center) => set({ requisitionCenter: center }),
 }));
 
 interface currentPatientInfo {

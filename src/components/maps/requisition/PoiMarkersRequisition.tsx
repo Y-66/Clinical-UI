@@ -1,11 +1,11 @@
-import { MarkerClusterer, type Marker } from "@googlemaps/markerclusterer";
+import { type Marker } from "@googlemaps/markerclusterer";
 import {
   AdvancedMarker,
   InfoWindow,
   Pin,
   useMap,
 } from "@vis.gl/react-google-maps";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Circle } from "../Circle";
 import type { Poi } from "../../../types/Poi";
 import PlaceDetailsCompact from "../PlaceDetailsCompact";
@@ -16,28 +16,33 @@ import {
   INITIAL_LONGITUDE,
 } from "../../../constants";
 import DirectionsMapRequisition from "./DirectionsMapRequisition";
-import { useSelectedRequisitionPoiStore } from "../../../store";
+import {
+  useSelectedRequisitionPoiStore,
+  useRequisitionCenterStore,
+} from "../../../store";
 
 export const PoiMarkersRequisition = (props: { pois: Poi[] }) => {
   const loaded = useGoogleMapsApi(GOOGLE_API_KEY);
 
   const map = useMap();
   const [markers, setMarkers] = useState<{ [key: string]: Marker }>({});
-  const clusterer = useRef<MarkerClusterer | null>(null);
+  // const clusterer = useRef<MarkerClusterer | null>(null);
 
   // Initialize MarkerClusterer, if the map has changed
-  useEffect(() => {
-    if (!map) return;
-    if (!clusterer.current) {
-      clusterer.current = new MarkerClusterer({ map });
-    }
-  }, [map]);
+  // Disabled to prevent red cluster markers
+  // useEffect(() => {
+  //   if (!map) return;
+  //   if (!clusterer.current) {
+  //     clusterer.current = new MarkerClusterer({ map });
+  //   }
+  // }, [map]);
 
   // Update markers, if the markers array has changed
-  useEffect(() => {
-    clusterer.current?.clearMarkers();
-    clusterer.current?.addMarkers(Object.values(markers));
-  }, [markers]);
+  // Disabled to prevent red cluster markers
+  // useEffect(() => {
+  //   clusterer.current?.clearMarkers();
+  //   clusterer.current?.addMarkers(Object.values(markers));
+  // }, [markers]);
 
   const setMarkerRef = (marker: Marker | null, key: string) => {
     if (marker && markers[key]) return;
@@ -60,19 +65,20 @@ export const PoiMarkersRequisition = (props: { pois: Poi[] }) => {
       if (!ev.latLng) return;
       console.log("marker clicked:", ev.latLng.toString());
       map.panTo(ev.latLng);
-      setCircleCenter(ev.latLng);
+      // setCircleCenter(ev.latLng);
     },
     [map]
   );
 
-  const [circleCenter, setCircleCenter] = useState<google.maps.LatLng | null>(
-    null
-  );
+  // const [circleCenter, setCircleCenter] = useState<google.maps.LatLng | null>(
+  //   null
+  // );
 
   // const [selectedPoi, setSelectedPoi] = useState<Poi | null>(null);
 
   const { selectedRequisitionPoi, updateSelectedRequisitionPoi } =
     useSelectedRequisitionPoiStore();
+  const { requisitionCenter } = useRequisitionCenterStore();
 
   // 在组件挂载时自动选择第一个 POI
   useEffect(() => {
@@ -141,11 +147,11 @@ export const PoiMarkersRequisition = (props: { pois: Poi[] }) => {
           </InfoWindow>
         </>
       )}
-      {selectedRequisitionPoi?.location && (
+      {selectedRequisitionPoi?.location && requisitionCenter && (
         <>
           <DirectionsMapRequisition
             key={selectedRequisitionPoi.key}
-            start={{ lat: INITIAL_LATITUDE, lng: INITIAL_LONGITUDE }}
+            start={{ lat: requisitionCenter.lat, lng: requisitionCenter.lng }}
             end={{
               lat: selectedRequisitionPoi.location.lat,
               lng: selectedRequisitionPoi.location.lng,
