@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Card,
   Input,
@@ -28,6 +28,7 @@ const PersonInfo: React.FC = () => {
     null
   );
   const { updateDiagnosisInfo } = useCurrentDiagnosisInfoStore();
+  const hasAutoLoaded = useRef(false);
 
   const handleSearch = async (values: { patientId: string }) => {
     const patientId = parseInt(values.patientId);
@@ -69,6 +70,21 @@ const PersonInfo: React.FC = () => {
       setLoading(false);
     }
   };
+
+  // Auto-fill and search from URL parameter
+  useEffect(() => {
+    if (hasAutoLoaded.current) return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const patientId = urlParams.get("patient_id");
+
+    if (patientId && /^\d+$/.test(patientId)) {
+      hasAutoLoaded.current = true;
+      form.setFieldsValue({ patientId });
+      handleSearch({ patientId });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "--";
