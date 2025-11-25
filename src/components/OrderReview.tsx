@@ -41,6 +41,8 @@ const OrderReview: React.FC = () => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [isPrescriptionSticky, setIsPrescriptionSticky] = useState(false);
   const [isRequisitionSticky, setIsRequisitionSticky] = useState(false);
+  const [isPrescriptionChanged, setIsPrescriptionChanged] = useState(false);
+  const [isRequisitionChanged, setIsRequisitionChanged] = useState(false);
   const [prescriptionForm] = Form.useForm();
   const [requisitionForm] = Form.useForm();
   const { selectedPharmacy } = useSelectedPharmacyStore();
@@ -181,6 +183,7 @@ const OrderReview: React.FC = () => {
 
       await updatePrescriptionById(prescriptionId, prescriptionUpdateData);
       message.success("Prescription updated successfully!");
+      setIsPrescriptionChanged(false); // Reset change state after successful update
     } catch (error) {
       message.error("Failed to update prescription. Please try again.");
       console.error("Update prescription failed:", error);
@@ -213,6 +216,7 @@ const OrderReview: React.FC = () => {
 
       await updateRequisitionById(requisitionId, requisitionUpdateData);
       message.success("Requisition updated successfully!");
+      setIsRequisitionChanged(false); // Reset change state after successful update
     } catch (error) {
       message.error("Failed to update requisition. Please try again.");
       console.error("Update requisition failed:", error);
@@ -223,6 +227,16 @@ const OrderReview: React.FC = () => {
 
   const handleSubmitOrders = async () => {
     try {
+      // Check if there are unsaved changes
+      if (isPrescriptionChanged || isRequisitionChanged) {
+        message.warning({
+          content:
+            "Please save your changes before submitting orders. Click the Update buttons in the form headers to save your changes.",
+          duration: 5,
+        });
+        return;
+      }
+
       // Validate both forms
       const prescriptionValues = await prescriptionForm.validateFields();
       const requisitionValues = await requisitionForm.validateFields();
@@ -327,32 +341,61 @@ const OrderReview: React.FC = () => {
                 isPrescriptionSticky ? "py-3 px-4" : "p-6"
               }`}
             >
-              <div className="flex items-center gap-3">
-                <div
-                  className={`rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg transition-all duration-300 ${
-                    isPrescriptionSticky ? "w-10 h-10" : "w-14 h-14"
-                  }`}
-                >
-                  <MedicineBoxOutlined
-                    className={`text-white transition-all duration-300 ${
-                      isPrescriptionSticky ? "text-lg" : "text-2xl"
-                    }`}
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h2
-                    className={`font-bold text-white transition-all duration-300 ${
-                      isPrescriptionSticky ? "text-lg mb-0" : "text-2xl mb-1"
+              <div className="flex items-center gap-3 justify-between">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div
+                    className={`rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg transition-all duration-300 ${
+                      isPrescriptionSticky ? "w-10 h-10" : "w-14 h-14"
                     }`}
                   >
-                    Prescription Order
-                  </h2>
-                  {!isPrescriptionSticky && (
-                    <p className="text-blue-100 text-sm">
-                      Medication details and pharmacy information
-                    </p>
-                  )}
+                    <MedicineBoxOutlined
+                      className={`text-white transition-all duration-300 ${
+                        isPrescriptionSticky ? "text-lg" : "text-2xl"
+                      }`}
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h2
+                      className={`font-bold text-white transition-all duration-300 ${
+                        isPrescriptionSticky ? "text-lg mb-0" : "text-2xl mb-1"
+                      }`}
+                    >
+                      Prescription Order
+                    </h2>
+                    {!isPrescriptionSticky && (
+                      <p className="text-blue-100 text-sm">
+                        Medication details and pharmacy information
+                      </p>
+                    )}
+                  </div>
                 </div>
+                {/* Update Button in Header */}
+                <Button
+                  type="primary"
+                  size={isPrescriptionSticky ? "middle" : "large"}
+                  icon={<CheckCircleOutlined />}
+                  disabled={!isPrescriptionChanged}
+                  className={`border-none font-semibold shadow-lg transition-all duration-300 rounded-lg flex-shrink-0 ${
+                    isPrescriptionChanged
+                      ? "bg-white/20 hover:bg-white/30 text-white border-2 border-white/40 hover:scale-105"
+                      : "bg-white/10 text-white/40 cursor-not-allowed border-2 border-white/20"
+                  } ${
+                    isPrescriptionSticky
+                      ? "h-9 px-4 text-sm"
+                      : "h-12 px-6 text-base"
+                  }`}
+                  onClick={handleUpdatePrescription}
+                  loading={prescriptionLoading}
+                  style={{
+                    opacity: isPrescriptionChanged ? 1 : 0.5,
+                  }}
+                >
+                  {isPrescriptionSticky
+                    ? "Update"
+                    : isPrescriptionChanged
+                    ? "Update Prescription"
+                    : "No Changes"}
+                </Button>
               </div>
             </div>
 
@@ -362,6 +405,7 @@ const OrderReview: React.FC = () => {
                 form={prescriptionForm}
                 layout="vertical"
                 className="space-y-4"
+                onValuesChange={() => setIsPrescriptionChanged(true)}
               >
                 {/* ID Section */}
                 <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
@@ -554,20 +598,6 @@ const OrderReview: React.FC = () => {
                     />
                   </Form.Item>
                 </div>
-
-                {/* Update Button */}
-                <div className="flex justify-end pt-4">
-                  <Button
-                    type="primary"
-                    size="large"
-                    icon={<CheckCircleOutlined />}
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 border-none h-12 px-8 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg"
-                    onClick={handleUpdatePrescription}
-                    loading={prescriptionLoading}
-                  >
-                    Update Prescription
-                  </Button>
-                </div>
               </Form>
             </div>
           </Card>
@@ -584,32 +614,61 @@ const OrderReview: React.FC = () => {
                 isRequisitionSticky ? "py-3 px-4" : "p-6"
               }`}
             >
-              <div className="flex items-center gap-3">
-                <div
-                  className={`rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg transition-all duration-300 ${
-                    isRequisitionSticky ? "w-10 h-10" : "w-14 h-14"
-                  }`}
-                >
-                  <ExperimentOutlined
-                    className={`text-white transition-all duration-300 ${
-                      isRequisitionSticky ? "text-lg" : "text-2xl"
-                    }`}
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h2
-                    className={`font-bold text-white transition-all duration-300 ${
-                      isRequisitionSticky ? "text-lg mb-0" : "text-2xl mb-1"
+              <div className="flex items-center gap-3 justify-between">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div
+                    className={`rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg transition-all duration-300 ${
+                      isRequisitionSticky ? "w-10 h-10" : "w-14 h-14"
                     }`}
                   >
-                    Lab Requisition Order
-                  </h2>
-                  {!isRequisitionSticky && (
-                    <p className="text-green-100 text-sm">
-                      Test requirements and laboratory information
-                    </p>
-                  )}
+                    <ExperimentOutlined
+                      className={`text-white transition-all duration-300 ${
+                        isRequisitionSticky ? "text-lg" : "text-2xl"
+                      }`}
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h2
+                      className={`font-bold text-white transition-all duration-300 ${
+                        isRequisitionSticky ? "text-lg mb-0" : "text-2xl mb-1"
+                      }`}
+                    >
+                      Lab Requisition Order
+                    </h2>
+                    {!isRequisitionSticky && (
+                      <p className="text-green-100 text-sm">
+                        Test requirements and laboratory information
+                      </p>
+                    )}
+                  </div>
                 </div>
+                {/* Update Button in Header */}
+                <Button
+                  type="primary"
+                  size={isRequisitionSticky ? "middle" : "large"}
+                  icon={<CheckCircleOutlined />}
+                  disabled={!isRequisitionChanged}
+                  className={`border-none font-semibold shadow-lg transition-all duration-300 rounded-lg flex-shrink-0 ${
+                    isRequisitionChanged
+                      ? "bg-white/20 hover:bg-white/30 text-white border-2 border-white/40 hover:scale-105"
+                      : "bg-white/10 text-white/40 cursor-not-allowed border-2 border-white/20"
+                  } ${
+                    isRequisitionSticky
+                      ? "h-9 px-4 text-sm"
+                      : "h-12 px-6 text-base"
+                  }`}
+                  onClick={handleUpdateRequisition}
+                  loading={requisitionLoading}
+                  style={{
+                    opacity: isRequisitionChanged ? 1 : 0.5,
+                  }}
+                >
+                  {isRequisitionSticky
+                    ? "Update"
+                    : isRequisitionChanged
+                    ? "Update Requisition"
+                    : "No Changes"}
+                </Button>
               </div>
             </div>
 
@@ -619,6 +678,7 @@ const OrderReview: React.FC = () => {
                 form={requisitionForm}
                 layout="vertical"
                 className="space-y-4"
+                onValuesChange={() => setIsRequisitionChanged(true)}
               >
                 {/* ID Section */}
                 <div className="bg-green-50 rounded-lg p-4 border border-green-200">
@@ -789,20 +849,6 @@ const OrderReview: React.FC = () => {
                       }}
                     />
                   </Form.Item>
-                </div>
-
-                {/* Update Button */}
-                <div className="flex justify-end pt-4">
-                  <Button
-                    type="primary"
-                    size="large"
-                    icon={<CheckCircleOutlined />}
-                    className="bg-gradient-to-r from-green-500 to-green-600 border-none h-12 px-8 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg"
-                    onClick={handleUpdateRequisition}
-                    loading={requisitionLoading}
-                  >
-                    Update Requisition
-                  </Button>
                 </div>
               </Form>
             </div>
