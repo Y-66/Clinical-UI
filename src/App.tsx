@@ -18,9 +18,22 @@ import SideBot from "./components/SideBot";
 import CustomSteps from "./components/CustomSteps";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Step5 } from "./pages/step5";
+import {
+  useCurrentDiagnosisInfoStore,
+  useGeneratedOrdersStore,
+  useSelectedPharmacyStore,
+  useSelectedLabStore,
+  useOrderSubmittedStore,
+} from "./store";
 
 const App = () => {
   const [showSidebar, setShowSidebar] = useState(false);
+  const { diagnosisInfo, updateDiagnosisInfo } = useCurrentDiagnosisInfoStore();
+  const { prescriptionId, requisitionId, updateOrderIds } =
+    useGeneratedOrdersStore();
+  const { selectedPharmacy } = useSelectedPharmacyStore();
+  const { selectedLab } = useSelectedLabStore();
+  const { isOrderSubmitted } = useOrderSubmittedStore();
   const steps = [
     {
       title: "Personal Info",
@@ -49,13 +62,47 @@ const App = () => {
     },
   ];
   const [current, setCurrent] = useState(0);
+
+  // Check if diagnosis is loaded (only for step 0)
+  const canProceedFromStep1 =
+    current === 0 ? diagnosisInfo && diagnosisInfo.length > 0 : true;
+
+  // Check if orders are generated (only for step 1)
+  const canProceedFromStep2 =
+    current === 1 ? prescriptionId && requisitionId : true;
+
+  // Check if pharmacy and lab are selected (only for step 2)
+  const canProceedFromStep3 =
+    current === 2 ? selectedPharmacy && selectedLab : true;
+
+  // Check if orders are submitted (only for step 3)
+  const canProceedFromStep4 = current === 3 ? isOrderSubmitted : true;
+
+  // Combined check for Next button
+  const canProceed =
+    canProceedFromStep1 &&
+    canProceedFromStep2 &&
+    canProceedFromStep3 &&
+    canProceedFromStep4;
+
   const next = () => {
     setCurrent(current + 1);
-    window.scrollTo({ top: 200, behavior: "smooth" });
+    // Delay scroll to allow page transition animation to start
+    setTimeout(() => {
+      window.scrollTo({ top: 200, behavior: "smooth" });
+    }, 50);
   };
   const prev = () => {
+    // Clear diagnosis when going back to step 1 (from step 2)
+    if (current === 1) {
+      updateDiagnosisInfo(null);
+      updateOrderIds(null, null);
+    }
     setCurrent(current - 1);
-    window.scrollTo({ top: 200, behavior: "smooth" });
+    // Delay scroll to allow page transition animation to start
+    setTimeout(() => {
+      window.scrollTo({ top: 200, behavior: "smooth" });
+    }, 50);
   };
   return (
     <div className="min-h-screen w-full p-8 relative">
@@ -135,15 +182,33 @@ const App = () => {
 
             {/* Action Buttons */}
             <div className="flex justify-end items-center mt-6 pt-6 border-t-2 border-gray-200">
+              {/* Hint Message for Step 4 */}
+              {current === 3 && !isOrderSubmitted && (
+                <div className="flex-1 mr-4">
+                  <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
+                    <p className="text-sm text-yellow-800 font-medium">
+                      ⚠️ Please click "Submit Orders" button to submit your
+                      prescription and requisition before proceeding to the next
+                      step.
+                    </p>
+                  </div>
+                </div>
+              )}
               <div className="flex gap-3">
-                {current > 0 && (
+                {current > 0 && current !== 2 && (
                   <Button
                     onClick={() => prev()}
                     size="large"
                     className="premium-button"
+                    disabled={current === 3 && isOrderSubmitted}
                     style={{
                       fontWeight: 600,
                       border: "2px solid #d1d5db",
+                      opacity: current === 3 && isOrderSubmitted ? 0.5 : 1,
+                      cursor:
+                        current === 3 && isOrderSubmitted
+                          ? "not-allowed"
+                          : "pointer",
                     }}
                   >
                     Previous
@@ -155,11 +220,14 @@ const App = () => {
                     onClick={() => next()}
                     size="large"
                     className="premium-button"
+                    disabled={!canProceed}
                     style={{
                       background:
                         "linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%)",
                       border: "none",
                       fontWeight: 600,
+                      opacity: !canProceed ? 0.5 : 1,
+                      cursor: !canProceed ? "not-allowed" : "pointer",
                     }}
                   >
                     Next Step

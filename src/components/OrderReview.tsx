@@ -27,6 +27,7 @@ import {
   useSelectedPharmacyStore,
   useSelectedLabStore,
   useGeneratedOrdersStore,
+  useOrderSubmittedStore,
 } from "../store";
 import dayjs from "dayjs";
 
@@ -43,6 +44,7 @@ const OrderReview: React.FC = () => {
   const { selectedPharmacy } = useSelectedPharmacyStore();
   const { selectedLab } = useSelectedLabStore();
   const { prescriptionId, requisitionId } = useGeneratedOrdersStore();
+  const { setOrderSubmitted } = useOrderSubmittedStore();
 
   const fetchOrderData = async () => {
     // Check if IDs are available
@@ -222,7 +224,10 @@ const OrderReview: React.FC = () => {
       // Call all APIs
       await Promise.all(apiCalls);
 
-      message.success("Orders submitted successfully!");
+      setOrderSubmitted(true);
+      message.success(
+        "Orders submitted successfully! You can now proceed to the next step."
+      );
     } catch (error) {
       message.error("Failed to submit orders. Please try again.");
       console.error("Validation or submission failed:", error);

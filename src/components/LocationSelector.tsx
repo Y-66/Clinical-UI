@@ -60,8 +60,9 @@ const LocationSelector: React.FC = () => {
     lng: number;
   } | null>(null);
   const { diagnosisInfo } = useCurrentDiagnosisInfoStore();
-  const { updateSelectedPharmacy } = useSelectedPharmacyStore();
-  const { updateSelectedLab } = useSelectedLabStore();
+  const { updateSelectedPharmacy, selectedPharmacy: storedPharmacy } =
+    useSelectedPharmacyStore();
+  const { updateSelectedLab, selectedLab: storedLab } = useSelectedLabStore();
 
   const fetchPharmacyData = async () => {
     if (!diagnosisInfo || diagnosisInfo.length === 0) {
@@ -112,6 +113,45 @@ const LocationSelector: React.FC = () => {
       setLoading(false);
     }
   };
+
+  // Sync selected pharmacy/lab from store when data is loaded
+  useEffect(() => {
+    if (storedPharmacy && nearestPharmacies.length > 0) {
+      // Find the full pharmacy object from nearestPharmacies or pharmacyPreferences
+      const foundInNearest = nearestPharmacies.find(
+        (p) => p.pharmacy_id === storedPharmacy.pharmacy_id
+      );
+      const foundInPreferences = pharmacyPreferences.find(
+        (p) => p.pharmacy_id === storedPharmacy.pharmacy_id
+      );
+      const found = foundInNearest || foundInPreferences;
+      if (found) {
+        setSelectedPharmacy(found);
+        if (found.coordinates) {
+          setPharmacyMapCenter(found.coordinates);
+        }
+      }
+    }
+  }, [storedPharmacy, nearestPharmacies, pharmacyPreferences]);
+
+  useEffect(() => {
+    if (storedLab && nearestLabs.length > 0) {
+      // Find the full lab object from nearestLabs or labPreferences
+      const foundInNearest = nearestLabs.find(
+        (l) => l.lab_id === storedLab.lab_id
+      );
+      const foundInPreferences = labPreferences.find(
+        (l) => l.lab_id === storedLab.lab_id
+      );
+      const found = foundInNearest || foundInPreferences;
+      if (found) {
+        setSelectedLab(found);
+        if (found.coordinates) {
+          setLabMapCenter(found.coordinates);
+        }
+      }
+    }
+  }, [storedLab, nearestLabs, labPreferences]);
 
   useEffect(() => {
     if (diagnosisInfo && diagnosisInfo.length > 0) {
@@ -740,6 +780,91 @@ const LocationSelector: React.FC = () => {
 
   return (
     <div className="w-full h-full">
+      {/* Selected Locations Display */}
+      <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border-b-2 border-gray-200">
+        <div className="grid grid-cols-2 gap-4">
+          {/* Selected Pharmacy Card */}
+          <div
+            className={`rounded-lg p-4 transition-all duration-300 ${
+              storedPharmacy
+                ? "bg-white border-2 border-blue-400 shadow-md"
+                : "bg-gray-50 border-2 border-dashed border-gray-300"
+            }`}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <ShopOutlined
+                className={`text-lg ${
+                  storedPharmacy ? "text-blue-600" : "text-gray-400"
+                }`}
+              />
+              <span className="font-semibold text-sm text-gray-700">
+                Selected Pharmacy
+              </span>
+            </div>
+            {storedPharmacy ? (
+              <div className="space-y-1">
+                <p
+                  className="font-bold text-blue-900 text-sm truncate"
+                  title={storedPharmacy.name}
+                >
+                  {storedPharmacy.name}
+                </p>
+                <p
+                  className="text-xs text-gray-600 line-clamp-2"
+                  title={storedPharmacy.address}
+                >
+                  📍 {storedPharmacy.address}
+                </p>
+              </div>
+            ) : (
+              <p className="text-xs text-gray-400 italic">
+                No pharmacy selected yet
+              </p>
+            )}
+          </div>
+
+          {/* Selected Lab Card */}
+          <div
+            className={`rounded-lg p-4 transition-all duration-300 ${
+              storedLab
+                ? "bg-white border-2 border-green-400 shadow-md"
+                : "bg-gray-50 border-2 border-dashed border-gray-300"
+            }`}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <ExperimentOutlined
+                className={`text-lg ${
+                  storedLab ? "text-green-600" : "text-gray-400"
+                }`}
+              />
+              <span className="font-semibold text-sm text-gray-700">
+                Selected Lab
+              </span>
+            </div>
+            {storedLab ? (
+              <div className="space-y-1">
+                <p
+                  className="font-bold text-green-900 text-sm truncate"
+                  title={storedLab.name}
+                >
+                  {storedLab.name}
+                </p>
+                <p
+                  className="text-xs text-gray-600 line-clamp-2"
+                  title={storedLab.address}
+                >
+                  📍 {storedLab.address}
+                </p>
+              </div>
+            ) : (
+              <p className="text-xs text-gray-400 italic">
+                No lab selected yet
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
       <Tabs
         activeKey={activeTab}
         onChange={setActiveTab}

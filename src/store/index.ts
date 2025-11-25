@@ -138,3 +138,12 @@ export const useGeneratedOrdersStore = create<GeneratedOrdersStore>((set) => ({
   updateOrderIds: (prescriptionId, requisitionId) => 
     set(() => ({ prescriptionId, requisitionId })),
 }));
+
+interface OrderSubmittedStore {
+  isOrderSubmitted: boolean;
+  setOrderSubmitted: (submitted: boolean) => void;
+}
+export const useOrderSubmittedStore = create<OrderSubmittedStore>((set) => ({
+  isOrderSubmitted: false,
+  setOrderSubmitted: (submitted) => set(() => ({ isOrderSubmitted: submitted })),
+}));
