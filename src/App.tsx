@@ -129,9 +129,11 @@ const App = () => {
   return (
     <div className="min-h-screen w-full p-8 relative bg-slate-50">
       {/* Decorative Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-cyan-50/80 to-transparent pointer-events-none -z-10" />
-      <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl pointer-events-none mix-blend-multiply -z-10" />
-      <div className="absolute top-1/3 -left-24 w-72 h-72 bg-teal-100/50 rounded-full blur-3xl pointer-events-none mix-blend-multiply -z-10" />
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-cyan-50/80 to-transparent -z-10" />
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl mix-blend-multiply -z-10" />
+        <div className="absolute top-1/3 -left-24 w-72 h-72 bg-teal-100/50 rounded-full blur-3xl mix-blend-multiply -z-10" />
+      </div>
 
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-12 text-center relative z-10">

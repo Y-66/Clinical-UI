@@ -1,4 +1,4 @@
-const BASE_URL: string = "http://127.0.0.1:8000/api";
+import { BASE_URL } from "../constants";
 
 // get patient and create docs by patient ID
 export const getPatientAndCreateDocsById = async (patientId: number) => {
