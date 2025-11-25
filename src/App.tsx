@@ -44,28 +44,28 @@ const App = () => {
 
   const steps = [
     {
-      title: "Personal Info",
-      description: "Confirm Client Information",
+      title: "Patient Info",
+      description: "Confirm Patient Information",
       icon: <CheckCircleOutlined />,
     },
     {
       title: "Facility Selection",
-      description: "Select the Pharmacy & Lab",
+      description: "Select Pharmacy & Lab",
       icon: <EnvironmentOutlined />,
     },
     {
-      title: "Form Review",
-      description: "Review the Prescription and Requisition",
+      title: "Order Review",
+      description: "Review & Confirm Orders",
       icon: <FileTextOutlined />,
     },
     {
-      title: "Submit",
-      description: "Send fax to Pharmacy & Lab",
+      title: "Submission",
+      description: "Submit Orders for Processing",
       icon: <SendOutlined />,
     },
     {
-      title: "Fax",
-      description: "Send fax to Pharmacy & Lab",
+      title: "Fax Transmission",
+      description: "Send Orders to Facilities",
       icon: <SendOutlined />,
     },
   ];

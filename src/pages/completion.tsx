@@ -277,7 +277,7 @@ export const CompletionPage = () => {
                               Patient Information Confirmed
                             </p>
                             <p className="text-sm text-gray-500 mt-1">
-                              Client diagnosis and details verified
+                              Patient diagnosis and details verified
                             </p>
                           </div>
                         ),

@@ -1,4 +1,5 @@
 import { Button } from "antd";
+import { useEffect } from "react";
 import {
   UserOutlined,
   MedicineBoxOutlined,
@@ -9,6 +10,10 @@ import { useNavigate } from "react-router-dom";
 
 export const LandingPage = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const patientOptions = [
     { id: 1, name: "John Smith", condition: "Diabetes Type 2" },

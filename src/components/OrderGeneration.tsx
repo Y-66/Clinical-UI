@@ -105,7 +105,7 @@ const OrderGeneration: React.FC = () => {
             <FileTextOutlined className="text-2xl" />
           </div>
           <h2 className="text-xl font-bold text-slate-800 m-0">
-            Current Diagnosis
+            Patient Diagnosis
           </h2>
         </div>
 
@@ -166,7 +166,7 @@ const OrderGeneration: React.FC = () => {
               border: "none",
             }}
           >
-            Generate Prescription & Requisition Forms
+            Generate Orders
           </Button>
         </div>
       )}

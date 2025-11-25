@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Empty, Spin, message, Tag, Button } from "antd";
+import { Empty, Spin, message, Tag } from "antd";
 import {
   ShopOutlined,
   ExperimentOutlined,
@@ -425,13 +425,13 @@ const LocationSelector: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {renderPharmacyList(
           nearestPharmacies,
-          "Nearest Pharmacies",
+          "Nearby Pharmacies",
           <EnvironmentOutlined className="text-blue-600 text-lg" />,
           false
         )}
         {renderPharmacyList(
           pharmacyPreferences,
-          "My Preferred Pharmacies",
+          "Preferred Pharmacies",
           <HeartFilled className="text-red-500 text-lg" />,
           true
         )}
@@ -442,9 +442,7 @@ const LocationSelector: React.FC = () => {
           <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shadow-sm">
             <EnvironmentOutlined className="text-xl" />
           </div>
-          <h3 className="text-lg font-bold text-slate-800 m-0">
-            Pharmacy Locations
-          </h3>
+          <h3 className="text-lg font-bold text-slate-800 m-0">Pharmacy Map</h3>
         </div>
         <div className="h-[500px] w-full relative">
           <APIProvider apiKey={GOOGLE_API_KEY}>
@@ -580,12 +578,12 @@ const LocationSelector: React.FC = () => {
       <div className="grid grid-cols-2 gap-4">
         {renderLabList(
           nearestLabs,
-          "Nearest Labs",
+          "Nearby Labs",
           <EnvironmentOutlined className="text-green-600" />
         )}
         {renderLabList(
           labPreferences,
-          "My Preferred Labs",
+          "Preferred Labs",
           <HeartFilled className="text-red-500" />,
           true
         )}
@@ -596,9 +594,7 @@ const LocationSelector: React.FC = () => {
           <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center text-green-600 shadow-sm">
             <EnvironmentOutlined className="text-xl" />
           </div>
-          <h3 className="text-lg font-bold text-slate-800 m-0">
-            Lab Locations
-          </h3>
+          <h3 className="text-lg font-bold text-slate-800 m-0">Lab Map</h3>
         </div>
         <div className="h-[500px] w-full relative">
           <APIProvider apiKey={GOOGLE_API_KEY}>
@@ -803,7 +799,7 @@ const LocationSelector: React.FC = () => {
       </div>
 
       <div className="px-4">
-        <div className="flex p-1 bg-slate-100 rounded-2xl mb-6 w-fit mx-auto">
+        <div className="flex p-1 bg-slate-100 rounded-2xl mt-4 mb-4 w-fit mx-auto">
           <button
             onClick={() => setActiveTab("pharmacy")}
             className={`flex items-center gap-2 px-8 py-3 rounded-xl text-lg font-bold transition-all duration-300 border-none cursor-pointer ${

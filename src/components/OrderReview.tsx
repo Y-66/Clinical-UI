@@ -263,10 +263,10 @@ const OrderReview: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-2">
-            Order Review & Confirmation
+            Review & Confirm Orders
           </h1>
           <p className="text-gray-600 text-lg">
-            Please review and confirm the order details before submission
+            Please review and confirm order details
           </p>
         </div>
 
@@ -283,7 +283,7 @@ const OrderReview: React.FC = () => {
                   <MedicineBoxOutlined className="text-2xl" />
                 </div>
                 <h2 className="text-xl font-bold text-slate-800 m-0">
-                  Prescription Order
+                  Prescription
                 </h2>
               </div>
 
@@ -523,7 +523,7 @@ const OrderReview: React.FC = () => {
                   <ExperimentOutlined className="text-2xl" />
                 </div>
                 <h2 className="text-xl font-bold text-slate-800 m-0">
-                  Lab Requisition Order
+                  Lab Requisition
                 </h2>
               </div>
 

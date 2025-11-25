@@ -93,8 +93,8 @@ const FaxSender: React.FC = () => {
     <div className="w-full min-h-[500px] flex flex-col">
       {/* Header Info */}
       <Alert
-        message="Send Faxes to Pharmacy & Lab"
-        description="Send the prescription to the pharmacy and the requisition to the lab via fax. Both faxes must be sent to complete the workflow."
+        message="Fax Transmission"
+        description="Transmit prescription to pharmacy and requisition to lab. Both transmissions required to complete workflow."
         type="info"
         showIcon
         className="mb-6"
