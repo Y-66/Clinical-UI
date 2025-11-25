@@ -136,27 +136,29 @@ const OrderGeneration: React.FC = () => {
       </Card>
 
       {/* Generate Orders Button */}
-      <div className="flex justify-center">
-        <Button
-          type="primary"
-          size="large"
-          icon={<ThunderboltOutlined />}
-          onClick={handleGenerateOrders}
-          loading={loading}
-          disabled={!diagnosisInfo || diagnosisInfo.length === 0}
-          style={{
-            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-            border: "none",
-            fontWeight: 600,
-            height: "50px",
-            paddingLeft: "32px",
-            paddingRight: "32px",
-            fontSize: "16px",
-          }}
-        >
-          Generate Prescription & Requisition Forms
-        </Button>
-      </div>
+      {!orderData && (
+        <div className="flex justify-center">
+          <Button
+            type="primary"
+            size="large"
+            icon={<ThunderboltOutlined />}
+            onClick={handleGenerateOrders}
+            loading={loading}
+            disabled={!diagnosisInfo || diagnosisInfo.length === 0}
+            style={{
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              border: "none",
+              fontWeight: 600,
+              height: "50px",
+              paddingLeft: "32px",
+              paddingRight: "32px",
+              fontSize: "16px",
+            }}
+          >
+            Generate Prescription & Requisition Forms
+          </Button>
+        </div>
+      )}
 
       {/* Loading State */}
       {loading && (

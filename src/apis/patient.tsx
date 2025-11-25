@@ -350,3 +350,49 @@ export const setRequisitionLab = async (
     throw error;
   }
 };
+
+// Send fax for prescription
+export const sendPrescriptionFax = async (prescriptionId: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/prescriptions/${prescriptionId}/fax`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Send prescription fax response:", data);
+    return data;
+  } catch (error) {
+    console.error("Error sending prescription fax:", error);
+    throw error;
+  }
+};
+
+// Send fax for requisition
+export const sendRequisitionFax = async (requisitionId: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/requisitions/${requisitionId}/fax`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Send requisition fax response:", data);
+    return data;
+  } catch (error) {
+    console.error("Error sending requisition fax:", error);
+    throw error;
+  }
+};
