@@ -12,6 +12,7 @@ export interface Pharmacy {
   notes?: string | null;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface PharmacyPreference extends Pharmacy {
   // PharmacyPreference is the same as Pharmacy for this API
 }
@@ -30,6 +31,7 @@ export interface Lab {
   notes?: string | null;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface LabPreference extends Lab {
   // LabPreference is the same as Lab for this API
 }

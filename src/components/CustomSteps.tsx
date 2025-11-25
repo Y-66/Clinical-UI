@@ -30,7 +30,6 @@ const CustomSteps: React.FC<CustomStepsProps> = ({ steps, current }) => {
         {steps.map((step, index) => {
           const isCompleted = index < current;
           const isCurrent = index === current;
-          const isPending = index > current;
 
           return (
             <div

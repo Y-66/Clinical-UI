@@ -14,7 +14,6 @@ import { Step1 } from "./pages/step1";
 import { Step3 } from "./pages/step3";
 import { Step4 } from "./pages/step4";
 import { Step2 } from "./pages/step2";
-import SideBot from "./components/SideBot";
 import CustomSteps from "./components/CustomSteps";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Step5 } from "./pages/step5";
@@ -297,9 +296,6 @@ const App = () => {
                   justifyContent: "center",
                 }}
               />
-            </div>
-            <div className="flex-1 overflow-hidden">
-              <SideBot />
             </div>
           </Card>
         </div>
