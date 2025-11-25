@@ -10,7 +10,8 @@ createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <Routes>
         <Route path="/landing" element={<LandingPage />} />
-        <Route path="/" element={<App />} />
+        <Route path="/workflow" element={<App />} />
+        <Route path="/" element={<Navigate to="/landing" replace />} />
         <Route path="*" element={<Navigate to="/landing" replace />} />
       </Routes>
     </BrowserRouter>

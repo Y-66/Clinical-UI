@@ -23,8 +23,8 @@ export const LandingPage = () => {
   ];
 
   const handlePatientSelect = (patientId: number) => {
-    // Navigate to root with patient_id parameter
-    navigate(`/?patient_id=${patientId}`);
+    // Navigate to workflow with patient_id parameter
+    navigate(`/workflow?patient_id=${patientId}`);
   };
 
   return (
