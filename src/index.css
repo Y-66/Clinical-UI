@@ -4,8 +4,8 @@
   font-weight: 400;
 
   color-scheme: light;
-  color: #1a202c;
-  background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 50%, #10b981 100%);
+  color: #1e293b;
+  background-color: #f8fafc;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -23,8 +23,8 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 50%, #10b981 100%);
-  background-attachment: fixed;
+  background-color: #f8fafc;
+  color: #1e293b;
 }
 
 h1,

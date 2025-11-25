@@ -1,6 +1,6 @@
 import "./App.css";
 import "antd/dist/reset.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, message, Card } from "antd";
 import {
   RobotOutlined,
@@ -9,6 +9,7 @@ import {
   FileTextOutlined,
   SendOutlined,
   CloseOutlined,
+  MedicineBoxOutlined,
 } from "@ant-design/icons";
 import { Step1 } from "./pages/step1";
 import { Step3 } from "./pages/step3";
@@ -35,6 +36,12 @@ const App = () => {
   const { selectedPharmacy } = useSelectedPharmacyStore();
   const { selectedLab } = useSelectedLabStore();
   const { isOrderSubmitted } = useOrderSubmittedStore();
+
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const steps = [
     {
       title: "Personal Info",
@@ -120,18 +127,31 @@ const App = () => {
   }
 
   return (
-    <div className="min-h-screen w-full p-8 relative">
+    <div className="min-h-screen w-full p-8 relative bg-slate-50">
+      {/* Decorative Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-cyan-50/80 to-transparent pointer-events-none -z-10" />
+      <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl pointer-events-none mix-blend-multiply -z-10" />
+      <div className="absolute top-1/3 -left-24 w-72 h-72 bg-teal-100/50 rounded-full blur-3xl pointer-events-none mix-blend-multiply -z-10" />
+
       {/* Header */}
-      <div className="max-w-7xl mx-auto mb-8 bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
-        <h1 className="text-4xl font-bold text-white text-center mb-2 drop-shadow-lg">
-          Digital Medical Document System
+      <div className="max-w-7xl mx-auto mb-12 text-center relative z-10">
+        <div className="inline-flex items-center justify-center p-3 bg-white rounded-2xl shadow-md mb-6 ring-1 ring-slate-100">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-200/50">
+            <MedicineBoxOutlined className="text-white text-2xl" />
+          </div>
+        </div>
+        <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-3 tracking-tight">
+          Digital Medical{" "}
+          <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+            Document System
+          </span>
         </h1>
-        <p className="text-white/90 text-center text-lg">
+        <p className="text-slate-500 text-lg max-w-2xl mx-auto font-medium">
           Your health, simplified and secured
         </p>
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-12 gap-6">
+      <div className="max-w-7xl mx-auto grid grid-cols-12 gap-6 relative z-10">
         {/* Left Steps Panel - Sticky */}
         <div className="col-span-3">
           <div className="sticky top-0 glass-card p-6">

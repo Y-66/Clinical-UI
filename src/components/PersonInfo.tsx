@@ -1,14 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Card,
-  Input,
-  Button,
-  Form,
-  Descriptions,
-  message,
-  Spin,
-  Alert,
-} from "antd";
+import { Input, Button, Form, Descriptions, message, Spin, Alert } from "antd";
 import {
   UserOutlined,
   SearchOutlined,
@@ -327,17 +318,17 @@ const PersonInfo: React.FC = () => {
 
       {/* Empty State */}
       {!diagnosisData && !loading && !error && (
-        <Card className="text-center py-16 shadow-sm border-2 border-dashed border-gray-300">
+        <div className="bg-white rounded-3xl text-center py-16 shadow-sm border-2 border-dashed border-slate-200">
           <div className="flex flex-col items-center justify-center">
-            <FileTextOutlined className="text-6xl text-gray-300 mb-4" />
-            <h3 className="text-xl font-semibold text-gray-500 mb-2">
+            <FileTextOutlined className="text-6xl text-slate-200 mb-4" />
+            <h3 className="text-xl font-semibold text-slate-400 mb-2">
               No Diagnosis Information
             </h3>
-            <p className="text-gray-400 text-base">
+            <p className="text-slate-400 text-base">
               Please enter a patient ID above to search for diagnosis details
             </p>
           </div>
-        </Card>
+        </div>
       )}
     </div>
   );

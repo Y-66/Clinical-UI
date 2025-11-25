@@ -1,5 +1,6 @@
 import { Result, Button, Card, Timeline } from "antd";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   CheckCircleOutlined,
   MedicineBoxOutlined,
@@ -18,6 +19,7 @@ import {
 } from "../store";
 
 export const CompletionPage = () => {
+  const navigate = useNavigate();
   const { diagnosisInfo } = useCurrentDiagnosisInfoStore();
   const { selectedPharmacy } = useSelectedPharmacyStore();
   const { selectedLab } = useSelectedLabStore();
@@ -28,7 +30,7 @@ export const CompletionPage = () => {
   }, []);
 
   const handleRestart = () => {
-    window.location.reload();
+    navigate("/landing");
   };
 
   return (
