@@ -1,4 +1,5 @@
 import { Result, Button, Card, Timeline } from "antd";
+import { useEffect } from "react";
 import {
   CheckCircleOutlined,
   MedicineBoxOutlined,
@@ -21,6 +22,10 @@ export const CompletionPage = () => {
   const { selectedPharmacy } = useSelectedPharmacyStore();
   const { selectedLab } = useSelectedLabStore();
   const { prescriptionFaxSent, requisitionFaxSent } = useFaxSentStore();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   const handleRestart = () => {
     window.location.reload();
