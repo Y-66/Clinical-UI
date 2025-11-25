@@ -39,12 +39,69 @@ const OrderReview: React.FC = () => {
   const [prescriptionLoading, setPrescriptionLoading] = useState(false);
   const [requisitionLoading, setRequisitionLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [isPrescriptionSticky, setIsPrescriptionSticky] = useState(false);
+  const [isRequisitionSticky, setIsRequisitionSticky] = useState(false);
   const [prescriptionForm] = Form.useForm();
   const [requisitionForm] = Form.useForm();
   const { selectedPharmacy } = useSelectedPharmacyStore();
   const { selectedLab } = useSelectedLabStore();
   const { prescriptionId, requisitionId } = useGeneratedOrdersStore();
   const { setOrderSubmitted, isOrderSubmitted } = useOrderSubmittedStore();
+
+  // Detect sticky state for prescription header
+  useEffect(() => {
+    const prescriptionHeader = document.getElementById("prescription-header");
+    if (!prescriptionHeader) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsPrescriptionSticky(!entry.isIntersecting);
+      },
+      { threshold: [1], rootMargin: "-1px 0px 0px 0px" }
+    );
+
+    const sentinel = document.createElement("div");
+    sentinel.style.height = "1px";
+    sentinel.style.position = "absolute";
+    sentinel.style.top = "0";
+    sentinel.style.width = "100%";
+    prescriptionHeader.parentElement?.insertBefore(
+      sentinel,
+      prescriptionHeader
+    );
+    observer.observe(sentinel);
+
+    return () => {
+      observer.disconnect();
+      sentinel.remove();
+    };
+  }, []);
+
+  // Detect sticky state for requisition header
+  useEffect(() => {
+    const requisitionHeader = document.getElementById("requisition-header");
+    if (!requisitionHeader) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsRequisitionSticky(!entry.isIntersecting);
+      },
+      { threshold: [1], rootMargin: "-1px 0px 0px 0px" }
+    );
+
+    const sentinel = document.createElement("div");
+    sentinel.style.height = "1px";
+    sentinel.style.position = "absolute";
+    sentinel.style.top = "0";
+    sentinel.style.width = "100%";
+    requisitionHeader.parentElement?.insertBefore(sentinel, requisitionHeader);
+    observer.observe(sentinel);
+
+    return () => {
+      observer.disconnect();
+      sentinel.remove();
+    };
+  }, []);
 
   const fetchOrderData = async () => {
     // Check if IDs are available
@@ -260,22 +317,41 @@ const OrderReview: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Prescription Card */}
           <Card
-            className="shadow-2xl border-0 hover:shadow-3xl transition-all duration-300 overflow-hidden"
+            className="shadow-2xl border-0 hover:shadow-3xl transition-all duration-300 overflow-visible"
             bodyStyle={{ padding: 0 }}
           >
-            {/* Card Header */}
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
-                  <MedicineBoxOutlined className="text-white text-2xl" />
+            {/* Card Header - Sticky */}
+            <div
+              id="prescription-header"
+              className={`sticky top-0 z-10 bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg transition-all duration-300 ${
+                isPrescriptionSticky ? "py-3 px-4" : "p-6"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className={`rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg transition-all duration-300 ${
+                    isPrescriptionSticky ? "w-10 h-10" : "w-14 h-14"
+                  }`}
+                >
+                  <MedicineBoxOutlined
+                    className={`text-white transition-all duration-300 ${
+                      isPrescriptionSticky ? "text-lg" : "text-2xl"
+                    }`}
+                  />
                 </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-white mb-1">
+                <div className="flex-1 min-w-0">
+                  <h2
+                    className={`font-bold text-white transition-all duration-300 ${
+                      isPrescriptionSticky ? "text-lg mb-0" : "text-2xl mb-1"
+                    }`}
+                  >
                     Prescription Order
                   </h2>
-                  <p className="text-blue-100 text-sm">
-                    Medication details and pharmacy information
-                  </p>
+                  {!isPrescriptionSticky && (
+                    <p className="text-blue-100 text-sm">
+                      Medication details and pharmacy information
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -498,22 +574,41 @@ const OrderReview: React.FC = () => {
 
           {/* Requisition Card */}
           <Card
-            className="shadow-2xl border-0 hover:shadow-3xl transition-all duration-300 overflow-hidden"
+            className="shadow-2xl border-0 hover:shadow-3xl transition-all duration-300 overflow-visible"
             bodyStyle={{ padding: 0 }}
           >
-            {/* Card Header */}
-            <div className="bg-gradient-to-r from-green-500 to-green-600 p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
-                  <ExperimentOutlined className="text-white text-2xl" />
+            {/* Card Header - Sticky */}
+            <div
+              id="requisition-header"
+              className={`sticky top-0 z-10 bg-gradient-to-r from-green-500 to-green-600 shadow-lg transition-all duration-300 ${
+                isRequisitionSticky ? "py-3 px-4" : "p-6"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className={`rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg transition-all duration-300 ${
+                    isRequisitionSticky ? "w-10 h-10" : "w-14 h-14"
+                  }`}
+                >
+                  <ExperimentOutlined
+                    className={`text-white transition-all duration-300 ${
+                      isRequisitionSticky ? "text-lg" : "text-2xl"
+                    }`}
+                  />
                 </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-white mb-1">
+                <div className="flex-1 min-w-0">
+                  <h2
+                    className={`font-bold text-white transition-all duration-300 ${
+                      isRequisitionSticky ? "text-lg mb-0" : "text-2xl mb-1"
+                    }`}
+                  >
                     Lab Requisition Order
                   </h2>
-                  <p className="text-green-100 text-sm">
-                    Test requirements and laboratory information
-                  </p>
+                  {!isRequisitionSticky && (
+                    <p className="text-green-100 text-sm">
+                      Test requirements and laboratory information
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

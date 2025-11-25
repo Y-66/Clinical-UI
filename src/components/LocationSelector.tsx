@@ -780,8 +780,8 @@ const LocationSelector: React.FC = () => {
 
   return (
     <div className="w-full h-full">
-      {/* Selected Locations Display */}
-      <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border-b-2 border-gray-200">
+      {/* Selected Locations Display - Sticky */}
+      <div className="sticky top-0 z-10 px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border-b-2 border-gray-200 shadow-md">
         <div className="grid grid-cols-2 gap-4">
           {/* Selected Pharmacy Card */}
           <div
