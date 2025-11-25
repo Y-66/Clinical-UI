@@ -44,7 +44,7 @@ const OrderReview: React.FC = () => {
   const { selectedPharmacy } = useSelectedPharmacyStore();
   const { selectedLab } = useSelectedLabStore();
   const { prescriptionId, requisitionId } = useGeneratedOrdersStore();
-  const { setOrderSubmitted } = useOrderSubmittedStore();
+  const { setOrderSubmitted, isOrderSubmitted } = useOrderSubmittedStore();
 
   const fetchOrderData = async () => {
     // Check if IDs are available
@@ -716,16 +716,33 @@ const OrderReview: React.FC = () => {
 
         {/* Submit Button */}
         <div className="flex justify-center pt-8">
-          <Button
-            type="primary"
-            size="large"
-            icon={<CheckCircleOutlined />}
-            className="bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 border-none h-14 px-12 text-xl font-bold shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300 rounded-xl"
-            onClick={handleSubmitOrders}
-            loading={submitLoading}
-          >
-            Submit Orders
-          </Button>
+          {isOrderSubmitted ? (
+            <div className="bg-green-50 border-2 border-green-400 rounded-xl p-6 shadow-lg">
+              <div className="flex items-center gap-3">
+                <CheckCircleOutlined className="text-4xl text-green-600" />
+                <div>
+                  <p className="text-xl font-bold text-green-800 mb-1">
+                    Orders Submitted Successfully!
+                  </p>
+                  <p className="text-sm text-green-600">
+                    Your prescription and requisition have been submitted. You
+                    can now proceed to the next step.
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <Button
+              type="primary"
+              size="large"
+              icon={<CheckCircleOutlined />}
+              className="bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 border-none h-14 px-12 text-xl font-bold shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300 rounded-xl"
+              onClick={handleSubmitOrders}
+              loading={submitLoading}
+            >
+              Submit Orders
+            </Button>
+          )}
         </div>
       </div>
     </div>
