@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, Button, message, Result, Alert, Tag } from "antd";
 import {
   SendOutlined,
@@ -13,6 +13,7 @@ import {
   useGeneratedOrdersStore,
   useSelectedPharmacyStore,
   useSelectedLabStore,
+  useFaxSentStore,
 } from "../store";
 import { sendPrescriptionFax, sendRequisitionFax } from "../apis/patient";
 
@@ -26,8 +27,27 @@ const FaxSender: React.FC = () => {
   const { prescriptionId, requisitionId } = useGeneratedOrdersStore();
   const { selectedPharmacy } = useSelectedPharmacyStore();
   const { selectedLab } = useSelectedLabStore();
+  const {
+    setPrescriptionFaxSent: setGlobalPrescriptionFaxSent,
+    setRequisitionFaxSent: setGlobalRequisitionFaxSent,
+  } = useFaxSentStore();
 
   const allFaxesSent = prescriptionFaxSent && requisitionFaxSent;
+
+  // Update store when faxes are sent
+  useEffect(() => {
+    if (prescriptionFaxSent) {
+      setGlobalPrescriptionFaxSent(true);
+    }
+    if (requisitionFaxSent) {
+      setGlobalRequisitionFaxSent(true);
+    }
+  }, [
+    prescriptionFaxSent,
+    requisitionFaxSent,
+    setGlobalPrescriptionFaxSent,
+    setGlobalRequisitionFaxSent,
+  ]);
 
   const handleSendPrescriptionFax = async () => {
     if (!prescriptionId) {
@@ -67,13 +87,6 @@ const FaxSender: React.FC = () => {
     } finally {
       setRequisitionLoading(false);
     }
-  };
-
-  const handleSendAllFaxes = async () => {
-    await Promise.all([
-      handleSendPrescriptionFax(),
-      handleSendRequisitionFax(),
-    ]);
   };
 
   return (
@@ -176,25 +189,6 @@ const FaxSender: React.FC = () => {
       {/* Fax Sending Interface */}
       {!allFaxesSent && (
         <div className="space-y-6 flex-1">
-          {/* Send All Button */}
-          <div className="flex justify-center mb-8">
-            <Button
-              type="primary"
-              size="large"
-              icon={<SendOutlined />}
-              onClick={handleSendAllFaxes}
-              loading={prescriptionLoading || requisitionLoading}
-              disabled={prescriptionFaxSent && requisitionFaxSent}
-              className="h-14 px-12 text-lg font-bold shadow-2xl"
-              style={{
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                border: "none",
-              }}
-            >
-              Send All Faxes
-            </Button>
-          </div>
-
           {/* Individual Fax Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Prescription Fax Card */}
@@ -398,7 +392,7 @@ const FaxSender: React.FC = () => {
           {(!prescriptionId || !requisitionId) && (
             <Alert
               message="Missing Order Information"
-              description="Please complete the previous steps to generate prescription and requisition orders before sending faxes."
+              description="You can sending faxes individually."
               type="warning"
               showIcon
               className="mt-4"

@@ -50,3 +50,16 @@ export const useOrderSubmittedStore = create<OrderSubmittedStore>((set) => ({
   isOrderSubmitted: false,
   setOrderSubmitted: (submitted) => set(() => ({ isOrderSubmitted: submitted })),
 }));
+
+interface FaxSentStore {
+  prescriptionFaxSent: boolean;
+  requisitionFaxSent: boolean;
+  setPrescriptionFaxSent: (sent: boolean) => void;
+  setRequisitionFaxSent: (sent: boolean) => void;
+}
+export const useFaxSentStore = create<FaxSentStore>((set) => ({
+  prescriptionFaxSent: false,
+  requisitionFaxSent: false,
+  setPrescriptionFaxSent: (sent) => set(() => ({ prescriptionFaxSent: sent })),
+  setRequisitionFaxSent: (sent) => set(() => ({ requisitionFaxSent: sent })),
+}));

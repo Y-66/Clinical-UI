@@ -14,9 +14,10 @@ import { Step1 } from "./pages/step1";
 import { Step3 } from "./pages/step3";
 import { Step4 } from "./pages/step4";
 import { Step2 } from "./pages/step2";
+import { Step5 } from "./pages/step5";
+import { CompletionPage } from "./pages/completion";
 import CustomSteps from "./components/CustomSteps";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { Step5 } from "./pages/step5";
 import {
   useCurrentDiagnosisInfoStore,
   useGeneratedOrdersStore,
@@ -27,6 +28,7 @@ import {
 
 const App = () => {
   const [showSidebar, setShowSidebar] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
   const { diagnosisInfo, updateDiagnosisInfo } = useCurrentDiagnosisInfoStore();
   const { prescriptionId, requisitionId, updateOrderIds } =
     useGeneratedOrdersStore();
@@ -103,6 +105,20 @@ const App = () => {
       window.scrollTo({ top: 200, behavior: "smooth" });
     }, 50);
   };
+
+  // If completed, show completion page
+  if (isCompleted) {
+    return (
+      <div className="min-h-screen w-full p-8 relative">
+        <div className="max-w-7xl mx-auto">
+          <div className="glass-card p-8">
+            <CompletionPage />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen w-full p-8 relative">
       {/* Header */}
@@ -235,9 +251,10 @@ const App = () => {
                 {current === steps.length - 1 && (
                   <Button
                     type="primary"
-                    onClick={() =>
-                      message.success("Prescription submitted successfully!")
-                    }
+                    onClick={() => {
+                      setIsCompleted(true);
+                      message.success("All processes completed successfully!");
+                    }}
                     size="large"
                     className="premium-button"
                     icon={<SendOutlined />}
@@ -248,7 +265,7 @@ const App = () => {
                       fontWeight: 600,
                     }}
                   >
-                    Submit
+                    Done!
                   </Button>
                 )}
               </div>
