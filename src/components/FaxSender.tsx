@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card, Button, message, Result, Alert, Tag } from "antd";
+import { Button, message, Result, Alert, Tag } from "antd";
 import {
   SendOutlined,
   CheckCircleOutlined,
@@ -114,7 +114,7 @@ const FaxSender: React.FC = () => {
           extra={
             <div className="space-y-4 max-w-3xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 shadow-lg">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 shadow-lg rounded-3xl p-6">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center">
                       <MedicineBoxOutlined className="text-2xl text-white" />
@@ -146,8 +146,8 @@ const FaxSender: React.FC = () => {
                       ✓ {prescriptionMessage}
                     </p>
                   </div>
-                </Card>
-                <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 shadow-lg">
+                </div>
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 shadow-lg rounded-3xl p-6">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
                       <ExperimentOutlined className="text-2xl text-white" />
@@ -179,7 +179,7 @@ const FaxSender: React.FC = () => {
                       ✓ {requisitionMessage}
                     </p>
                   </div>
-                </Card>
+                </div>
               </div>
             </div>
           }
@@ -192,11 +192,11 @@ const FaxSender: React.FC = () => {
           {/* Individual Fax Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Prescription Fax Card */}
-            <Card
-              className={`shadow-lg transition-all duration-300 ${
+            <div
+              className={`shadow-lg transition-all duration-300 rounded-3xl p-6 ${
                 prescriptionFaxSent
                   ? "border-2 border-green-400 bg-green-50"
-                  : "border-2 border-blue-300 hover:shadow-xl"
+                  : "border-2 border-blue-300 hover:shadow-xl bg-white"
               }`}
             >
               <div className="flex flex-col items-center text-center space-y-3 py-4">
@@ -288,14 +288,14 @@ const FaxSender: React.FC = () => {
                   </Button>
                 )}
               </div>
-            </Card>
+            </div>
 
             {/* Requisition Fax Card */}
-            <Card
-              className={`shadow-lg transition-all duration-300 ${
+            <div
+              className={`shadow-lg transition-all duration-300 rounded-3xl p-6 ${
                 requisitionFaxSent
                   ? "border-2 border-green-400 bg-green-50"
-                  : "border-2 border-green-300 hover:shadow-xl"
+                  : "border-2 border-green-300 hover:shadow-xl bg-white"
               }`}
             >
               <div className="flex flex-col items-center text-center space-y-3 py-4">
@@ -385,7 +385,7 @@ const FaxSender: React.FC = () => {
                   </Button>
                 )}
               </div>
-            </Card>
+            </div>
           </div>
 
           {/* Warning if IDs are missing */}

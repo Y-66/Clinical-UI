@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  Card,
   Form,
   Input,
   Button,
@@ -273,50 +272,44 @@ const OrderReview: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Prescription Card */}
-          <Card
-            className="shadow-2xl border-0 hover:shadow-3xl transition-all duration-300 overflow-visible"
-            bodyStyle={{ padding: 0 }}
-          >
+          <div className="bg-white rounded-3xl shadow-xl border border-slate-100 hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
             {/* Card Header - Sticky */}
             <div
               id="prescription-header"
-              className="sticky top-0 z-10 bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg transition-all duration-300 py-3 px-4"
+              className="sticky top-0 z-10 bg-gradient-to-r from-blue-50 to-white border-b border-slate-100 shadow-sm py-4 px-6 flex items-center justify-between gap-4 rounded-t-3xl"
             >
-              <div className="flex items-center gap-3 justify-between">
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg transition-all duration-300 w-10 h-10">
-                    <MedicineBoxOutlined className="text-white transition-all duration-300 text-lg" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h2 className="font-bold text-white transition-all duration-300 text-lg mb-0">
-                      Prescription Order
-                    </h2>
-                  </div>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600 shadow-sm group-hover:scale-110 transition-transform">
+                  <MedicineBoxOutlined className="text-2xl" />
                 </div>
-                {/* Update Button in Header */}
-                <Button
-                  type="primary"
-                  size="middle"
-                  icon={<CheckCircleOutlined />}
-                  disabled={!isPrescriptionChanged}
-                  className={`border-none font-semibold shadow-lg transition-all duration-300 rounded-lg flex-shrink-0 h-9 px-4 text-sm ${
-                    isPrescriptionChanged
-                      ? "bg-white/20 hover:bg-white/30 text-white border-2 border-white/40 hover:scale-105"
-                      : "bg-white/10 text-white/40 cursor-not-allowed border-2 border-white/20"
-                  }`}
-                  onClick={handleUpdatePrescription}
-                  loading={prescriptionLoading}
-                  style={{
-                    opacity: isPrescriptionChanged ? 1 : 0.5,
-                  }}
-                >
-                  Update
-                </Button>
+                <h2 className="text-xl font-bold text-slate-800 m-0">
+                  Prescription Order
+                </h2>
               </div>
+
+              {/* Update Button in Header */}
+              <Button
+                type="primary"
+                size="middle"
+                icon={<CheckCircleOutlined />}
+                onClick={handleUpdatePrescription}
+                loading={prescriptionLoading}
+                disabled={!isPrescriptionChanged}
+                className={`
+                  font-bold shadow-md border-none transition-all duration-300 rounded-xl px-6
+                  ${
+                    isPrescriptionChanged
+                      ? "bg-amber-400 hover:bg-amber-500 text-slate-900 scale-105 animate-pulse"
+                      : "bg-blue-100 text-blue-600 hover:bg-blue-200 opacity-50 cursor-not-allowed"
+                  }
+                `}
+              >
+                {isPrescriptionChanged ? "Save Changes" : "Update"}
+              </Button>
             </div>
 
             {/* Card Body */}
-            <div className="p-6 bg-white">
+            <div className="p-6 bg-white rounded-b-3xl">
               <Form
                 form={prescriptionForm}
                 layout="vertical"
@@ -516,53 +509,47 @@ const OrderReview: React.FC = () => {
                 </div>
               </Form>
             </div>
-          </Card>
+          </div>
 
           {/* Requisition Card */}
-          <Card
-            className="shadow-2xl border-0 hover:shadow-3xl transition-all duration-300 overflow-visible"
-            bodyStyle={{ padding: 0 }}
-          >
+          <div className="bg-white rounded-3xl shadow-xl border border-slate-100 hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
             {/* Card Header - Sticky */}
             <div
               id="requisition-header"
-              className="sticky top-0 z-10 bg-gradient-to-r from-green-500 to-green-600 shadow-lg transition-all duration-300 py-3 px-4"
+              className="sticky top-0 z-10 bg-gradient-to-r from-green-50 to-white border-b border-slate-100 shadow-sm py-4 px-6 flex items-center justify-between gap-4 rounded-t-3xl"
             >
-              <div className="flex items-center gap-3 justify-between">
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg transition-all duration-300 w-10 h-10">
-                    <ExperimentOutlined className="text-white transition-all duration-300 text-lg" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h2 className="font-bold text-white transition-all duration-300 text-lg mb-0">
-                      Lab Requisition Order
-                    </h2>
-                  </div>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center text-green-600 shadow-sm group-hover:scale-110 transition-transform">
+                  <ExperimentOutlined className="text-2xl" />
                 </div>
-                {/* Update Button in Header */}
-                <Button
-                  type="primary"
-                  size="middle"
-                  icon={<CheckCircleOutlined />}
-                  disabled={!isRequisitionChanged}
-                  className={`border-none font-semibold shadow-lg transition-all duration-300 rounded-lg flex-shrink-0 h-9 px-4 text-sm ${
-                    isRequisitionChanged
-                      ? "bg-white/20 hover:bg-white/30 text-white border-2 border-white/40 hover:scale-105"
-                      : "bg-white/10 text-white/40 cursor-not-allowed border-2 border-white/20"
-                  }`}
-                  onClick={handleUpdateRequisition}
-                  loading={requisitionLoading}
-                  style={{
-                    opacity: isRequisitionChanged ? 1 : 0.5,
-                  }}
-                >
-                  Update
-                </Button>
+                <h2 className="text-xl font-bold text-slate-800 m-0">
+                  Lab Requisition Order
+                </h2>
               </div>
+
+              {/* Update Button in Header */}
+              <Button
+                type="primary"
+                size="middle"
+                icon={<CheckCircleOutlined />}
+                onClick={handleUpdateRequisition}
+                loading={requisitionLoading}
+                disabled={!isRequisitionChanged}
+                className={`
+                  font-bold shadow-md border-none transition-all duration-300 rounded-xl px-6
+                  ${
+                    isRequisitionChanged
+                      ? "bg-amber-400 hover:bg-amber-500 text-slate-900 scale-105 animate-pulse"
+                      : "bg-green-100 text-green-600 hover:bg-green-200 opacity-50 cursor-not-allowed"
+                  }
+                `}
+              >
+                {isRequisitionChanged ? "Save Changes" : "Update"}
+              </Button>
             </div>
 
             {/* Card Body */}
-            <div className="p-6 bg-white">
+            <div className="p-6 bg-white rounded-b-3xl">
               <Form
                 form={requisitionForm}
                 layout="vertical"
@@ -741,7 +728,7 @@ const OrderReview: React.FC = () => {
                 </div>
               </Form>
             </div>
-          </Card>
+          </div>
         </div>
 
         {/* Submit Button */}

@@ -97,62 +97,78 @@ const PersonInfo: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full space-y-6">
+    <div className="w-full h-full space-y-8">
       {/* Client ID Search Area */}
-      <Card
-        title={
-          <div className="flex items-center gap-2">
-            <SearchOutlined className="text-cyan-600" />
-            <span className="text-lg font-semibold">
-              Diagnosis Information Search
-            </span>
+      <div className="bg-white rounded-3xl shadow-xl p-8 border border-slate-100 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-50 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none" />
+
+        <div className="flex items-center gap-4 mb-8 relative z-10">
+          <div className="w-12 h-12 rounded-2xl bg-cyan-100 flex items-center justify-center text-cyan-600 shadow-sm">
+            <SearchOutlined className="text-2xl" />
           </div>
-        }
-        className="shadow-sm border-l-4 border-l-cyan-500"
-      >
+          <div>
+            <h2 className="text-2xl font-bold text-slate-800 m-0">
+              Diagnosis Search
+            </h2>
+            <p className="text-slate-500 m-0">
+              Enter patient ID to retrieve medical records
+            </p>
+          </div>
+        </div>
+
         <Form
           form={form}
           onFinish={handleSearch}
-          layout="inline"
-          className="w-full"
+          layout="vertical"
+          className="w-full relative z-10"
         >
-          <Form.Item
-            name="patientId"
-            label={<span className="font-medium">Patient ID</span>}
-            rules={[
-              { required: true, message: "Please enter patient ID" },
-              { pattern: /^\d+$/, message: "Please enter a valid numeric ID" },
-            ]}
-            className="flex-1"
-          >
-            <Input
-              placeholder="Enter patient ID to search diagnosis"
-              size="large"
-              disabled={loading}
-              prefix={<IdcardOutlined className="text-gray-400" />}
-            />
-          </Form.Item>
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              size="large"
-              loading={loading}
-              icon={<SearchOutlined />}
-              style={{
-                background: "linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%)",
-                border: "none",
-                fontWeight: 600,
-                height: "40px",
-                paddingLeft: "24px",
-                paddingRight: "24px",
-              }}
+          <div className="flex flex-col md:flex-row gap-4 items-end">
+            <Form.Item
+              name="patientId"
+              label={
+                <span className="font-semibold text-slate-700 text-base">
+                  Patient ID
+                </span>
+              }
+              rules={[
+                { required: true, message: "Please enter patient ID" },
+                {
+                  pattern: /^\d+$/,
+                  message: "Please enter a valid numeric ID",
+                },
+              ]}
+              className="flex-1 w-full mb-0"
             >
-              Search Diagnosis
-            </Button>
-          </Form.Item>
+              <Input
+                placeholder="e.g. 12345"
+                size="large"
+                disabled={loading}
+                prefix={
+                  <IdcardOutlined className="text-slate-400 text-lg mr-2" />
+                }
+                className="h-14 rounded-xl border-slate-200 hover:border-cyan-400 focus:border-cyan-500 text-lg"
+              />
+            </Form.Item>
+            <Form.Item className="mb-0 w-full md:w-auto">
+              <Button
+                type="primary"
+                htmlType="submit"
+                size="large"
+                loading={loading}
+                icon={<SearchOutlined />}
+                className="h-14 px-8 rounded-xl text-lg font-bold shadow-lg shadow-cyan-200 hover:shadow-cyan-300 transition-all w-full md:w-auto"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%)",
+                  border: "none",
+                }}
+              >
+                Search Records
+              </Button>
+            </Form.Item>
+          </div>
         </Form>
-      </Card>
+      </div>
 
       {/* Error Message Display */}
       {error && (
@@ -161,138 +177,150 @@ const PersonInfo: React.FC = () => {
           description={error}
           type="error"
           showIcon
-          className="shadow-sm"
+          className="rounded-2xl border-red-100 bg-red-50 text-red-800 shadow-sm"
           closable
         />
       )}
 
       {/* Loading State */}
       {loading && (
-        <Card className="text-center py-12 shadow-sm">
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-12 text-center shadow-lg border border-slate-100">
           <Spin size="large" />
-          <div className="mt-6 space-y-4">
-            <div className="flex flex-col items-center space-y-3">
-              <div className="text-gray-700 font-medium flex items-center gap-2">
-                <span className="inline-block w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
-                Searching for diagnosis information...
-              </div>
-            </div>
-            <p className="text-sm text-gray-500 mt-4">
-              This may take a few moments...
+          <div className="mt-6 space-y-2">
+            <h3 className="text-lg font-semibold text-slate-700">
+              Retrieving Records...
+            </h3>
+            <p className="text-slate-500">
+              Please wait while we fetch the diagnosis information
             </p>
           </div>
-        </Card>
+        </div>
       )}
 
       {/* Diagnosis Information Display */}
       {diagnosisData && diagnosisData.length > 0 && !loading && (
-        <div className="space-y-4">
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           {diagnosisData.map((diagnosis, index) => (
-            <Card
+            <div
               key={diagnosis.diagnosis_id}
-              title={
-                <div className="flex items-center gap-2">
-                  <FileTextOutlined className="text-purple-600" />
-                  <span className="text-lg font-semibold">
-                    Diagnosis #{index + 1}
-                  </span>
-                </div>
-              }
-              className="shadow-sm border-l-4 border-l-purple-500"
+              className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden hover:shadow-2xl transition-shadow duration-300"
             >
-              <Descriptions
-                bordered
-                column={{ xs: 1, sm: 2, md: 2, lg: 3 }}
-                size="middle"
-                labelStyle={{
-                  backgroundColor: "#f8fafc",
-                  fontWeight: 600,
-                  color: "#374151",
-                  width: "160px",
-                  fontSize: "13px",
-                  whiteSpace: "nowrap",
-                }}
-                contentStyle={{
-                  fontSize: "14px",
-                }}
-              >
-                <Descriptions.Item
-                  label={
-                    <div className="flex items-center gap-1">
-                      <IdcardOutlined className="text-purple-600 text-sm" />
-                      <span>Diagnosis ID</span>
-                    </div>
-                  }
-                >
-                  <span className="font-bold text-purple-600 text-base">
-                    #{diagnosis.diagnosis_id}
-                  </span>
-                </Descriptions.Item>
-
-                <Descriptions.Item
-                  label={
-                    <div className="flex items-center gap-1">
-                      <UserOutlined className="text-cyan-600 text-sm" />
-                      <span>Patient ID</span>
-                    </div>
-                  }
-                >
-                  <span className="font-semibold">{diagnosis.patient_id}</span>
-                </Descriptions.Item>
-
-                <Descriptions.Item
-                  label={
-                    <div className="flex items-center gap-1">
-                      <UserOutlined className="text-blue-600 text-sm" />
-                      <span>Doctor ID</span>
-                    </div>
-                  }
-                >
-                  {diagnosis.doctor_id}
-                </Descriptions.Item>
-
-                <Descriptions.Item
-                  label={
-                    <div className="flex items-center gap-1">
-                      <FileTextOutlined className="text-green-600 text-sm" />
-                      <span>Diagnosis Code</span>
-                    </div>
-                  }
-                  span={2}
-                >
-                  <span className="font-mono bg-purple-50 px-3 py-1 rounded text-purple-700 text-base font-semibold">
-                    {diagnosis.diagnosis_code}
-                  </span>
-                </Descriptions.Item>
-
-                <Descriptions.Item
-                  label={
-                    <div className="flex items-center gap-1">
-                      <CalendarOutlined className="text-orange-600 text-sm" />
-                      <span>Diagnosis Date</span>
-                    </div>
-                  }
-                >
-                  {formatDate(diagnosis.diagnosis_date)}
-                </Descriptions.Item>
-
-                <Descriptions.Item
-                  label={
-                    <div className="flex items-center gap-1">
-                      <FileTextOutlined className="text-amber-600 text-sm" />
-                      <span>Description</span>
-                    </div>
-                  }
-                  span={3}
-                >
-                  <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
-                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                      {diagnosis.diagnosis_description}
-                    </p>
+              <div className="bg-gradient-to-r from-slate-50 to-white p-6 border-b border-slate-100 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600">
+                    <FileTextOutlined className="text-xl" />
                   </div>
-                </Descriptions.Item>
-              </Descriptions>
-            </Card>
+                  <h3 className="text-xl font-bold text-slate-800 m-0">
+                    Diagnosis Record #{index + 1}
+                  </h3>
+                </div>
+                <div className="px-4 py-1 bg-purple-50 text-purple-700 rounded-full text-sm font-bold border border-purple-100">
+                  Active
+                </div>
+              </div>
+
+              <div className="p-6">
+                <Descriptions
+                  bordered
+                  column={{ xs: 1, sm: 2, md: 2, lg: 3 }}
+                  size="middle"
+                  className="rounded-xl overflow-hidden border-slate-200"
+                  labelStyle={{
+                    backgroundColor: "#f8fafc",
+                    fontWeight: 600,
+                    color: "#475569",
+                    width: "160px",
+                    fontSize: "13px",
+                  }}
+                  contentStyle={{
+                    fontSize: "14px",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <Descriptions.Item
+                    label={
+                      <div className="flex items-center gap-2">
+                        <IdcardOutlined className="text-purple-500" />
+                        <span>Diagnosis ID</span>
+                      </div>
+                    }
+                  >
+                    <span className="font-bold text-purple-600 text-base">
+                      #{diagnosis.diagnosis_id}
+                    </span>
+                  </Descriptions.Item>
+
+                  <Descriptions.Item
+                    label={
+                      <div className="flex items-center gap-2">
+                        <UserOutlined className="text-cyan-500" />
+                        <span>Patient ID</span>
+                      </div>
+                    }
+                  >
+                    <span className="font-semibold text-slate-700">
+                      {diagnosis.patient_id}
+                    </span>
+                  </Descriptions.Item>
+
+                  <Descriptions.Item
+                    label={
+                      <div className="flex items-center gap-2">
+                        <UserOutlined className="text-blue-500" />
+                        <span>Doctor ID</span>
+                      </div>
+                    }
+                  >
+                    <span className="text-slate-700">
+                      {diagnosis.doctor_id}
+                    </span>
+                  </Descriptions.Item>
+
+                  <Descriptions.Item
+                    label={
+                      <div className="flex items-center gap-2">
+                        <FileTextOutlined className="text-green-500" />
+                        <span>Diagnosis Code</span>
+                      </div>
+                    }
+                    span={2}
+                  >
+                    <span className="font-mono bg-slate-100 px-3 py-1 rounded-lg text-slate-700 text-base font-bold border border-slate-200">
+                      {diagnosis.diagnosis_code}
+                    </span>
+                  </Descriptions.Item>
+
+                  <Descriptions.Item
+                    label={
+                      <div className="flex items-center gap-2">
+                        <CalendarOutlined className="text-orange-500" />
+                        <span>Date</span>
+                      </div>
+                    }
+                  >
+                    <span className="text-slate-700">
+                      {formatDate(diagnosis.diagnosis_date)}
+                    </span>
+                  </Descriptions.Item>
+
+                  <Descriptions.Item
+                    label={
+                      <div className="flex items-center gap-2">
+                        <FileTextOutlined className="text-amber-500" />
+                        <span>Description</span>
+                      </div>
+                    }
+                    span={3}
+                  >
+                    <div className="bg-amber-50/50 p-4 rounded-xl border border-amber-100">
+                      <p className="text-slate-700 leading-relaxed whitespace-pre-wrap m-0">
+                        {diagnosis.diagnosis_description}
+                      </p>
+                    </div>
+                  </Descriptions.Item>
+                </Descriptions>
+              </div>
+            </div>
           ))}
         </div>
       )}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Tabs, Card, List, Empty, Spin, message, Tag, Button } from "antd";
+import { Empty, Spin, message, Tag, Button } from "antd";
 import {
   ShopOutlined,
   ExperimentOutlined,
@@ -205,130 +205,110 @@ const LocationSelector: React.FC = () => {
     icon: React.ReactNode,
     isPreference: boolean = false
   ) => (
-    <Card
-      title={
-        <div className="flex items-center gap-2">
+    <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden flex flex-col h-[600px]">
+      <div className="bg-gradient-to-r from-blue-50 to-white p-4 border-b border-slate-100 flex items-center gap-3 flex-shrink-0">
+        <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shadow-sm">
           {icon}
-          <span className="font-semibold">{title}</span>
         </div>
-      }
-      className="shadow-md h-full"
-      bodyStyle={{ padding: "12px" }}
-    >
-      {loading ? (
-        <div className="flex justify-center items-center py-20">
-          <Spin size="large" />
-        </div>
-      ) : pharmacies.length === 0 ? (
-        <Empty
-          description={`No ${
-            isPreference ? "preferred" : "nearby"
-          } pharmacies found`}
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-        />
-      ) : (
-        <List
-          dataSource={pharmacies}
-          renderItem={(pharmacy, index) => {
+        <h3 className="text-lg font-bold text-slate-800 m-0">{title}</h3>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+        {loading ? (
+          <div className="flex justify-center items-center h-full">
+            <Spin size="large" />
+          </div>
+        ) : pharmacies.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-slate-400">
+            <Empty
+              description={
+                <span className="text-slate-400">
+                  No {isPreference ? "preferred" : "nearby"} pharmacies found
+                </span>
+              }
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
+          </div>
+        ) : (
+          pharmacies.map((pharmacy, index) => {
             const isSelected =
               selectedPharmacy?.pharmacy_id === pharmacy.pharmacy_id;
             return (
-              <List.Item
+              <div
                 key={`${pharmacy.pharmacy_id}-${index}`}
-                className={`rounded-lg transition-all duration-200 px-4 py-3 border ${
+                className={`rounded-2xl p-4 border transition-all duration-300 cursor-pointer group ${
                   isSelected
-                    ? "bg-yellow-50 border-yellow-400 shadow-lg"
-                    : "hover:bg-blue-50 border-transparent hover:border-blue-200"
+                    ? "bg-blue-50 border-blue-200 shadow-md scale-[1.02]"
+                    : "bg-white border-slate-100 hover:border-blue-200 hover:shadow-md hover:scale-[1.01]"
                 }`}
-                style={{ marginBottom: "12px" }}
+                onClick={() => handleSelectPharmacy(pharmacy)}
               >
-                <div className="w-full">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex-1 pr-4 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="font-bold text-lg text-gray-900 break-words">
-                          {pharmacy.name}
+                <div className="flex justify-between items-start gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span
+                        className={`font-bold text-base truncate ${
+                          isSelected ? "text-blue-700" : "text-slate-800"
+                        }`}
+                      >
+                        {pharmacy.name}
+                      </span>
+                      {isPreference && (
+                        <HeartFilled className="text-red-500 text-sm animate-pulse flex-shrink-0" />
+                      )}
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="flex items-start gap-2 text-sm text-slate-500">
+                        <EnvironmentOutlined className="mt-1 text-blue-400 flex-shrink-0" />
+                        <span className="line-clamp-2 text-xs">
+                          {pharmacy.address}
                         </span>
-                        {isPreference && (
-                          <HeartFilled className="text-red-500 text-base animate-pulse flex-shrink-0" />
-                        )}
                       </div>
-                      <div className="space-y-1.5">
-                        <div className="flex items-start gap-2 text-sm text-gray-700">
-                          <EnvironmentOutlined className="mt-0.5 text-blue-600 text-base flex-shrink-0" />
-                          <span className="leading-relaxed break-words">
-                            {pharmacy.address}
+                      {pharmacy.phone_number && (
+                        <div className="flex items-center gap-2 text-sm text-slate-500">
+                          <PhoneOutlined className="text-green-500 flex-shrink-0" />
+                          <span className="text-xs">
+                            {pharmacy.phone_number}
                           </span>
-                        </div>
-                        {pharmacy.phone_number && (
-                          <div className="flex items-center gap-2 text-sm text-gray-700">
-                            <PhoneOutlined className="text-green-600 text-base flex-shrink-0" />
-                            <span className="font-medium">
-                              {pharmacy.phone_number}
-                            </span>
-                          </div>
-                        )}
-                        {pharmacy.email && (
-                          <div className="flex items-start gap-2 text-sm text-gray-600">
-                            <span className="text-gray-400 flex-shrink-0">
-                              📧
-                            </span>
-                            <span
-                              className="text-blue-600 underline break-all"
-                              style={{
-                                wordBreak: "break-word",
-                                overflowWrap: "anywhere",
-                              }}
-                            >
-                              {pharmacy.email}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                      {pharmacy.notes && isPreference && (
-                        <div className="mt-3 text-xs text-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 p-3 rounded-lg border border-blue-200 shadow-sm">
-                          <span className="font-bold text-blue-800">
-                            💡 Note:{" "}
-                          </span>
-                          <span className="italic">{pharmacy.notes}</span>
                         </div>
                       )}
                     </div>
-                    {pharmacy.distance_km !== undefined && (
-                      <div className="flex flex-col items-end gap-1">
-                        <Tag
-                          color="blue"
-                          className="font-bold text-base px-3 py-1"
-                          style={{ margin: 0 }}
-                        >
-                          {formatDistance(pharmacy.distance_km)}
-                        </Tag>
-                        <span className="text-xs text-gray-500">away</span>
+
+                    {pharmacy.notes && isPreference && (
+                      <div className="mt-2 text-xs text-slate-600 bg-blue-50/50 p-2 rounded-lg border border-blue-100">
+                        <span className="font-bold text-blue-600">Note: </span>
+                        {pharmacy.notes}
                       </div>
                     )}
                   </div>
-                  <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
-                    <Button
-                      type={isSelected ? "default" : "primary"}
-                      size="small"
-                      icon={<StarOutlined />}
-                      className={
+
+                  <div className="flex flex-col items-end gap-2">
+                    {pharmacy.distance_km !== undefined && (
+                      <Tag
+                        color="blue"
+                        className="m-0 font-bold border-0 bg-blue-100 text-blue-700 rounded-full px-2 text-xs"
+                      >
+                        {formatDistance(pharmacy.distance_km)}
+                      </Tag>
+                    )}
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
                         isSelected
-                          ? "bg-yellow-400 border-yellow-500 text-gray-900 font-bold shadow-md"
-                          : "bg-gradient-to-r from-blue-500 to-blue-600 border-none shadow-sm hover:shadow-md"
-                      }
-                      onClick={() => handleSelectPharmacy(pharmacy)}
+                          ? "bg-blue-500 text-white"
+                          : "bg-slate-100 text-slate-300 group-hover:bg-blue-100 group-hover:text-blue-400"
+                      }`}
                     >
-                      {isSelected ? "Selected" : "Select"}
-                    </Button>
+                      <StarOutlined className="text-xs" />
+                    </div>
                   </div>
                 </div>
-              </List.Item>
+              </div>
             );
-          }}
-        />
-      )}
-    </Card>
+          })
+        )}
+      </div>
+    </div>
   );
 
   const renderLabList = (
@@ -337,127 +317,107 @@ const LocationSelector: React.FC = () => {
     icon: React.ReactNode,
     isPreference: boolean = false
   ) => (
-    <Card
-      title={
-        <div className="flex items-center gap-2">
+    <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden flex flex-col h-[600px]">
+      <div className="bg-gradient-to-r from-green-50 to-white p-4 border-b border-slate-100 flex items-center gap-3 flex-shrink-0">
+        <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center text-green-600 shadow-sm">
           {icon}
-          <span className="font-semibold">{title}</span>
         </div>
-      }
-      className="shadow-md h-full"
-      bodyStyle={{ padding: "12px" }}
-    >
-      {loading ? (
-        <div className="flex justify-center items-center py-20">
-          <Spin size="large" />
-        </div>
-      ) : labs.length === 0 ? (
-        <Empty
-          description={`No ${isPreference ? "preferred" : "nearby"} labs found`}
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-        />
-      ) : (
-        <List
-          dataSource={labs}
-          renderItem={(lab, index) => {
+        <h3 className="text-lg font-bold text-slate-800 m-0">{title}</h3>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+        {loading ? (
+          <div className="flex justify-center items-center h-full">
+            <Spin size="large" />
+          </div>
+        ) : labs.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-slate-400">
+            <Empty
+              description={
+                <span className="text-slate-400">
+                  No {isPreference ? "preferred" : "nearby"} labs found
+                </span>
+              }
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
+          </div>
+        ) : (
+          labs.map((lab, index) => {
             const isSelected = selectedLab?.lab_id === lab.lab_id;
             return (
-              <List.Item
+              <div
                 key={`${lab.lab_id}-${index}`}
-                className={`rounded-lg transition-all duration-200 px-4 py-3 border ${
+                className={`rounded-2xl p-4 border transition-all duration-300 cursor-pointer group ${
                   isSelected
-                    ? "bg-yellow-50 border-yellow-400 shadow-lg"
-                    : "hover:bg-green-50 border-transparent hover:border-green-200"
+                    ? "bg-green-50 border-green-200 shadow-md scale-[1.02]"
+                    : "bg-white border-slate-100 hover:border-green-200 hover:shadow-md hover:scale-[1.01]"
                 }`}
-                style={{ marginBottom: "12px" }}
+                onClick={() => handleSelectLab(lab)}
               >
-                <div className="w-full">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex-1 pr-4 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="font-bold text-lg text-gray-900 break-words">
-                          {lab.name}
+                <div className="flex justify-between items-start gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span
+                        className={`font-bold text-base truncate ${
+                          isSelected ? "text-green-700" : "text-slate-800"
+                        }`}
+                      >
+                        {lab.name}
+                      </span>
+                      {isPreference && (
+                        <HeartFilled className="text-red-500 text-sm animate-pulse flex-shrink-0" />
+                      )}
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="flex items-start gap-2 text-sm text-slate-500">
+                        <EnvironmentOutlined className="mt-1 text-green-400 flex-shrink-0" />
+                        <span className="line-clamp-2 text-xs">
+                          {lab.address}
                         </span>
-                        {isPreference && (
-                          <HeartFilled className="text-red-500 text-base animate-pulse flex-shrink-0" />
-                        )}
                       </div>
-                      <div className="space-y-1.5">
-                        <div className="flex items-start gap-2 text-sm text-gray-700">
-                          <EnvironmentOutlined className="mt-0.5 text-green-600 text-base flex-shrink-0" />
-                          <span className="leading-relaxed break-words">
-                            {lab.address}
-                          </span>
-                        </div>
-                        {lab.phone_number && (
-                          <div className="flex items-center gap-2 text-sm text-gray-700">
-                            <PhoneOutlined className="text-green-600 text-base flex-shrink-0" />
-                            <span className="font-medium">
-                              {lab.phone_number}
-                            </span>
-                          </div>
-                        )}
-                        {lab.email && (
-                          <div className="flex items-start gap-2 text-sm text-gray-600">
-                            <span className="text-gray-400 flex-shrink-0">
-                              📧
-                            </span>
-                            <span
-                              className="text-green-600 underline break-all"
-                              style={{
-                                wordBreak: "break-word",
-                                overflowWrap: "anywhere",
-                              }}
-                            >
-                              {lab.email}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                      {lab.notes && isPreference && (
-                        <div className="mt-3 text-xs text-gray-700 bg-gradient-to-r from-green-50 to-teal-50 p-3 rounded-lg border border-green-200 shadow-sm">
-                          <span className="font-bold text-green-800">
-                            💡 Note:{" "}
-                          </span>
-                          <span className="italic">{lab.notes}</span>
+                      {lab.phone_number && (
+                        <div className="flex items-center gap-2 text-sm text-slate-500">
+                          <PhoneOutlined className="text-green-500 flex-shrink-0" />
+                          <span className="text-xs">{lab.phone_number}</span>
                         </div>
                       )}
                     </div>
-                    {lab.distance_km !== undefined && (
-                      <div className="flex flex-col items-end gap-1">
-                        <Tag
-                          color="green"
-                          className="font-bold text-base px-3 py-1"
-                          style={{ margin: 0 }}
-                        >
-                          {formatDistance(lab.distance_km)}
-                        </Tag>
-                        <span className="text-xs text-gray-500">away</span>
+
+                    {lab.notes && isPreference && (
+                      <div className="mt-2 text-xs text-slate-600 bg-green-50/50 p-2 rounded-lg border border-green-100">
+                        <span className="font-bold text-green-600">Note: </span>
+                        {lab.notes}
                       </div>
                     )}
                   </div>
-                  <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
-                    <Button
-                      type={isSelected ? "default" : "primary"}
-                      size="small"
-                      icon={<StarOutlined />}
-                      className={
+
+                  <div className="flex flex-col items-end gap-2">
+                    {lab.distance_km !== undefined && (
+                      <Tag
+                        color="green"
+                        className="m-0 font-bold border-0 bg-green-100 text-green-700 rounded-full px-2 text-xs"
+                      >
+                        {formatDistance(lab.distance_km)}
+                      </Tag>
+                    )}
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
                         isSelected
-                          ? "bg-yellow-400 border-yellow-500 text-gray-900 font-bold shadow-md"
-                          : "bg-gradient-to-r from-green-500 to-green-600 border-none shadow-sm hover:shadow-md"
-                      }
-                      onClick={() => handleSelectLab(lab)}
+                          ? "bg-green-500 text-white"
+                          : "bg-slate-100 text-slate-300 group-hover:bg-green-100 group-hover:text-green-400"
+                      }`}
                     >
-                      {isSelected ? "Selected" : "Select"}
-                    </Button>
+                      <StarOutlined className="text-xs" />
+                    </div>
                   </div>
                 </div>
-              </List.Item>
+              </div>
             );
-          }}
-        />
-      )}
-    </Card>
+          })
+        )}
+      </div>
+    </div>
   );
 
   const pharmacyContent = (
@@ -477,16 +437,16 @@ const LocationSelector: React.FC = () => {
         )}
       </div>
       {/* Google Map for Pharmacies */}
-      <Card
-        title={
-          <div className="flex items-center gap-2">
-            <EnvironmentOutlined className="text-blue-600 text-lg" />
-            <span className="font-semibold">Pharmacy Locations</span>
+      <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-50 to-white p-4 border-b border-slate-100 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shadow-sm">
+            <EnvironmentOutlined className="text-xl" />
           </div>
-        }
-        className="shadow-md"
-      >
-        <div style={{ height: "500px", width: "100%" }}>
+          <h3 className="text-lg font-bold text-slate-800 m-0">
+            Pharmacy Locations
+          </h3>
+        </div>
+        <div className="h-[500px] w-full relative">
           <APIProvider apiKey={GOOGLE_API_KEY}>
             <Map
               key={
@@ -611,7 +571,7 @@ const LocationSelector: React.FC = () => {
             </Map>
           </APIProvider>
         </div>
-      </Card>
+      </div>
     </div>
   );
 
@@ -631,16 +591,16 @@ const LocationSelector: React.FC = () => {
         )}
       </div>
       {/* Google Map for Labs */}
-      <Card
-        title={
-          <div className="flex items-center gap-2">
-            <EnvironmentOutlined className="text-green-600 text-lg" />
-            <span className="font-semibold">Lab Locations</span>
+      <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+        <div className="bg-gradient-to-r from-green-50 to-white p-4 border-b border-slate-100 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center text-green-600 shadow-sm">
+            <EnvironmentOutlined className="text-xl" />
           </div>
-        }
-        className="shadow-md"
-      >
-        <div style={{ height: "500px", width: "100%" }}>
+          <h3 className="text-lg font-bold text-slate-800 m-0">
+            Lab Locations
+          </h3>
+        </div>
+        <div className="h-[500px] w-full relative">
           <APIProvider apiKey={GOOGLE_API_KEY}>
             <Map
               key={selectedLab ? `lab-${selectedLab.lab_id}` : "lab-default"}
@@ -751,32 +711,9 @@ const LocationSelector: React.FC = () => {
             </Map>
           </APIProvider>
         </div>
-      </Card>
+      </div>
     </div>
   );
-
-  const tabItems = [
-    {
-      key: "pharmacy",
-      label: (
-        <span className="flex items-center gap-2 text-base">
-          <ShopOutlined />
-          Pharmacy
-        </span>
-      ),
-      children: pharmacyContent,
-    },
-    {
-      key: "lab",
-      label: (
-        <span className="flex items-center gap-2 text-base">
-          <ExperimentOutlined />
-          Lab
-        </span>
-      ),
-      children: labContent,
-    },
-  ];
 
   return (
     <div className="w-full h-full">
@@ -865,14 +802,36 @@ const LocationSelector: React.FC = () => {
         </div>
       </div>
 
-      <Tabs
-        activeKey={activeTab}
-        onChange={setActiveTab}
-        items={tabItems}
-        size="large"
-        className="px-4"
-        tabBarStyle={{ marginBottom: 0 }}
-      />
+      <div className="px-4">
+        <div className="flex p-1 bg-slate-100 rounded-2xl mb-6 w-fit mx-auto">
+          <button
+            onClick={() => setActiveTab("pharmacy")}
+            className={`flex items-center gap-2 px-8 py-3 rounded-xl text-lg font-bold transition-all duration-300 border-none cursor-pointer ${
+              activeTab === "pharmacy"
+                ? "bg-white text-blue-600 shadow-md scale-105"
+                : "bg-transparent text-slate-500 hover:text-slate-700"
+            }`}
+          >
+            <ShopOutlined className="text-xl" />
+            Pharmacy
+          </button>
+          <button
+            onClick={() => setActiveTab("lab")}
+            className={`flex items-center gap-2 px-8 py-3 rounded-xl text-lg font-bold transition-all duration-300 border-none cursor-pointer ${
+              activeTab === "lab"
+                ? "bg-white text-green-600 shadow-md scale-105"
+                : "bg-transparent text-slate-500 hover:text-slate-700"
+            }`}
+          >
+            <ExperimentOutlined className="text-xl" />
+            Lab
+          </button>
+        </div>
+
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          {activeTab === "pharmacy" ? pharmacyContent : labContent}
+        </div>
+      </div>
     </div>
   );
 };
