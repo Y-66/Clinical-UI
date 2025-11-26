@@ -16,20 +16,42 @@ import {
   useSelectedPharmacyStore,
   useSelectedLabStore,
   useFaxSentStore,
+  useGeneratedOrdersStore,
+  useOrderSubmittedStore,
+  useWorkflowGenerationStore,
 } from "../store";
 
 export const CompletionPage = () => {
   const navigate = useNavigate();
-  const { diagnosisInfo } = useCurrentDiagnosisInfoStore();
-  const { selectedPharmacy } = useSelectedPharmacyStore();
-  const { selectedLab } = useSelectedLabStore();
-  const { prescriptionFaxSent, requisitionFaxSent } = useFaxSentStore();
+  const { diagnosisInfo, updateDiagnosisInfo } = useCurrentDiagnosisInfoStore();
+  const { selectedPharmacy, updateSelectedPharmacy } =
+    useSelectedPharmacyStore();
+  const { selectedLab, updateSelectedLab } = useSelectedLabStore();
+  const {
+    prescriptionFaxSent,
+    requisitionFaxSent,
+    setPrescriptionFaxSent,
+    setRequisitionFaxSent,
+  } = useFaxSentStore();
+  const { updateOrderIds } = useGeneratedOrdersStore();
+  const { setOrderSubmitted } = useOrderSubmittedStore();
+  const { setHasGeneratedOrders } = useWorkflowGenerationStore();
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
   const handleRestart = () => {
+    // Reset all states
+    updateDiagnosisInfo(null);
+    updateSelectedPharmacy(null);
+    updateSelectedLab(null);
+    setPrescriptionFaxSent(false);
+    setRequisitionFaxSent(false);
+    updateOrderIds(null, null);
+    setOrderSubmitted(false);
+    setHasGeneratedOrders(false);
+
     navigate("/landing");
   };
 
