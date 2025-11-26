@@ -63,7 +63,8 @@ const App = () => {
     },
     {
       title: "Professional Review",
-      description: "Clinical staff review and refine patient forms before approval. AI-generated content may contain errors and requires human verification.",
+      description:
+        "Clinical staff review and refine patient forms before approval. AI-generated content may contain errors and requires human verification.",
       icon: <SearchOutlined />,
     },
     {
@@ -161,7 +162,7 @@ const App = () => {
       <div className="max-w-7xl mx-auto grid grid-cols-12 gap-6 relative z-10 items-stretch">
         {/* Left Steps Panel - Sticky */}
         <div className="col-span-3">
-          <div className="sticky top-0 glass-card p-6 h-full flex flex-col">
+          <div className="sticky top-4 glass-card p-6 flex flex-col">
             <div className="mb-6 flex-shrink-0">
               <h3 className="text-xl font-bold text-gray-800 mb-1">
                 Progress Tracker
