@@ -199,7 +199,7 @@ const FaxSender: React.FC = () => {
                   : "border-2 border-blue-300 hover:shadow-xl bg-white"
               }`}
             >
-              <div className="flex flex-col items-center text-center space-y-3 py-4">
+              <div className="flex flex-col items-center text-center space-y-3 py-4 h-full">
                 <div
                   className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 ${
                     prescriptionFaxSent
@@ -214,7 +214,7 @@ const FaxSender: React.FC = () => {
                   )}
                 </div>
 
-                <div className="w-full">
+                <div className="w-full flex-1">
                   <h3 className="text-lg font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
                     <MedicineBoxOutlined className="text-blue-600" />
                     Prescription Fax
@@ -254,15 +254,20 @@ const FaxSender: React.FC = () => {
                 </div>
 
                 {prescriptionFaxSent ? (
-                  <div className="bg-green-100 border border-green-300 rounded-lg p-4 w-full">
-                    <p className="text-sm text-green-800 font-medium">
-                      ✓ Fax sent successfully
-                    </p>
-                    {prescriptionMessage && (
-                      <p className="text-xs text-gray-600 mt-2">
-                        {prescriptionMessage}
-                      </p>
-                    )}
+                  <div className="bg-green-100 border border-green-300 rounded-lg p-3 w-full text-left">
+                    <div className="flex items-start gap-2">
+                      <CheckCircleOutlined className="text-green-600 text-base mt-1" />
+                      <div className="flex-1">
+                        <p className="text-sm text-green-800 font-medium">
+                          Fax sent successfully
+                        </p>
+                        {prescriptionMessage && (
+                          <p className="text-xs text-gray-600 mt-1">
+                            {prescriptionMessage}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <Button
@@ -298,7 +303,7 @@ const FaxSender: React.FC = () => {
                   : "border-2 border-green-300 hover:shadow-xl bg-white"
               }`}
             >
-              <div className="flex flex-col items-center text-center space-y-3 py-4">
+              <div className="flex flex-col items-center text-center space-y-3 py-4 h-full">
                 <div
                   className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 ${
                     requisitionFaxSent
@@ -313,7 +318,7 @@ const FaxSender: React.FC = () => {
                   )}
                 </div>
 
-                <div className="w-full">
+                <div className="w-full flex-1">
                   <h3 className="text-lg font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
                     <ExperimentOutlined className="text-green-600" />
                     Requisition Fax
@@ -351,15 +356,20 @@ const FaxSender: React.FC = () => {
                 </div>
 
                 {requisitionFaxSent ? (
-                  <div className="bg-green-100 border border-green-300 rounded-lg p-4 w-full">
-                    <p className="text-sm text-green-800 font-medium">
-                      ✓ Fax sent successfully
-                    </p>
-                    {requisitionMessage && (
-                      <p className="text-xs text-gray-600 mt-2">
-                        {requisitionMessage}
-                      </p>
-                    )}
+                  <div className="bg-green-100 border border-green-300 rounded-lg p-3 w-full text-left">
+                    <div className="flex items-start gap-2">
+                      <CheckCircleOutlined className="text-green-600 text-base mt-1" />
+                      <div className="flex-1">
+                        <p className="text-sm text-green-800 font-medium">
+                          Fax sent successfully
+                        </p>
+                        {requisitionMessage && (
+                          <p className="text-xs text-gray-600 mt-1">
+                            {requisitionMessage}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <Button

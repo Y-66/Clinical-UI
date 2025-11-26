@@ -15,38 +15,43 @@ interface CustomStepsProps {
 const CustomSteps: React.FC<CustomStepsProps> = ({ steps, current }) => {
   return (
     <div className="relative">
-      {/* Progress Line */}
-      <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-gradient-to-b from-gray-200 via-gray-200 to-gray-200">
-        <div
-          className="w-full bg-gradient-to-b from-cyan-500 to-teal-500 transition-all duration-700 ease-out"
-          style={{
-            height: `${(current / (steps.length - 1)) * 100}%`,
-          }}
-        />
-      </div>
-
       {/* Steps */}
       <div className="space-y-6">
         {steps.map((step, index) => {
           const isCompleted = index < current;
           const isCurrent = index === current;
+          const isLast = index === steps.length - 1;
 
           return (
             <div
               key={index}
               className={`relative flex items-start gap-4 transition-all duration-500 ${
-                isCurrent ? "scale-105" : ""
+                isCurrent ? "scale-100" : ""
               }`}
             >
-              {/* Icon Circle */}
-              <div className="relative z-10 flex-shrink-0">
+              {/* Vertical Connector Line for each step (except the last) */}
+              {!isLast && (
                 <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 transform ${
+                  className="absolute left-6 top-5 w-0.5 bg-gray-200"
+                  style={{ height: "calc(100% + 1.5rem)" }}
+                />
+              )}
+              {isCompleted && !isLast && (
+                <div
+                  className="absolute left-6 top-5 w-0.5 bg-gradient-to-b from-cyan-500 to-teal-500"
+                  style={{ height: "calc(100% + 1.5rem)" }}
+                />
+              )}
+
+              {/* Icon Circle */}
+              <div className="relative z-10 flex-shrink-0 w-12 flex justify-center">
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500 ${
                     isCompleted
-                      ? "bg-gradient-to-br from-cyan-500 to-teal-500 shadow-lg shadow-cyan-500/50 scale-100"
+                      ? "bg-gradient-to-br from-cyan-500 to-teal-500 shadow-lg shadow-cyan-500/50"
                       : isCurrent
-                      ? "bg-gradient-to-br from-cyan-500 to-teal-500 shadow-xl shadow-cyan-500/60 scale-110 animate-pulse"
-                      : "bg-gray-200 scale-90"
+                      ? "bg-gradient-to-br from-cyan-500 to-teal-500 shadow-xl shadow-cyan-500/60 current-step-glow"
+                      : "bg-gray-200"
                   }`}
                 >
                   {isCompleted ? (
@@ -64,7 +69,9 @@ const CustomSteps: React.FC<CustomStepsProps> = ({ steps, current }) => {
 
                 {/* Ripple Effect for Current Step */}
                 {isCurrent && (
-                  <div className="absolute inset-0 rounded-full bg-cyan-400 animate-ping opacity-20" />
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="w-12 h-12 rounded-full bg-cyan-400/20 current-step-ring" />
+                  </div>
                 )}
               </div>
 
@@ -96,7 +103,7 @@ const CustomSteps: React.FC<CustomStepsProps> = ({ steps, current }) => {
                 {/* Progress Badge */}
                 {isCurrent && (
                   <div className="mt-0 inline-block">
-                    <span className="px-3 py-1 bg-gradient-to-r from-cyan-100 to-teal-100 text-cyan-700 text-xs font-semibold rounded-full animate-pulse">
+                    <span className="px-3 py-1 bg-gradient-to-r from-cyan-100 to-teal-100 text-cyan-700 text-xs font-semibold rounded-full">
                       In Progress
                     </span>
                   </div>

@@ -10,6 +10,7 @@ import {
   SendOutlined,
   CloseOutlined,
   MedicineBoxOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { Step1 } from "./pages/step1";
 import { Step3 } from "./pages/step3";
@@ -44,28 +45,28 @@ const App = () => {
 
   const steps = [
     {
-      title: "Patient Info",
-      description: "Confirm Patient Information",
+      title: "Diagnosis Info",
+      description: "View and confirm patient's latest diagnosis",
       icon: <CheckCircleOutlined />,
     },
     {
-      title: "Facility Selection",
-      description: "Select Pharmacy & Lab",
-      icon: <EnvironmentOutlined />,
-    },
-    {
-      title: "Order Review",
-      description: "Review & Confirm Orders",
+      title: "Agent Doc Generation",
+      description: "AI generates prescription & requisition forms",
       icon: <FileTextOutlined />,
     },
     {
-      title: "Submission",
-      description: "Submit Orders for Processing",
-      icon: <SendOutlined />,
+      title: "Facility Selection",
+      description: "Choose preferred pharmacy and lab",
+      icon: <EnvironmentOutlined />,
     },
     {
-      title: "Fax Transmission",
-      description: "Send Orders to Facilities",
+      title: "Professional Review",
+      description: "Clinical staff review and refine patient forms before approval. AI-generated content may contain errors and requires human verification.",
+      icon: <SearchOutlined />,
+    },
+    {
+      title: "Fax Confirmation",
+      description: "Finalize and send forms to facilities",
       icon: <SendOutlined />,
     },
   ];
@@ -145,19 +146,19 @@ const App = () => {
         <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-3 tracking-tight">
           Digital Medical{" "}
           <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
-            Document System
+            Document Workflow
           </span>
         </h1>
         <p className="text-slate-500 text-lg max-w-2xl mx-auto font-medium">
-          Your health, simplified and secured
+          Agent-driven E-Health App for Seamless Prescription & Requisition
         </p>
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-12 gap-6 relative z-10">
+      <div className="max-w-7xl mx-auto grid grid-cols-12 gap-6 relative z-10 items-stretch">
         {/* Left Steps Panel - Sticky */}
         <div className="col-span-3">
-          <div className="sticky top-0 glass-card p-6">
-            <div className="mb-6">
+          <div className="sticky top-0 glass-card p-6 h-full flex flex-col">
+            <div className="mb-6 flex-shrink-0">
               <h3 className="text-xl font-bold text-gray-800 mb-1">
                 Progress Tracker
               </h3>
@@ -165,13 +166,15 @@ const App = () => {
                 Step {current + 1} of {steps.length}
               </p>
             </div>
-            <CustomSteps steps={steps} current={current} />
+            <div className="flex-1 flex items-stretch">
+              <CustomSteps steps={steps} current={current} />
+            </div>
           </div>
         </div>
 
         {/* Main Content Area - No min height restriction */}
         <div className="col-span-9">
-          <div className="glass-card p-8 flex flex-col">
+          <div className="glass-card p-8 flex flex-col h-full">
             {/* Step Title */}
             <div className="mb-0 flex items-center justify-between">
               <div className="flex items-baseline">
