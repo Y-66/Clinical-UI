@@ -26,6 +26,7 @@ import {
   useSelectedPharmacyStore,
   useSelectedLabStore,
   useOrderSubmittedStore,
+  useWorkflowGenerationStore,
 } from "./store";
 
 const App = () => {
@@ -37,6 +38,7 @@ const App = () => {
   const { selectedPharmacy } = useSelectedPharmacyStore();
   const { selectedLab } = useSelectedLabStore();
   const { isOrderSubmitted } = useOrderSubmittedStore();
+  const { hasGeneratedOrders } = useWorkflowGenerationStore();
 
   // Scroll to top on mount
   useEffect(() => {
@@ -76,13 +78,15 @@ const App = () => {
   const canProceedFromStep1 =
     current === 0 ? diagnosisInfo && diagnosisInfo.length > 0 : true;
 
-  // Check if orders are generated (only for step 1)
+  // Check if orders are generated (step 1: Agent Doc Generation)
   const canProceedFromStep2 =
-    current === 1 ? prescriptionId && requisitionId : true;
+    current === 1
+      ? Boolean(hasGeneratedOrders && prescriptionId && requisitionId)
+      : true;
 
   // Check if pharmacy and lab are selected (only for step 2)
   const canProceedFromStep3 =
-    current === 2 ? selectedPharmacy && selectedLab : true;
+    current === 2 ? Boolean(selectedPharmacy && selectedLab) : true;
 
   // Check if orders are submitted (only for step 3)
   const canProceedFromStep4 = current === 3 ? isOrderSubmitted : true;

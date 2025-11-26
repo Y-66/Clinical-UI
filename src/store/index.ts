@@ -63,3 +63,16 @@ export const useFaxSentStore = create<FaxSentStore>((set) => ({
   setPrescriptionFaxSent: (sent) => set(() => ({ prescriptionFaxSent: sent })),
   setRequisitionFaxSent: (sent) => set(() => ({ requisitionFaxSent: sent })),
 }));
+
+interface WorkflowGenerationStore {
+  hasGeneratedOrders: boolean;
+  setHasGeneratedOrders: (generated: boolean) => void;
+}
+
+export const useWorkflowGenerationStore = create<WorkflowGenerationStore>(
+  (set) => ({
+    hasGeneratedOrders: false,
+    setHasGeneratedOrders: (generated) =>
+      set(() => ({ hasGeneratedOrders: generated })),
+  })
+);

@@ -10,6 +10,7 @@ import { generateWorkflowOrders } from "../apis/patient";
 import {
   useCurrentDiagnosisInfoStore,
   useGeneratedOrdersStore,
+  useWorkflowGenerationStore,
 } from "../store";
 import type { WorkflowOrderResponse } from "../types/WorkflowOrder";
 
@@ -20,6 +21,7 @@ const OrderGeneration: React.FC = () => {
   );
   const { diagnosisInfo } = useCurrentDiagnosisInfoStore();
   const { updateOrderIds } = useGeneratedOrdersStore();
+  const { setHasGeneratedOrders } = useWorkflowGenerationStore();
 
   const handleGenerateOrders = async () => {
     if (!diagnosisInfo || diagnosisInfo.length === 0) {
@@ -38,6 +40,7 @@ const OrderGeneration: React.FC = () => {
         data.prescription.prescription_id,
         data.requisition.requisition_id
       );
+      setHasGeneratedOrders(true);
       message.success("Orders generated successfully!");
     } catch (err) {
       const errorMessage =

@@ -20,11 +20,14 @@ import {
   getPharmacyPreferences,
   getNearestLabs,
   getLabPreferences,
+  setPrescriptionPharmacy,
+  setRequisitionLab,
 } from "../apis/patient";
 import {
   useCurrentDiagnosisInfoStore,
   useSelectedPharmacyStore,
   useSelectedLabStore,
+  useGeneratedOrdersStore,
 } from "../store";
 import type {
   Pharmacy,
@@ -63,6 +66,7 @@ const LocationSelector: React.FC = () => {
   const { updateSelectedPharmacy, selectedPharmacy: storedPharmacy } =
     useSelectedPharmacyStore();
   const { updateSelectedLab, selectedLab: storedLab } = useSelectedLabStore();
+  const { prescriptionId, requisitionId } = useGeneratedOrdersStore();
 
   const fetchPharmacyData = async () => {
     if (!diagnosisInfo || diagnosisInfo.length === 0) {
@@ -163,6 +167,74 @@ const LocationSelector: React.FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, diagnosisInfo]);
+
+  // Auto-select default pharmacy/lab if none selected
+  useEffect(() => {
+    const autoSelectPharmacy = async () => {
+      if (!prescriptionId) return;
+      if (storedPharmacy) return;
+
+      const candidate =
+        pharmacyPreferences[0] || nearestPharmacies[0] || null;
+      if (!candidate) return;
+
+      try {
+        await setPrescriptionPharmacy(prescriptionId, candidate.pharmacy_id);
+        updateSelectedPharmacy({
+          pharmacy_id: candidate.pharmacy_id,
+          name: candidate.name,
+          address: candidate.address,
+        });
+        setSelectedPharmacy(candidate);
+        if (candidate.coordinates) {
+          setPharmacyMapCenter(candidate.coordinates);
+        }
+        message.success(
+          `Automatically selected preferred pharmacy: ${candidate.name}`
+        );
+      } catch (error) {
+        console.error("Auto-select pharmacy failed", error);
+      }
+    };
+
+    const autoSelectLab = async () => {
+      if (!requisitionId) return;
+      if (storedLab) return;
+
+      const candidate = labPreferences[0] || nearestLabs[0] || null;
+      if (!candidate) return;
+
+      try {
+        await setRequisitionLab(requisitionId, candidate.lab_id);
+        updateSelectedLab({
+          lab_id: candidate.lab_id,
+          name: candidate.name,
+          address: candidate.address,
+        });
+        setSelectedLab(candidate);
+        if (candidate.coordinates) {
+          setLabMapCenter(candidate.coordinates);
+        }
+        message.success(`Automatically selected preferred lab: ${candidate.name}`);
+      } catch (error) {
+        console.error("Auto-select lab failed", error);
+      }
+    };
+
+    autoSelectPharmacy();
+    autoSelectLab();
+  }, [
+    pharmacyPreferences,
+    nearestPharmacies,
+    labPreferences,
+    nearestLabs,
+    storedPharmacy,
+    storedLab,
+    prescriptionId,
+    requisitionId,
+    updateSelectedPharmacy,
+    updateSelectedLab,
+  ]);
 
   const handleSelectPharmacy = (pharmacy: Pharmacy) => {
     setSelectedPharmacy(pharmacy);
