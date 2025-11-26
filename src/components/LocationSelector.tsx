@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Empty, Spin, message, Tag } from "antd";
 import {
   ShopOutlined,
@@ -67,6 +67,9 @@ const LocationSelector: React.FC = () => {
     useSelectedPharmacyStore();
   const { updateSelectedLab, selectedLab: storedLab } = useSelectedLabStore();
   const { prescriptionId, requisitionId } = useGeneratedOrdersStore();
+
+  const isSelectingPharmacy = useRef(false);
+  const isSelectingLab = useRef(false);
 
   const fetchPharmacyData = async () => {
     if (!diagnosisInfo || diagnosisInfo.length === 0) {
@@ -173,10 +176,12 @@ const LocationSelector: React.FC = () => {
     const autoSelectPharmacy = async () => {
       if (!prescriptionId) return;
       if (storedPharmacy) return;
+      if (isSelectingPharmacy.current) return;
 
-      const candidate =
-        pharmacyPreferences[0] || nearestPharmacies[0] || null;
+      const candidate = pharmacyPreferences[0] || nearestPharmacies[0] || null;
       if (!candidate) return;
+
+      isSelectingPharmacy.current = true;
 
       try {
         await setPrescriptionPharmacy(prescriptionId, candidate.pharmacy_id);
@@ -194,15 +199,20 @@ const LocationSelector: React.FC = () => {
         );
       } catch (error) {
         console.error("Auto-select pharmacy failed", error);
+      } finally {
+        isSelectingPharmacy.current = false;
       }
     };
 
     const autoSelectLab = async () => {
       if (!requisitionId) return;
       if (storedLab) return;
+      if (isSelectingLab.current) return;
 
       const candidate = labPreferences[0] || nearestLabs[0] || null;
       if (!candidate) return;
+
+      isSelectingLab.current = true;
 
       try {
         await setRequisitionLab(requisitionId, candidate.lab_id);
@@ -215,9 +225,13 @@ const LocationSelector: React.FC = () => {
         if (candidate.coordinates) {
           setLabMapCenter(candidate.coordinates);
         }
-        message.success(`Automatically selected preferred lab: ${candidate.name}`);
+        message.success(
+          `Automatically selected preferred lab: ${candidate.name}`
+        );
       } catch (error) {
         console.error("Auto-select lab failed", error);
+      } finally {
+        isSelectingLab.current = false;
       }
     };
 
