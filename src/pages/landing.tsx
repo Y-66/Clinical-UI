@@ -176,7 +176,7 @@ export const LandingPage = () => {
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div
             className="group bg-white rounded-3xl p-6 shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-cyan-200 cursor-pointer"
-            onClick={() => navigate(`/workflow/manual-prescription?patient_id=1`)}
+            onClick={() => navigate(`/workflow/manual-prescription`)}
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg">
@@ -190,7 +190,7 @@ export const LandingPage = () => {
           </div>
           <div
             className="group bg-white rounded-3xl p-6 shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-cyan-200 cursor-pointer"
-            onClick={() => navigate(`/workflow/manual-requisition?patient_id=1`)}
+            onClick={() => navigate(`/workflow/manual-requisition`)}
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg">

@@ -31,7 +31,8 @@ function useQuery() {
 const ManualPrescriptionWorkflow: React.FC = () => {
   const query = useQuery();
   const navigate = useNavigate();
-  const patientId = Number(query.get("patient_id") || 1);
+  const patientIdFromQuery = query.get("patient_id");
+  const patientId = patientIdFromQuery ? Number(patientIdFromQuery) : undefined;
 
   const { diagnosisInfo } = useCurrentDiagnosisInfoStore();
   const { selectedPharmacy } = useSelectedPharmacyStore();
@@ -95,7 +96,11 @@ const ManualPrescriptionWorkflow: React.FC = () => {
                 <CSSTransition key={current} timeout={500} classNames="page">
                   <div className="w-full">
                     {current === 0 && <PersonInfo />}
-                    {current === 1 && <ManualPrescriptionEditor patientId={patientId} />}
+                    {current === 1 && (
+                      <ManualPrescriptionEditor
+                        patientId={Number(diagnosisInfo?.[0]?.patient_id ?? patientId)}
+                      />
+                    )}
                     {current === 2 && <LocationSelector mode="prescription-only" />}
                     {current === 3 && <OrderReview mode="prescription-only" />}
                     {current === 4 && <FaxSender mode="prescription-only" />}
