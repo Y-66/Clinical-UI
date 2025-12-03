@@ -172,6 +172,38 @@ export const LandingPage = () => {
           </div>
         </div>
 
+        {/* Workflow Shortcuts */}
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div
+            className="group bg-white rounded-3xl p-6 shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-cyan-200 cursor-pointer"
+            onClick={() => navigate(`/workflow/manual-prescription?patient_id=1`)}
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg">
+                <MedicineBoxOutlined className="text-white text-xl" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-slate-800">Manual Prescription + AI Assist</h3>
+                <p className="text-slate-500">Create empty prescription, edit, or let AI complete</p>
+              </div>
+            </div>
+          </div>
+          <div
+            className="group bg-white rounded-3xl p-6 shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-cyan-200 cursor-pointer"
+            onClick={() => navigate(`/workflow/manual-requisition?patient_id=1`)}
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg">
+                <ExperimentOutlined className="text-white text-xl" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-slate-800">Manual Requisition + AI Assist</h3>
+                <p className="text-slate-500">Create empty requisition, edit, or let AI complete</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Footer Info */}
         <div className="text-center mt-20 pb-8">
           <div className="inline-flex flex-wrap justify-center items-center gap-4 md:gap-8 text-sm font-semibold text-slate-400 uppercase tracking-widest">

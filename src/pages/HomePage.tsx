@@ -47,7 +47,7 @@ const HomePage = () => {
       desc: "Manual entry with AI suggestions for medications",
       icon: <RobotOutlined />,
       typeLabel: "Manual + AI Assist",
-      onClick: () => navigate("/coming-soon"),
+      onClick: () => navigate("/workflow/manual-prescription?patient_id=1"),
     },
     {
       key: "manual-requisition-ai",
@@ -55,7 +55,7 @@ const HomePage = () => {
       desc: "Manual order with AI recommendations for labs",
       icon: <RobotOutlined />,
       typeLabel: "Manual + AI Assist",
-      onClick: () => navigate("/coming-soon"),
+      onClick: () => navigate("/workflow/manual-requisition?patient_id=1"),
     },
   ];
 
