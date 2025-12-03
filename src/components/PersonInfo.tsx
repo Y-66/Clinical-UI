@@ -99,7 +99,7 @@ const PersonInfo: React.FC = () => {
           </div>
           <div>
             <h2 className="text-2xl font-bold text-slate-800 m-0">
-              Diagnosis Search
+              Latest Diagnosis Search
             </h2>
             <p className="text-slate-500 m-0">
               Enter patient ID to retrieve medical records

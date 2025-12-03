@@ -22,7 +22,7 @@ const HomePage = () => {
       desc: "Automatically generate Prescription based on Diagnosis",
       icon: <FileTextOutlined />,
       typeLabel: "Auto",
-      onClick: () => navigate("/coming-soon"),
+      onClick: () => navigate("/workflow/auto-prescription"),
     },
     {
       key: "auto-requisition",
@@ -30,7 +30,7 @@ const HomePage = () => {
       desc: "Automatically generate Lab Requisition from Diagnosis",
       icon: <ExperimentOutlined />,
       typeLabel: "Auto",
-      onClick: () => navigate("/coming-soon"),
+      onClick: () => navigate("/workflow/auto-requisition"),
     },
     {
       key: "auto-dual-forms",
@@ -68,11 +68,11 @@ const HomePage = () => {
       <div className="max-w-7xl mx-auto px-6 py-12 relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-black text-slate-900 mb-4 tracking-tight">
-            Workflow Launcher
+          <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-3 tracking-tight">
+            Digital Medical <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">Document Workflow</span>
           </h1>
-          <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
-            Choose a mode to start. Only <span className="font-semibold text-cyan-700">Auto Dual-Forms</span> is available now.
+          <p className="text-slate-500 text-lg max-w-2xl mx-auto font-medium">
+            Agent-driven E-Health App for Seamless Prescription & Requisition
           </p>
         </div>
 

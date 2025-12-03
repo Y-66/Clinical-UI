@@ -76,3 +76,32 @@ export const useWorkflowGenerationStore = create<WorkflowGenerationStore>(
       set(() => ({ hasGeneratedOrders: generated })),
   })
 );
+
+// Single-form workflow stores
+interface PrescriptionWorkflowStore {
+  prescriptionId: string | null;
+  hasGeneratedPrescription: boolean;
+  setPrescriptionId: (id: string | null) => void;
+  setHasGeneratedPrescription: (v: boolean) => void;
+}
+
+export const usePrescriptionWorkflowStore = create<PrescriptionWorkflowStore>((set) => ({
+  prescriptionId: null,
+  hasGeneratedPrescription: false,
+  setPrescriptionId: (id) => set(() => ({ prescriptionId: id })),
+  setHasGeneratedPrescription: (v) => set(() => ({ hasGeneratedPrescription: v })),
+}));
+
+interface RequisitionWorkflowStore {
+  requisitionId: string | null;
+  hasGeneratedRequisition: boolean;
+  setRequisitionId: (id: string | null) => void;
+  setHasGeneratedRequisition: (v: boolean) => void;
+}
+
+export const useRequisitionWorkflowStore = create<RequisitionWorkflowStore>((set) => ({
+  requisitionId: null,
+  hasGeneratedRequisition: false,
+  setRequisitionId: (id) => set(() => ({ requisitionId: id })),
+  setHasGeneratedRequisition: (v) => set(() => ({ hasGeneratedRequisition: v })),
+}));

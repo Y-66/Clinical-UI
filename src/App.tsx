@@ -141,14 +141,27 @@ const App = () => {
         <div className="absolute top-1/3 -left-24 w-72 h-72 bg-teal-100/50 rounded-full blur-3xl mix-blend-multiply -z-10" />
       </div>
 
-      {/* Header */}
+      {/* Header with clickable title to go back to Home */}
       <div className="max-w-7xl mx-auto mb-12 text-center relative z-10">
         <div className="inline-flex items-center justify-center p-3 bg-white rounded-2xl shadow-md mb-6 ring-1 ring-slate-100">
           <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-200/50">
             <MedicineBoxOutlined className="text-white text-2xl" />
           </div>
         </div>
-        <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-3 tracking-tight">
+        <h1
+          className="text-4xl md:text-5xl font-black text-slate-900 mb-3 tracking-tight cursor-pointer select-none"
+          onClick={() => {
+            try {
+              // Use navigate from react-router without extra packages
+              const navEvent = new MouseEvent("click", { bubbles: true });
+              // Fallback: assign location to ensure navigation
+              window.location.assign("/landing");
+            } catch (e) {
+              window.location.href = "/landing";
+            }
+          }}
+          title="Back to Home"
+        >
           Digital Medical{" "}
           <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
             Document Workflow

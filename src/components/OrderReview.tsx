@@ -27,13 +27,15 @@ import {
   useSelectedLabStore,
   useGeneratedOrdersStore,
   useOrderSubmittedStore,
+  usePrescriptionWorkflowStore,
+  useRequisitionWorkflowStore,
 } from "../store";
 import dayjs from "dayjs";
 
 const { TextArea } = Input;
 const { Option } = Select;
 
-const OrderReview: React.FC = () => {
+const OrderReview: React.FC<{ mode?: "dual" | "prescription-only" | "requisition-only" }> = ({ mode = "dual" }) => {
   const [initialLoading, setInitialLoading] = useState(false);
   const [prescriptionLoading, setPrescriptionLoading] = useState(false);
   const [requisitionLoading, setRequisitionLoading] = useState(false);
@@ -44,22 +46,26 @@ const OrderReview: React.FC = () => {
   const [requisitionForm] = Form.useForm();
   const { selectedPharmacy } = useSelectedPharmacyStore();
   const { selectedLab } = useSelectedLabStore();
-  const { prescriptionId, requisitionId } = useGeneratedOrdersStore();
+  const { prescriptionId: dualPrescriptionId, requisitionId: dualRequisitionId } = useGeneratedOrdersStore();
+  const { prescriptionId: singlePrescriptionId } = usePrescriptionWorkflowStore();
+  const { requisitionId: singleRequisitionId } = useRequisitionWorkflowStore();
   const { setOrderSubmitted, isOrderSubmitted } = useOrderSubmittedStore();
 
   const fetchOrderData = async () => {
-    // Check if IDs are available
-    if (!prescriptionId || !requisitionId) {
+    // Resolve IDs based on mode
+    const prescriptionId = mode !== "requisition-only" ? (dualPrescriptionId || singlePrescriptionId) : null;
+    const requisitionId = mode !== "prescription-only" ? (dualRequisitionId || singleRequisitionId) : null;
+
+    if ((mode === "dual" && (!prescriptionId || !requisitionId)) || (mode === "prescription-only" && !prescriptionId) || (mode === "requisition-only" && !requisitionId)) {
       message.warning("Please generate orders first in Step 2");
       return;
     }
 
     setInitialLoading(true);
     try {
-      const [prescriptionRes, requisitionRes] = await Promise.all([
-        getPrescriptionById(prescriptionId),
-        getRequisitionById(requisitionId),
-      ]);
+      const presPromise = prescriptionId ? getPrescriptionById(prescriptionId) : Promise.resolve(null);
+      const reqPromise = requisitionId ? getRequisitionById(requisitionId) : Promise.resolve(null);
+      const [prescriptionRes, requisitionRes] = await Promise.all([presPromise, reqPromise]);
 
       // Set form values with store data override for pharmacy/lab
       if (prescriptionRes) {
@@ -74,7 +80,6 @@ const OrderReview: React.FC = () => {
             selectedPharmacy?.address || prescriptionRes.pharmacy_address,
         });
       }
-
       if (requisitionRes) {
         requisitionForm.setFieldsValue({
           requisition_id: requisitionRes.requisition.requisition_id,
@@ -93,14 +98,16 @@ const OrderReview: React.FC = () => {
   };
 
   useEffect(() => {
+    // Ensure we start with submit button visible when entering Review step
+    setOrderSubmitted(false);
     fetchOrderData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [mode]);
 
   const handleUpdatePrescription = async () => {
     try {
       const prescriptionValues = await prescriptionForm.validateFields();
-
+      const prescriptionId = dualPrescriptionId || singlePrescriptionId;
       if (!prescriptionId) {
         message.error("Prescription ID not found.");
         return;
@@ -137,7 +144,7 @@ const OrderReview: React.FC = () => {
   const handleUpdateRequisition = async () => {
     try {
       const requisitionValues = await requisitionForm.validateFields();
-
+      const requisitionId = dualRequisitionId || singleRequisitionId;
       if (!requisitionId) {
         message.error("Requisition ID not found.");
         return;
@@ -180,10 +187,11 @@ const OrderReview: React.FC = () => {
       }
 
       // Validate both forms
-      const prescriptionValues = await prescriptionForm.validateFields();
-      const requisitionValues = await requisitionForm.validateFields();
-
-      if (!prescriptionId || !requisitionId) {
+      const presValues = mode !== "requisition-only" ? await prescriptionForm.validateFields() : null;
+      const reqValues = mode !== "prescription-only" ? await requisitionForm.validateFields() : null;
+      const prescriptionId = mode !== "requisition-only" ? (dualPrescriptionId || singlePrescriptionId) : null;
+      const requisitionId = mode !== "prescription-only" ? (dualRequisitionId || singleRequisitionId) : null;
+      if ((mode === "dual" && (!prescriptionId || !requisitionId)) || (mode === "prescription-only" && !prescriptionId) || (mode === "requisition-only" && !requisitionId)) {
         message.error("Order IDs not found. Please generate orders first.");
         return;
       }
@@ -191,46 +199,51 @@ const OrderReview: React.FC = () => {
       setSubmitLoading(true);
 
       // Prepare prescription update data (only editable fields)
-      const prescriptionUpdateData = {
-        status: prescriptionValues.status,
-        notes: prescriptionValues.notes,
-        medication_name: prescriptionValues.medication_name,
-        medication_strength: prescriptionValues.medication_strength,
-        medication_form: prescriptionValues.medication_form,
-        dosage_instructions: prescriptionValues.dosage_instructions,
-        quantity: prescriptionValues.quantity,
-        refills_allowed: prescriptionValues.refills_allowed,
-        expiry_date: prescriptionValues.expiry_date
-          ? prescriptionValues.expiry_date.format("YYYY-MM-DD")
-          : undefined,
-      };
+      const prescriptionUpdateData = presValues
+        ? {
+            status: presValues.status,
+            notes: presValues.notes,
+            medication_name: presValues.medication_name,
+            medication_strength: presValues.medication_strength,
+            medication_form: presValues.medication_form,
+            dosage_instructions: presValues.dosage_instructions,
+            quantity: presValues.quantity,
+            refills_allowed: presValues.refills_allowed,
+            expiry_date: presValues.expiry_date
+              ? presValues.expiry_date.format("YYYY-MM-DD")
+              : undefined,
+          }
+        : null;
 
       // Prepare requisition update data (only editable fields)
-      const requisitionUpdateData = {
-        status: requisitionValues.status,
-        notes: requisitionValues.notes,
-        department: requisitionValues.department,
-        test_type: requisitionValues.test_type,
-        test_code: requisitionValues.test_code,
-        clinical_info: requisitionValues.clinical_info,
-        priority: requisitionValues.priority,
-      };
+      const requisitionUpdateData = reqValues
+        ? {
+            status: reqValues.status,
+            notes: reqValues.notes,
+            department: reqValues.department,
+            test_type: reqValues.test_type,
+            test_code: reqValues.test_code,
+            clinical_info: reqValues.clinical_info,
+            priority: reqValues.priority,
+          }
+        : null;
 
       // Prepare API calls array
-      const apiCalls = [
-        updatePrescriptionById(prescriptionId, prescriptionUpdateData),
-        updateRequisitionById(requisitionId, requisitionUpdateData),
-      ];
+      const apiCalls: Promise<any>[] = [];
+      if (prescriptionId && prescriptionUpdateData) {
+        apiCalls.push(updatePrescriptionById(prescriptionId, prescriptionUpdateData));
+      }
+      if (requisitionId && requisitionUpdateData) {
+        apiCalls.push(updateRequisitionById(requisitionId, requisitionUpdateData));
+      }
 
       // Add pharmacy ID if selected
-      if (selectedPharmacy?.pharmacy_id) {
-        apiCalls.push(
-          setPrescriptionPharmacy(prescriptionId, selectedPharmacy.pharmacy_id)
-        );
+      if (prescriptionId && selectedPharmacy?.pharmacy_id) {
+        apiCalls.push(setPrescriptionPharmacy(prescriptionId, selectedPharmacy.pharmacy_id));
       }
 
       // Add lab ID if selected
-      if (selectedLab?.lab_id) {
+      if (requisitionId && selectedLab?.lab_id) {
         apiCalls.push(setRequisitionLab(requisitionId, selectedLab.lab_id));
       }
 
@@ -272,7 +285,8 @@ const OrderReview: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Prescription Card */}
-          <div className="bg-white rounded-3xl shadow-xl border border-slate-100 hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
+          <div className="bg-white rounded-3xl shadow-xl border border-slate-100 hover:shadow-2xl transition-all duration-300 group flex flex-col h-full"
+               style={mode === "requisition-only" ? { pointerEvents: "none", opacity: 0.4 } : undefined}>
             {/* Card Header - Sticky */}
             <div
               id="prescription-header"
@@ -294,7 +308,7 @@ const OrderReview: React.FC = () => {
                 icon={<CheckCircleOutlined />}
                 onClick={handleUpdatePrescription}
                 loading={prescriptionLoading}
-                disabled={!isPrescriptionChanged}
+                disabled={mode === "requisition-only" || !isPrescriptionChanged}
                 className={`
                   font-bold shadow-md border-none transition-all duration-300 rounded-xl px-6
                   ${
@@ -310,6 +324,7 @@ const OrderReview: React.FC = () => {
 
             {/* Card Body */}
             <div className="p-6 bg-white rounded-b-3xl">
+              {mode !== "requisition-only" && (
               <Form
                 form={prescriptionForm}
                 layout="vertical"
@@ -508,11 +523,13 @@ const OrderReview: React.FC = () => {
                   </Form.Item>
                 </div>
               </Form>
+              )}
             </div>
           </div>
 
           {/* Requisition Card */}
-          <div className="bg-white rounded-3xl shadow-xl border border-slate-100 hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
+          <div className="bg-white rounded-3xl shadow-xl border border-slate-100 hover:shadow-2xl transition-all duration-300 group flex flex-col h-full"
+               style={mode === "prescription-only" ? { pointerEvents: "none", opacity: 0.4 } : undefined}>
             {/* Card Header - Sticky */}
             <div
               id="requisition-header"
@@ -534,7 +551,7 @@ const OrderReview: React.FC = () => {
                 icon={<CheckCircleOutlined />}
                 onClick={handleUpdateRequisition}
                 loading={requisitionLoading}
-                disabled={!isRequisitionChanged}
+                disabled={mode === "prescription-only" || !isRequisitionChanged}
                 className={`
                   font-bold shadow-md border-none transition-all duration-300 rounded-xl px-6
                   ${
@@ -550,6 +567,7 @@ const OrderReview: React.FC = () => {
 
             {/* Card Body */}
             <div className="p-6 bg-white rounded-b-3xl">
+              {mode !== "prescription-only" && (
               <Form
                 form={requisitionForm}
                 layout="vertical"
@@ -727,6 +745,7 @@ const OrderReview: React.FC = () => {
                   </Form.Item>
                 </div>
               </Form>
+              )}
             </div>
           </div>
         </div>

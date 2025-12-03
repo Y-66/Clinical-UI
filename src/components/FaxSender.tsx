@@ -14,17 +14,23 @@ import {
   useSelectedPharmacyStore,
   useSelectedLabStore,
   useFaxSentStore,
+  usePrescriptionWorkflowStore,
+  useRequisitionWorkflowStore,
 } from "../store";
-import { sendPrescriptionFax, sendRequisitionFax } from "../apis/patient";
+import { sendPrescriptionFax, sendRequisitionFax, setPrescriptionPharmacy, setRequisitionLab } from "../apis/patient";
 
-const FaxSender: React.FC = () => {
+const FaxSender: React.FC<{ mode?: "dual" | "prescription-only" | "requisition-only" }> = ({ mode = "dual" }) => {
   const [prescriptionFaxSent, setPrescriptionFaxSent] = useState(false);
   const [requisitionFaxSent, setRequisitionFaxSent] = useState(false);
   const [prescriptionLoading, setPrescriptionLoading] = useState(false);
   const [requisitionLoading, setRequisitionLoading] = useState(false);
   const [prescriptionMessage, setPrescriptionMessage] = useState("");
   const [requisitionMessage, setRequisitionMessage] = useState("");
-  const { prescriptionId, requisitionId } = useGeneratedOrdersStore();
+  const { prescriptionId: dualPrescriptionId, requisitionId: dualRequisitionId } = useGeneratedOrdersStore();
+  const { prescriptionId: singlePrescriptionId } = usePrescriptionWorkflowStore();
+  const { requisitionId: singleRequisitionId } = useRequisitionWorkflowStore();
+  const prescriptionId = mode !== "requisition-only" ? (dualPrescriptionId || singlePrescriptionId) : null;
+  const requisitionId = mode !== "prescription-only" ? (dualRequisitionId || singleRequisitionId) : null;
   const { selectedPharmacy } = useSelectedPharmacyStore();
   const { selectedLab } = useSelectedLabStore();
   const {
@@ -32,7 +38,9 @@ const FaxSender: React.FC = () => {
     setRequisitionFaxSent: setGlobalRequisitionFaxSent,
   } = useFaxSentStore();
 
-  const allFaxesSent = prescriptionFaxSent && requisitionFaxSent;
+  const allFaxesSent = (mode === "dual")
+    ? (prescriptionFaxSent && requisitionFaxSent)
+    : (mode === "prescription-only" ? prescriptionFaxSent : requisitionFaxSent);
 
   // Update store when faxes are sent
   useEffect(() => {
@@ -55,14 +63,25 @@ const FaxSender: React.FC = () => {
       return;
     }
 
+    // Ensure destination is bound (many backends require pharmacy_id before fax)
+    if (!selectedPharmacy?.pharmacy_id) {
+      message.warning("Please select a pharmacy in Step 3 and submit in Step 4 before faxing.");
+      return;
+    }
+
     setPrescriptionLoading(true);
     try {
+      try {
+        await setPrescriptionPharmacy(prescriptionId, selectedPharmacy.pharmacy_id);
+      } catch (e) {
+        // Continue; backend may already have the binding
+      }
       const response = await sendPrescriptionFax(prescriptionId);
       setPrescriptionFaxSent(true);
       setPrescriptionMessage(response.message || "Fax sent successfully");
       message.success("Prescription fax sent successfully!");
     } catch (error) {
-      message.error("Failed to send prescription fax. Please try again.");
+      message.error("Failed to send prescription fax. Please verify Step 4 submission and destination.");
       console.error("Error sending prescription fax:", error);
     } finally {
       setPrescriptionLoading(false);
@@ -75,14 +94,25 @@ const FaxSender: React.FC = () => {
       return;
     }
 
+    // Ensure destination is bound
+    if (!selectedLab?.lab_id) {
+      message.warning("Please select a lab in Step 3 and submit in Step 4 before faxing.");
+      return;
+    }
+
     setRequisitionLoading(true);
     try {
+      try {
+        await setRequisitionLab(requisitionId, selectedLab.lab_id);
+      } catch (e) {
+        // Continue if already bound
+      }
       const response = await sendRequisitionFax(requisitionId);
       setRequisitionFaxSent(true);
       setRequisitionMessage(response.message || "Fax sent successfully");
       message.success("Requisition fax sent successfully!");
     } catch (error) {
-      message.error("Failed to send requisition fax. Please try again.");
+      message.error("Failed to send requisition fax. Please verify Step 4 submission and destination.");
       console.error("Error sending requisition fax:", error);
     } finally {
       setRequisitionLoading(false);
@@ -110,10 +140,11 @@ const FaxSender: React.FC = () => {
               All Faxes Sent Successfully!
             </span>
           }
-          subTitle="Both prescription and requisition have been successfully faxed to their respective destinations."
+          subTitle={mode === "dual" ? "Both prescription and requisition have been successfully faxed to their respective destinations." : (mode === "prescription-only" ? "Prescription has been successfully faxed to the pharmacy." : "Requisition has been successfully faxed to the lab.")}
           extra={
             <div className="space-y-4 max-w-3xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className={`grid ${mode === "dual" ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"} gap-6`}>
+                {(mode !== "requisition-only") && (
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 shadow-lg rounded-3xl p-6">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center">
@@ -147,6 +178,8 @@ const FaxSender: React.FC = () => {
                     </p>
                   </div>
                 </div>
+                )}
+                {(mode !== "prescription-only") && (
                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 shadow-lg rounded-3xl p-6">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
@@ -180,6 +213,7 @@ const FaxSender: React.FC = () => {
                     </p>
                   </div>
                 </div>
+                )}
               </div>
             </div>
           }
@@ -190,9 +224,9 @@ const FaxSender: React.FC = () => {
       {!allFaxesSent && (
         <div className="space-y-6 flex-1">
           {/* Individual Fax Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className={`grid ${mode === "dual" ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"} gap-6`}>
             {/* Prescription Fax Card */}
-            <div
+            {(mode !== "requisition-only") && (<div
               className={`shadow-lg transition-all duration-300 rounded-3xl p-6 ${
                 prescriptionFaxSent
                   ? "border-2 border-green-400 bg-green-50"
@@ -293,10 +327,10 @@ const FaxSender: React.FC = () => {
                   </Button>
                 )}
               </div>
-            </div>
+            </div>)}
 
             {/* Requisition Fax Card */}
-            <div
+            {(mode !== "prescription-only") && (<div
               className={`shadow-lg transition-all duration-300 rounded-3xl p-6 ${
                 requisitionFaxSent
                   ? "border-2 border-green-400 bg-green-50"
@@ -395,11 +429,11 @@ const FaxSender: React.FC = () => {
                   </Button>
                 )}
               </div>
-            </div>
+            </div>)}
           </div>
 
           {/* Warning if IDs are missing */}
-          {(!prescriptionId || !requisitionId) && (
+          {(mode === "dual" && (!prescriptionId || !requisitionId)) && (
             <Alert
               message="Missing Order Information"
               description="You can sending faxes individually."

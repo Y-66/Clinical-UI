@@ -362,7 +362,11 @@ export const sendPrescriptionFax = async (prescriptionId: string) => {
     });
 
     if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
+      let details = "";
+      try {
+        details = await res.text();
+      } catch {}
+      throw new Error(`HTTP error! status: ${res.status}${details ? ` - ${details}` : ""}`);
     }
 
     const data = await res.json();
@@ -385,7 +389,11 @@ export const sendRequisitionFax = async (requisitionId: string) => {
     });
 
     if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
+      let details = "";
+      try {
+        details = await res.text();
+      } catch {}
+      throw new Error(`HTTP error! status: ${res.status}${details ? ` - ${details}` : ""}`);
     }
 
     const data = await res.json();
@@ -395,4 +403,77 @@ export const sendRequisitionFax = async (requisitionId: string) => {
     console.error("Error sending requisition fax:", error);
     throw error;
   }
+};
+
+// Create empty prescription then complete via workflow
+export const createEmptyPrescription = async (args: { patient_id: number }) => {
+  const res = await fetch(`${BASE_URL}/prescriptions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      patient_id: args.patient_id,
+      prescriber_id: "",
+      medication_name: "",
+      medication_strength: "",
+      medication_form: "",
+      dosage_instructions: "",
+      quantity: 0,
+      refills_allowed: 0,
+      date_prescribed: new Date().toISOString(),
+      expiry_date: "",
+      status: "",
+      notes: "",
+      pharmacy_id: null,
+    }),
+  });
+  if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+  return await res.json();
+};
+
+export const completePrescription = async (args: {
+  patient_id: number;
+  prescription_id: string;
+}) => {
+  const res = await fetch(`${BASE_URL}/workflow/complete-prescription`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(args),
+  });
+  if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+  return await res.json();
+};
+
+export const createEmptyRequisition = async (args: { patient_id: number }) => {
+  const res = await fetch(`${BASE_URL}/requisitions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      patient_id: args.patient_id,
+      lab_id: null,
+      department: "",
+      test_type: "",
+      test_code: null,
+      clinical_info: null,
+      date_requested: new Date().toISOString(),
+      priority: "",
+      status: "",
+      result_date: null,
+      notes: "",
+    }),
+  });
+  if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+  return await res.json();
+};
+
+export const completeRequisition = async (args: {
+  patient_id: number;
+  requisition_id: string;
+}) => {
+  const res = await fetch(`${BASE_URL}/workflow/complete-requisition`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(args),
+  });
+  if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+  return await res.json();
 };

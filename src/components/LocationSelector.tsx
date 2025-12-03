@@ -20,8 +20,6 @@ import {
   getPharmacyPreferences,
   getNearestLabs,
   getLabPreferences,
-  setPrescriptionPharmacy,
-  setRequisitionLab,
 } from "../apis/patient";
 import {
   useCurrentDiagnosisInfoStore,
@@ -41,8 +39,8 @@ import {
   INITIAL_LONGITUDE,
 } from "../constants";
 
-const LocationSelector: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>("pharmacy");
+const LocationSelector: React.FC<{ mode?: "dual" | "prescription-only" | "requisition-only" }> = ({ mode = "dual" }) => {
+  const [activeTab, setActiveTab] = useState<string>(mode === "requisition-only" ? "lab" : "pharmacy");
   const [nearestPharmacies, setNearestPharmacies] = useState<Pharmacy[]>([]);
   const [pharmacyPreferences, setPharmacyPreferences] = useState<
     PharmacyPreference[]
@@ -162,93 +160,22 @@ const LocationSelector: React.FC = () => {
 
   useEffect(() => {
     if (diagnosisInfo && diagnosisInfo.length > 0) {
-      if (activeTab === "pharmacy") {
+      if (mode === "prescription-only") {
         fetchPharmacyData();
-      } else if (activeTab === "lab") {
+      } else if (mode === "requisition-only") {
         fetchLabData();
+      } else {
+        if (activeTab === "pharmacy") {
+          fetchPharmacyData();
+        } else if (activeTab === "lab") {
+          fetchLabData();
+        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab, diagnosisInfo]);
+  }, [activeTab, diagnosisInfo, mode]);
 
-  // Auto-select default pharmacy/lab if none selected
-  useEffect(() => {
-    const autoSelectPharmacy = async () => {
-      if (!prescriptionId) return;
-      if (storedPharmacy) return;
-      if (isSelectingPharmacy.current) return;
-
-      const candidate = pharmacyPreferences[0] || nearestPharmacies[0] || null;
-      if (!candidate) return;
-
-      isSelectingPharmacy.current = true;
-
-      try {
-        await setPrescriptionPharmacy(prescriptionId, candidate.pharmacy_id);
-        updateSelectedPharmacy({
-          pharmacy_id: candidate.pharmacy_id,
-          name: candidate.name,
-          address: candidate.address,
-        });
-        setSelectedPharmacy(candidate);
-        if (candidate.coordinates) {
-          setPharmacyMapCenter(candidate.coordinates);
-        }
-        message.success(
-          `Automatically selected preferred pharmacy: ${candidate.name}`
-        );
-      } catch (error) {
-        console.error("Auto-select pharmacy failed", error);
-      } finally {
-        isSelectingPharmacy.current = false;
-      }
-    };
-
-    const autoSelectLab = async () => {
-      if (!requisitionId) return;
-      if (storedLab) return;
-      if (isSelectingLab.current) return;
-
-      const candidate = labPreferences[0] || nearestLabs[0] || null;
-      if (!candidate) return;
-
-      isSelectingLab.current = true;
-
-      try {
-        await setRequisitionLab(requisitionId, candidate.lab_id);
-        updateSelectedLab({
-          lab_id: candidate.lab_id,
-          name: candidate.name,
-          address: candidate.address,
-        });
-        setSelectedLab(candidate);
-        if (candidate.coordinates) {
-          setLabMapCenter(candidate.coordinates);
-        }
-        message.success(
-          `Automatically selected preferred lab: ${candidate.name}`
-        );
-      } catch (error) {
-        console.error("Auto-select lab failed", error);
-      } finally {
-        isSelectingLab.current = false;
-      }
-    };
-
-    autoSelectPharmacy();
-    autoSelectLab();
-  }, [
-    pharmacyPreferences,
-    nearestPharmacies,
-    labPreferences,
-    nearestLabs,
-    storedPharmacy,
-    storedLab,
-    prescriptionId,
-    requisitionId,
-    updateSelectedPharmacy,
-    updateSelectedLab,
-  ]);
+  // Remove auto-binding of facilities; selection only updates local store.
 
   const handleSelectPharmacy = (pharmacy: Pharmacy) => {
     setSelectedPharmacy(pharmacy);
@@ -799,7 +726,7 @@ const LocationSelector: React.FC = () => {
 
   return (
     <div className="w-full h-full">
-      {/* Selected Locations Display - Sticky */}
+      {/* Selected Locations Display - Sticky (mode-aware: disable opposite box) */}
       <div className="sticky top-0 z-10 px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border-b-2 border-gray-200 shadow-md">
         <div className="grid grid-cols-2 gap-4">
           {/* Selected Pharmacy Card */}
@@ -809,6 +736,7 @@ const LocationSelector: React.FC = () => {
                 ? "bg-white border-2 border-blue-400 shadow-md"
                 : "bg-gray-50 border-2 border-dashed border-gray-300"
             }`}
+            style={mode === "requisition-only" ? { pointerEvents: "none", opacity: 0.4 } : undefined}
           >
             <div className="flex items-center gap-2 mb-2">
               <ShopOutlined
@@ -820,7 +748,7 @@ const LocationSelector: React.FC = () => {
                 Selected Pharmacy
               </span>
             </div>
-            {storedPharmacy ? (
+            {mode !== "requisition-only" && storedPharmacy ? (
               <div className="space-y-1">
                 <p
                   className="font-bold text-blue-900 text-sm truncate"
@@ -836,9 +764,9 @@ const LocationSelector: React.FC = () => {
                 </p>
               </div>
             ) : (
-              <p className="text-xs text-gray-400 italic">
-                No pharmacy selected yet
-              </p>
+              mode === "requisition-only" ? null : (
+                <p className="text-xs text-gray-400 italic">No pharmacy selected yet</p>
+              )
             )}
           </div>
 
@@ -849,6 +777,7 @@ const LocationSelector: React.FC = () => {
                 ? "bg-white border-2 border-green-400 shadow-md"
                 : "bg-gray-50 border-2 border-dashed border-gray-300"
             }`}
+            style={mode === "prescription-only" ? { pointerEvents: "none", opacity: 0.4 } : undefined}
           >
             <div className="flex items-center gap-2 mb-2">
               <ExperimentOutlined
@@ -860,7 +789,7 @@ const LocationSelector: React.FC = () => {
                 Selected Lab
               </span>
             </div>
-            {storedLab ? (
+            {mode !== "prescription-only" && storedLab ? (
               <div className="space-y-1">
                 <p
                   className="font-bold text-green-900 text-sm truncate"
@@ -876,43 +805,50 @@ const LocationSelector: React.FC = () => {
                 </p>
               </div>
             ) : (
-              <p className="text-xs text-gray-400 italic">
-                No lab selected yet
-              </p>
+              mode === "prescription-only" ? null : (
+                <p className="text-xs text-gray-400 italic">No lab selected yet</p>
+              )
             )}
           </div>
         </div>
       </div>
 
       <div className="px-4">
-        <div className="flex p-1 bg-slate-100 rounded-2xl mt-4 mb-4 w-fit mx-auto">
-          <button
-            onClick={() => setActiveTab("pharmacy")}
-            className={`flex items-center gap-2 px-8 py-3 rounded-xl text-lg font-bold transition-all duration-300 border-none cursor-pointer ${
-              activeTab === "pharmacy"
-                ? "bg-white text-blue-600 shadow-md scale-105"
-                : "bg-transparent text-slate-500 hover:text-slate-700"
-            }`}
-          >
-            <ShopOutlined className="text-xl" />
-            Pharmacy
-          </button>
-          <button
-            onClick={() => setActiveTab("lab")}
-            className={`flex items-center gap-2 px-8 py-3 rounded-xl text-lg font-bold transition-all duration-300 border-none cursor-pointer ${
-              activeTab === "lab"
-                ? "bg-white text-green-600 shadow-md scale-105"
-                : "bg-transparent text-slate-500 hover:text-slate-700"
-            }`}
-          >
-            <ExperimentOutlined className="text-xl" />
-            Lab
-          </button>
-        </div>
-
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {activeTab === "pharmacy" ? pharmacyContent : labContent}
-        </div>
+        {mode === "dual" ? (
+          <>
+            <div className="flex p-1 bg-slate-100 rounded-2xl mt-4 mb-4 w-fit mx-auto">
+              <button
+                onClick={() => setActiveTab("pharmacy")}
+                className={`flex items-center gap-2 px-8 py-3 rounded-xl text-lg font-bold transition-all duration-300 border-none cursor-pointer ${
+                  activeTab === "pharmacy"
+                    ? "bg-white text-blue-600 shadow-md scale-105"
+                    : "bg-transparent text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                <ShopOutlined className="text-xl" />
+                Pharmacy
+              </button>
+              <button
+                onClick={() => setActiveTab("lab")}
+                className={`flex items-center gap-2 px-8 py-3 rounded-xl text-lg font-bold transition-all duration-300 border-none cursor-pointer ${
+                  activeTab === "lab"
+                    ? "bg-white text-green-600 shadow-md scale-105"
+                    : "bg-transparent text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                <ExperimentOutlined className="text-xl" />
+                Lab
+              </button>
+            </div>
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              {activeTab === "pharmacy" ? pharmacyContent : labContent}
+            </div>
+          </>
+        ) : mode === "prescription-only" ? (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">{pharmacyContent}</div>
+        ) : (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">{labContent}</div>
+        )}
       </div>
     </div>
   );
