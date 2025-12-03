@@ -5,6 +5,8 @@ import "./index.css";
 import App from "./App.tsx";
 import HomePage from "./pages/HomePage.jsx";
 import ComingSoon from "./pages/coming-soon.tsx";
+import AutoPrescriptionWorkflow from "./pages/AutoPrescriptionWorkflow.tsx";
+import AutoRequisitionWorkflow from "./pages/AutoRequisitionWorkflow.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -12,6 +14,8 @@ createRoot(document.getElementById("root")!).render(
       <Routes>
         <Route path="/landing" element={<HomePage />} />
         <Route path="/workflow" element={<App />} />
+        <Route path="/workflow/prescription" element={<AutoPrescriptionWorkflow />} />
+        <Route path="/workflow/requisition" element={<AutoRequisitionWorkflow />} />
         <Route path="/coming-soon" element={<ComingSoon />} />
         <Route path="/" element={<Navigate to="/landing" replace />} />
         <Route path="*" element={<Navigate to="/landing" replace />} />

@@ -22,7 +22,7 @@ const HomePage = () => {
       desc: "Automatically generate Prescription based on Diagnosis",
       icon: <FileTextOutlined />,
       typeLabel: "Auto",
-      onClick: () => navigate("/coming-soon"),
+      onClick: () => navigate("/workflow/prescription"),
     },
     {
       key: "auto-requisition",
@@ -30,7 +30,7 @@ const HomePage = () => {
       desc: "Automatically generate Lab Requisition from Diagnosis",
       icon: <ExperimentOutlined />,
       typeLabel: "Auto",
-      onClick: () => navigate("/coming-soon"),
+      onClick: () => navigate("/workflow/requisition"),
     },
     {
       key: "auto-dual-forms",
@@ -72,7 +72,7 @@ const HomePage = () => {
             Workflow Launcher
           </h1>
           <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
-            Choose a mode to start. Only <span className="font-semibold text-cyan-700">Auto Dual-Forms</span> is available now.
+            Choose a mode to start. <span className="font-semibold text-cyan-700">Auto Prescription</span>, <span className="font-semibold text-cyan-700">Auto Requisition</span>, and <span className="font-semibold text-cyan-700">Auto Dual-Forms</span> are available now.
           </p>
         </div>
 

@@ -396,3 +396,99 @@ export const sendRequisitionFax = async (requisitionId: string) => {
     throw error;
   }
 };
+
+// Create empty prescription (only with patient_id)
+export const createEmptyPrescription = async (patientId: number) => {
+  try {
+    const res = await fetch(`${BASE_URL}/prescriptions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ patient_id: patientId }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Create empty prescription response:", data);
+    return data;
+  } catch (error) {
+    console.error("Error creating empty prescription:", error);
+    throw error;
+  }
+};
+
+// Complete prescription using AI agent
+export const completePrescription = async (prescriptionId: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/workflow/complete-prescription`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ prescription_id: prescriptionId }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Complete prescription response:", data);
+    return data;
+  } catch (error) {
+    console.error("Error completing prescription:", error);
+    throw error;
+  }
+};
+
+// Create empty requisition (only with patient_id)
+export const createEmptyRequisition = async (patientId: number) => {
+  try {
+    const res = await fetch(`${BASE_URL}/requisitions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ patient_id: patientId }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Create empty requisition response:", data);
+    return data;
+  } catch (error) {
+    console.error("Error creating empty requisition:", error);
+    throw error;
+  }
+};
+
+// Complete requisition using AI agent
+export const completeRequisition = async (requisitionId: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/workflow/complete-requisition`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ requisition_id: requisitionId }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Complete requisition response:", data);
+    return data;
+  } catch (error) {
+    console.error("Error completing requisition:", error);
+    throw error;
+  }
+};
